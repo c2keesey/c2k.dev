@@ -27,7 +27,25 @@ import '../styles/global.css';
         <div class="panel-content">
           <section class="hero">
             <TextScramble text="c2k" tag="h1" class="hero-title" always />
+            <div class="bio">
+              <p class="bio-role">CTO, context engineer <a href="https://maia-analytics.com" target="_blank" rel="noopener">@maia_analytics</a></p>
+              <p class="bio-tagline">Outer Sunset, SF · Ridiculous output · Living in agreement with nature</p>
+              <div class="bio-links">
+                <a href="https://github.com/c2keesey" target="_blank" rel="noopener">github</a>
+                <a href="https://x.com/c2keesey" target="_blank" rel="noopener">x</a>
+                <a href="https://linkedin.com/in/c2keesey" target="_blank" rel="noopener">linkedin</a>
+              </div>
+            </div>
           </section>
+
+          <div class="building-section" id="building-section">
+            <div class="building-header">
+              <span class="building-pulse"></span>
+              <span class="building-label">currently building</span>
+            </div>
+            <div class="building-repos" id="building-repos"></div>
+          </div>
+
           <MaiaShowcase />
         </div>
       </section>
@@ -202,6 +220,67 @@ import '../styles/global.css';
 
   updateStatus();
   setInterval(updateStatus, 30000);
+
+  // Currently building
+  const buildingRepos = document.getElementById('building-repos');
+  const buildingSection = document.getElementById('building-section');
+
+  function timeAgo(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days}d ago`;
+  }
+
+  if (buildingRepos) {
+    fetch('/api/activity')
+      .then(r => r.json())
+      .then((data: { repos: Array<{ name: string; url: string; description: string; lastCommit: string; pushedAt: string }> }) => {
+        if (data.repos.length === 0) {
+          buildingSection?.remove();
+          return;
+        }
+        data.repos.forEach((repo, i) => {
+          const row = document.createElement('a');
+          row.href = repo.url;
+          row.target = '_blank';
+          row.rel = 'noopener';
+          row.className = 'building-row';
+          row.style.animationDelay = `${i * 120}ms`;
+
+          const dot = document.createElement('span');
+          dot.className = 'building-dot';
+
+          const info = document.createElement('span');
+          info.className = 'building-info';
+
+          const name = document.createElement('span');
+          name.className = 'building-name';
+          name.textContent = repo.name;
+
+          const commit = document.createElement('span');
+          commit.className = 'building-commit';
+          commit.textContent = repo.lastCommit || repo.description || '';
+
+          info.appendChild(name);
+          if (commit.textContent) info.appendChild(commit);
+
+          const time = document.createElement('span');
+          time.className = 'building-time';
+          time.textContent = repo.pushedAt ? timeAgo(repo.pushedAt) : '';
+
+          row.appendChild(dot);
+          row.appendChild(info);
+          row.appendChild(time);
+          buildingRepos.appendChild(row);
+        });
+      })
+      .catch(() => buildingSection?.remove());
+  }
 </script>
 
 <style>
@@ -252,6 +331,177 @@ import '../styles/global.css';
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 0.75rem;
+  }
+
+  .bio {
+    margin-top: 0.25rem;
+  }
+
+  .bio-role {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .bio-role a {
+    color: var(--purple);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .bio-role a:hover {
+    opacity: 0.7;
+  }
+
+  .bio-tagline {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-top: 0.25rem;
+  }
+
+  .bio-links {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .bio-links a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .bio-links a:hover {
+    color: var(--purple);
+  }
+
+  .building-section {
+    margin-bottom: 2rem;
+    position: relative;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.04), rgba(249, 115, 22, 0.02));
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--purple);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .building-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--purple), transparent 60%);
+    opacity: 0.5;
+  }
+
+  .building-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem 0;
+  }
+
+  .building-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--purple);
+    box-shadow: 0 0 6px var(--purple), 0 0 12px rgba(168, 85, 247, 0.3);
+    animation: building-glow 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes building-glow {
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--purple), 0 0 12px rgba(168, 85, 247, 0.3); }
+    50% { opacity: 0.5; box-shadow: 0 0 3px var(--purple), 0 0 6px rgba(168, 85, 247, 0.15); }
+  }
+
+  .building-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .building-repos {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0;
+  }
+
+  :global(.building-row) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1.25rem;
+    text-decoration: none;
+    transition: background 0.15s;
+    animation: building-fade-in 0.4s ease-out both;
+  }
+
+  :global(.building-row:hover) {
+    background: rgba(168, 85, 247, 0.06);
+  }
+
+  @keyframes building-fade-in {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  :global(.building-dot) {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #a855f7;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  :global(.building-row:hover .building-dot) {
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(168, 85, 247, 0.5);
+  }
+
+  :global(.building-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.building-name) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #a855f7;
+  }
+
+  :global(.building-commit) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.25);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.building-time) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  :global(.building-row:hover .building-time) {
+    color: rgba(255, 255, 255, 0.4);
   }
 
   .hero-sub {
