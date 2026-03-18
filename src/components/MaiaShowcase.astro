@@ -5,8 +5,6 @@
 
 <div class="maia-showcase" id="maia-showcase">
   <a class="maia-card" id="maia-card" href="https://maia-analytics.com" target="_blank" rel="noopener">
-    <div class="maia-glow" id="maia-glow"></div>
-    <div class="maia-grid" id="maia-grid"></div>
     <div class="maia-content">
       <div class="maia-header">
         <img src="/MAIA-logo-white.svg" alt="MAIA" class="maia-logo" />
@@ -39,58 +37,9 @@
 
 <script>
   function initMaia() {
-    const card = document.getElementById('maia-card');
-    const glow = document.getElementById('maia-glow');
     const canvas = document.getElementById('maia-canvas') as HTMLCanvasElement;
     const queryEl = document.getElementById('maia-query');
-    if (!card || !glow || !canvas || !queryEl) return;
-
-    // Magic card glow
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      glow.style.background = `radial-gradient(400px circle at ${x}px ${y}px, rgba(0, 120, 140, 0.25), transparent 60%)`;
-      glow.style.opacity = '1';
-    });
-
-    card.addEventListener('mouseleave', () => {
-      glow.style.opacity = '0';
-    });
-
-    // Interactive grid
-    const grid = document.getElementById('maia-grid');
-    if (grid) {
-      const cols = 16;
-      const rows = 8;
-      for (let i = 0; i < cols * rows; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'maia-grid-cell';
-        grid.appendChild(cell);
-      }
-
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
-        const cells = grid.querySelectorAll<HTMLElement>('.maia-grid-cell');
-        const cellW = rect.width / cols;
-        const cellH = rect.height / rows;
-
-        cells.forEach((cell, i) => {
-          const cx = (i % cols) * cellW + cellW / 2;
-          const cy = Math.floor(i / cols) * cellH + cellH / 2;
-          const dist = Math.sqrt((mx - cx) ** 2 + (my - cy) ** 2);
-          cell.style.opacity = dist < 80 ? String(0.15 * (1 - dist / 80)) : '0';
-        });
-      });
-
-      card.addEventListener('mouseleave', () => {
-        grid.querySelectorAll<HTMLElement>('.maia-grid-cell').forEach(cell => {
-          cell.style.opacity = '0';
-        });
-      });
-    }
+    if (!canvas || !queryEl) return;
 
     // Mini map visualization — animated data points appearing
     const ctx = canvas.getContext('2d');
@@ -226,33 +175,6 @@
 
   .maia-card:hover {
     border-color: rgba(0, 120, 140, 0.6);
-  }
-
-  .maia-glow {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .maia-grid {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: repeat(16, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .maia-grid-cell {
-    background: rgba(0, 180, 210, 0.5);
-    opacity: 0;
-    transition: opacity 0.15s;
-    border-radius: 1px;
-    margin: 1px;
   }
 
   .maia-content {
