@@ -1,0 +1,125 @@
+---
+interface Props {
+  text: string;
+  tag?: string;
+  class?: string;
+  delay?: number;
+  always?: boolean;
+}
+
+const { text, tag = 'span', class: className, delay = 0, always = false } = Astro.props;
+const Tag = tag;
+---
+
+<Tag
+  class:list={['text-scramble', className]}
+  data-text={text}
+  data-delay={delay}
+  data-always={always.toString()}
+>
+  {text}
+</Tag>
+
+<script>
+  // Hex-heavy charset a la Charm — reads as "data being decoded"
+  const chars = '0123456789abcdefABCDEF~!@#$%^&*()+=_';
+  const seen = new Set<string>();
+
+  function scramble(el: HTMLElement) {
+    const alwaysAnimate = el.dataset.always === 'true';
+    const key = el.dataset.text + ':' + el.className;
+    if (!alwaysAnimate && seen.has(key)) return;
+    seen.add(key);
+
+    const target = el.dataset.text || '';
+    const delay = parseInt(el.dataset.delay || '0', 10);
+    const totalDuration = 900;
+
+    // Staggered birth: each character gets a random birth offset
+    // Plus a left-to-right bias so it feels directional but organic
+    const birthOffsets: number[] = [];
+    const resolveOffsets: number[] = [];
+    const birthWindow = totalDuration * 0.3;
+    const resolveWindow = totalDuration * 0.7;
+
+    for (let i = 0; i < target.length; i++) {
+      const bias = (i / target.length) * birthWindow * 0.5;
+      birthOffsets[i] = bias + Math.random() * birthWindow * 0.5;
+      resolveOffsets[i] = birthWindow + bias + Math.random() * resolveWindow * 0.4;
+    }
+
+    // Start blank (periods like Charm)
+    renderFrame(el, target, birthOffsets, resolveOffsets, -1);
+
+    let start: number | null = null;
+
+    setTimeout(() => {
+      const step = (timestamp: number) => {
+        if (!start) start = timestamp;
+        const elapsed = timestamp - start;
+
+        renderFrame(el, target, birthOffsets, resolveOffsets, elapsed);
+
+        if (elapsed < totalDuration) {
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = target;
+        }
+      };
+      requestAnimationFrame(step);
+    }, delay);
+  }
+
+  function renderFrame(
+    el: HTMLElement,
+    target: string,
+    birthOffsets: number[],
+    resolveOffsets: number[],
+    elapsed: number
+  ) {
+    el.textContent = '';
+    const frag = document.createDocumentFragment();
+
+    for (let i = 0; i < target.length; i++) {
+      if (target[i] === ' ') {
+        frag.appendChild(document.createTextNode(' '));
+      } else if (elapsed >= resolveOffsets[i]) {
+        // Resolved: show final character
+        frag.appendChild(document.createTextNode(target[i]));
+      } else if (elapsed >= birthOffsets[i]) {
+        // Born but not resolved: show scramble glyph
+        const span = document.createElement('span');
+        span.className = 'scramble-glyph';
+        span.textContent = chars[Math.floor(Math.random() * chars.length)];
+        frag.appendChild(span);
+      } else {
+        // Not yet born: show dim placeholder
+        const span = document.createElement('span');
+        span.className = 'scramble-unborn';
+        span.textContent = '.';
+        frag.appendChild(span);
+      }
+    }
+    el.appendChild(frag);
+  }
+
+  function init() {
+    document.querySelectorAll<HTMLElement>('.text-scramble').forEach(scramble);
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>
+
+<style is:global>
+  .scramble-glyph {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .scramble-unborn {
+    opacity: 0.15;
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/about', label: 'About' },
+];
+---
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">c2k</a>
+    <div class="nav-links" id="nav-links">
+      {links.map(link => (
+        <a href={link.href} class="nav-link">
+          {link.label}
+        </a>
+      ))}
+      <div class="nav-indicator" id="nav-indicator"></div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 10, 11, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0;
+    position: relative;
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    transition: color 0.2s;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+  }
+
+  .nav-link:hover {
+    color: var(--text);
+  }
+
+  .nav-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    background: var(--bg-hover);
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>

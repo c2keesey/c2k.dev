@@ -1,0 +1,44 @@
+:root {
+  --bg: #0a0a0b;
+  --bg-surface: #141416;
+  --bg-hover: #1c1c1f;
+  --text: #e4e4e7;
+  --text-muted: #71717a;
+  --border: #27272a;
+
+  --purple: #a855f7;
+  --orange: #f97316;
+  --gradient: linear-gradient(135deg, var(--purple), #d946ef, var(--orange));
+  --gradient-text: linear-gradient(90deg, var(--purple), #d946ef, var(--orange));
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--purple);
+  color: white;
+}

@@ -1,0 +1,446 @@
+---
+// Interactive Claude Code statusline showcase with animated context fill
+// Tap to expand for detailed breakdown
+---
+
+<div class="showcase" id="sl-showcase">
+  <div class="showcase-header">
+    <span class="showcase-label">Claude Code Statusline</span>
+    <a class="showcase-tag" href="https://github.com/c2keesey/dotfiles/blob/main/bin/claude-statusline" target="_blank" rel="noopener">
+      dotfiles/bin/claude-statusline ↗
+    </a>
+  </div>
+
+  <div class="terminal" id="statusline-terminal">
+    <div class="terminal-chrome">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="terminal-title">claude-statusline</span>
+    </div>
+    <div class="terminal-body">
+      <div class="sl-line1" id="sl-line1">
+        <span class="sl-segment" data-label="git branch" data-desc="Current branch, truncated at 30 chars">
+          <span class="sl-branch">main</span>
+        </span>
+        <span class="sl-segment" data-label="changes" data-desc="Staged + unstaged + untracked file count">
+          <span class="sl-changes">±3</span>
+        </span>
+        <span class="sl-sep">│</span>
+        <span class="sl-segment" data-label="directory" data-desc="Shortened working directory path">
+          <span class="sl-cwd">~/repos/c2k.dev</span>
+        </span>
+      </div>
+      <div class="sl-line2" id="sl-line2">
+        <span class="sl-segment" data-label="context usage" data-desc="Context window %. Green 0-60, yellow 60-100, red 100+">
+          <span class="sl-ctx" id="sl-ctx">0%</span>
+        </span>
+        <span class="sl-segment sl-extended" id="sl-extended" data-label="extended pricing" data-desc="Appears when context exceeds 200K tokens (extended pricing tier)">
+          <span class="sl-dot-indicator"></span>
+        </span>
+        <span class="sl-segment" data-label="system stats" data-desc="CPU load and memory usage, cached every second">
+          <span class="sl-stats">↯12 ⛁43</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tooltip" id="sl-tooltip"></div>
+
+  <button class="expand-trigger" id="sl-expand-btn">
+    <span class="expand-text">tap to explore</span>
+    <span class="expand-arrow" id="sl-expand-arrow">↓</span>
+  </button>
+
+  <div class="expanded-content" id="sl-expanded-content">
+    <div class="detail-section">
+      <h3 class="detail-title">What is this?</h3>
+      <p class="detail-text">
+        A 198-line bash script that replaces Claude Code's default statusline. It runs on every prompt, parsing JSON input from Claude Code and rendering a two-line display with ANSI colors.
+      </p>
+    </div>
+
+    <div class="detail-section">
+      <h3 class="detail-title">Line 1 — Git + Location</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-key">Branch</span>
+          <span class="detail-val">Current branch, truncated at 30 chars. Shows HEAD during detached state.</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-key">State icons</span>
+          <span class="detail-val">↻ rebase · ⑂ merge · ⊕ cherry-pick · ↩ revert · ◇ bisect</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-key">±N</span>
+          <span class="detail-val">Total of staged + unstaged + untracked files.</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-key">Path</span>
+          <span class="detail-val">Shortened CWD. Detects git worktrees and shows worktree name.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h3 class="detail-title">Line 2 — Context + System</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-key">Context %</span>
+          <span class="detail-val">Color-coded: green (0-60%), yellow (60-100%), red (100%+). For Opus 1M, scales to show 500K personal limit as 100%.</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-key">• dot</span>
+          <span class="detail-val">Extended pricing indicator. Appears when context exceeds 200K tokens on the 1M model.</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-key">↯ ⛁</span>
+          <span class="detail-val">CPU load and memory usage. Cached for 1 second to avoid expensive recalculation.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h3 class="detail-title">Why native bash?</h3>
+      <p class="detail-text">
+        Replaced the third-party ccstatusline tool to eliminate rendering artifacts and stdin handling issues. A single bash script with jq parsing, no dependencies, no wrapper hacks. Works on both macOS and Linux.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initShowcase() {
+    const ctx = document.getElementById('sl-ctx');
+    const extended = document.getElementById('sl-extended');
+    const tooltip = document.getElementById('sl-tooltip');
+    const segments = document.querySelectorAll<HTMLElement>('.sl-segment');
+    const expandBtn = document.getElementById('sl-expand-btn');
+    const expandedContent = document.getElementById('sl-expanded-content');
+    const expandArrow = document.getElementById('sl-expand-arrow');
+    const showcase = document.getElementById('sl-showcase');
+    if (!ctx || !expandBtn || !expandedContent || !showcase) return;
+
+    let isExpanded = false;
+
+    // Animate context percentage on a loop
+    let pct = 0;
+    let direction = 1;
+    const speed = 30;
+
+    function ctxColor(v: number): string {
+      let r: number, g: number;
+      if (v < 60) {
+        r = 0; g = 255;
+      } else if (v < 100) {
+        const t = (v - 60) / 40;
+        r = Math.round(t * 255);
+        g = Math.round((1 - t) * 255);
+      } else {
+        r = 255; g = 0;
+      }
+      return `rgb(${r}, ${g}, 0)`;
+    }
+
+    let animating = true;
+
+    function tick() {
+      if (!animating) return;
+      pct += direction * 0.5;
+      if (pct >= 100) { direction = -1; pct = 100; }
+      if (pct <= 0) { direction = 1; pct = 0; }
+
+      const displayPct = Math.round(pct);
+      ctx.textContent = `${displayPct}%`;
+      ctx.style.color = ctxColor(displayPct);
+
+      if (displayPct > 40) {
+        extended.classList.add('visible');
+      } else {
+        extended.classList.remove('visible');
+      }
+    }
+
+    const interval = setInterval(tick, speed);
+
+    // Tap terminal to pause/resume animation
+    const terminal = document.getElementById('statusline-terminal');
+    terminal?.addEventListener('click', () => {
+      animating = !animating;
+    });
+
+    // Tooltip on hover/tap for segments
+    segments.forEach(seg => {
+      seg.addEventListener('mouseenter', () => {
+        const label = seg.dataset.label || '';
+        const desc = seg.dataset.desc || '';
+        tooltip.textContent = `${label}: ${desc}`;
+        tooltip.classList.add('visible');
+        seg.classList.add('highlighted');
+      });
+
+      seg.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+        seg.classList.remove('highlighted');
+      });
+    });
+
+    // Expand/collapse
+    expandBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      expandedContent.classList.toggle('open', isExpanded);
+      expandArrow.textContent = isExpanded ? '↑' : '↓';
+      expandBtn.querySelector('.expand-text')!.textContent = isExpanded ? 'collapse' : 'tap to explore';
+    });
+
+    // Cleanup
+    document.addEventListener('astro:before-swap', () => clearInterval(interval), { once: true });
+  }
+
+  initShowcase();
+</script>
+
+<style>
+  .showcase {
+    margin-top: 1.5rem;
+  }
+
+  .showcase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .showcase-label {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .showcase-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple);
+    border-radius: 4px;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+
+  .showcase-tag:hover {
+    background: rgba(168, 85, 247, 0.3);
+  }
+
+  .terminal {
+    background: #0d0d0f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .terminal-chrome {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: #161618;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terminal-title {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
+
+  .terminal-body {
+    padding: 1rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+
+  .sl-line1, .sl-line2 {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+  }
+
+  .sl-segment {
+    position: relative;
+    padding: 1px 2px;
+    border-radius: 3px;
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .sl-segment.highlighted {
+    background: rgba(168, 85, 247, 0.2);
+  }
+
+  .sl-branch {
+    color: #e4e4e7;
+    font-weight: 500;
+  }
+
+  .sl-changes {
+    color: #c084fc;
+    margin-left: 4px;
+  }
+
+  .sl-sep {
+    color: #3f3f46;
+    margin: 0 6px;
+  }
+
+  .sl-cwd {
+    color: #71717a;
+  }
+
+  .sl-ctx {
+    color: rgb(0, 255, 0);
+    font-weight: 500;
+    transition: color 0.05s linear;
+  }
+
+  .sl-extended {
+    opacity: 0;
+    transition: opacity 0.3s;
+    margin: 0 2px;
+  }
+
+  .sl-extended.visible {
+    opacity: 1;
+  }
+
+  .sl-dot-indicator {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #b8860b;
+    vertical-align: middle;
+  }
+
+  .sl-stats {
+    color: #0a5c0a;
+    margin-left: 4px;
+  }
+
+  .tooltip {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 0.5rem 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+    min-height: 1.5rem;
+  }
+
+  .tooltip.visible {
+    opacity: 1;
+  }
+
+  /* Expand trigger */
+  .expand-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.5rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .expand-trigger:hover {
+    border-color: var(--purple);
+    color: var(--text);
+  }
+
+  .expand-arrow {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Expanded content */
+  .expanded-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+    opacity: 0;
+  }
+
+  .expanded-content.open {
+    max-height: 800px;
+    opacity: 1;
+  }
+
+  .detail-section {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-section:last-child {
+    border-bottom: none;
+  }
+
+  .detail-title {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .detail-text {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .detail-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    font-size: 0.85rem;
+  }
+
+  .detail-key {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--purple);
+    white-space: nowrap;
+    min-width: 80px;
+  }
+
+  .detail-val {
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+</style>

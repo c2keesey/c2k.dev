@@ -1,0 +1,425 @@
+---
+// Claude Code Skills — interactive showcase
+// Skills discovered and rendered like a live Claude session
+---
+
+<div class="skills-showcase" id="skills-showcase">
+  <div class="skills-header">
+    <span class="skills-label">Claude Code Skills</span>
+    <a class="skills-tag" href="https://github.com/c2keesey/dotfiles/tree/main/claude/skills" target="_blank" rel="noopener">
+      dotfiles/claude/skills ↗
+    </a>
+  </div>
+
+  <div class="skills-terminal">
+    <div class="skills-chrome">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="skills-title">claude code</span>
+    </div>
+
+    <div class="skills-prompt" id="skills-prompt">
+      <span class="prompt-caret">❯</span>
+      <span class="prompt-text" id="skills-prompt-text"></span>
+      <span class="prompt-cursor" id="skills-cursor">▊</span>
+    </div>
+
+    <div class="skills-list" id="skills-list">
+      <div class="skill-row" data-skill="0" data-cmd="/issue-to-pr" data-desc="Linear issue → implementation → PR → merged" data-category="workflow" data-detail="9-step automation: branch, implement, test, review, merge. Docker worktree isolation with unique ports per branch.">
+        <span class="skill-cmd">/issue-to-pr</span>
+        <span class="skill-desc">issue → code → PR → merged</span>
+        <span class="skill-cat">workflow</span>
+      </div>
+      <div class="skill-row" data-skill="1" data-cmd="/sync" data-desc="Pull repos, fix symlinks, rebuild config" data-category="devops" data-detail="Syncs all ~/repos/ directories, verifies symlinks, rebuilds CLAUDE.md, runs health checks across machines.">
+        <span class="skill-cmd">/sync</span>
+        <span class="skill-desc">pull repos, fix symlinks, rebuild config</span>
+        <span class="skill-cat">devops</span>
+      </div>
+      <div class="skill-row" data-skill="2" data-cmd="/pane" data-desc="Rich tmux pane — files, diffs, logs" data-category="terminal" data-detail="Manages a right tmux pane for displaying syntax-highlighted files, git diffs, logs, and structured data using Helix as viewer.">
+        <span class="skill-cmd">/pane</span>
+        <span class="skill-desc">rich tmux pane — files, diffs, logs</span>
+        <span class="skill-cat">terminal</span>
+      </div>
+      <div class="skill-row" data-skill="3" data-cmd="/dispatch" data-desc="Send tasks to parallel worker sessions" data-category="workflow" data-detail="Dispatches tasks to 5 agent-deck workers, each with independent git worktree and Docker container for parallel development.">
+        <span class="skill-cmd">/dispatch</span>
+        <span class="skill-desc">send tasks to parallel worker sessions</span>
+        <span class="skill-cat">workflow</span>
+      </div>
+      <div class="skill-row" data-skill="4" data-cmd="/make-tests" data-desc="FastAPI test patterns + fixture guide" data-category="testing" data-detail="Comprehensive testing guide: fixture selection, session isolation (savepoint vs committed), parallel safety, TestClient patterns.">
+        <span class="skill-cmd">/make-tests</span>
+        <span class="skill-desc">FastAPI test patterns + fixture guide</span>
+        <span class="skill-cat">testing</span>
+      </div>
+      <div class="skill-row" data-skill="5" data-cmd="/mods-command" data-desc="Pipe docs into LLM CLI with custom roles" data-category="tools" data-detail="Creates shell functions that pipe reference docs into the mods CLI. 3-part pattern: docs file + mods.yml role + shell function.">
+        <span class="skill-cmd">/mods-command</span>
+        <span class="skill-desc">pipe docs into LLM CLI with custom roles</span>
+        <span class="skill-cat">tools</span>
+      </div>
+      <div class="skill-row" data-skill="6" data-cmd="/resolve-pr-threads" data-desc="Resolve GitHub review threads via GraphQL" data-category="git" data-detail="Resolves PR review comment threads using GraphQL API. Works around GitHub REST vs GraphQL quirks for thread ID mapping.">
+        <span class="skill-cmd">/resolve-pr-threads</span>
+        <span class="skill-desc">resolve GitHub review threads via GraphQL</span>
+        <span class="skill-cat">git</span>
+      </div>
+      <div class="skill-row" data-skill="7" data-cmd="/bug-root-cause" data-desc="Investigate with Linear, Logfire, Slack traces" data-category="debugging" data-detail="Investigates bugs across Linear issues, Logfire traces, Slack threads, and code. Adds structured findings with confidence levels.">
+        <span class="skill-cmd">/bug-root-cause</span>
+        <span class="skill-desc">investigate via Linear, Logfire, Slack traces</span>
+        <span class="skill-cat">debugging</span>
+      </div>
+      <div class="skill-row" data-skill="8" data-cmd="/raycast-chrome-tab" data-desc="AppleScript tab switcher for Raycast" data-category="tools" data-detail="Creates Raycast script commands that switch to existing Chrome tabs matching a URL pattern, or open the URL if not found.">
+        <span class="skill-cmd">/raycast-chrome-tab</span>
+        <span class="skill-desc">AppleScript tab switcher for Raycast</span>
+        <span class="skill-cat">tools</span>
+      </div>
+    </div>
+
+    <div class="skill-detail-bar" id="skill-detail-bar">
+      <span class="detail-bar-text" id="detail-bar-text"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initSkills() {
+    const promptText = document.getElementById('skills-prompt-text');
+    const cursor = document.getElementById('skills-cursor');
+    const rows = document.querySelectorAll<HTMLElement>('.skill-row');
+    const detailBar = document.getElementById('skill-detail-bar');
+    const detailText = document.getElementById('detail-bar-text');
+    if (!promptText || !cursor || !detailBar || !detailText) return;
+
+    const charset = '0123456789abcdefABCDEF~!@#$%^&*';
+
+    // Phase 1: Type out the discovery command
+    const command = 'show me your skills';
+    let cmdIndex = 0;
+
+    function typeCommand() {
+      if (cmdIndex <= command.length) {
+        promptText.textContent = command.slice(0, cmdIndex);
+        cmdIndex++;
+        setTimeout(typeCommand, 30 + Math.random() * 50);
+      } else {
+        setTimeout(revealSkills, 400);
+      }
+    }
+
+    // Phase 2: Reveal skills one by one with decode effect
+    let currentRow = 0;
+
+    function decodeText(el: HTMLElement, finalText: string, duration: number): Promise<void> {
+      return new Promise(resolve => {
+        const len = finalText.length;
+        const startTime = performance.now();
+        el.style.visibility = 'visible';
+
+        function tick() {
+          const elapsed = performance.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          let result = '';
+
+          for (let i = 0; i < len; i++) {
+            const charProgress = Math.max(0, (progress - (i / len) * 0.4) / 0.6);
+            if (charProgress >= 1) {
+              result += finalText[i];
+            } else if (charProgress > 0) {
+              result += charset[Math.floor(Math.random() * charset.length)];
+            } else {
+              result += '.';
+            }
+          }
+
+          el.textContent = result;
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            el.textContent = finalText;
+            resolve();
+          }
+        }
+        requestAnimationFrame(tick);
+      });
+    }
+
+    async function revealSkills() {
+      cursor.style.display = 'none';
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        row.classList.add('appearing');
+
+        const cmd = row.querySelector('.skill-cmd') as HTMLElement;
+        const desc = row.querySelector('.skill-desc') as HTMLElement;
+        const cat = row.querySelector('.skill-cat') as HTMLElement;
+
+        const cmdText = cmd.textContent || '';
+        const descText = desc.textContent || '';
+        const catText = cat.textContent || '';
+
+        cmd.textContent = '';
+        desc.textContent = '';
+        cat.textContent = '';
+
+        cmd.style.visibility = 'visible';
+        desc.style.visibility = 'visible';
+        cat.style.visibility = 'visible';
+
+        await Promise.all([
+          decodeText(cmd, cmdText, 350),
+          decodeText(desc, descText, 450),
+          decodeText(cat, catText, 250),
+        ]);
+
+        row.classList.add('revealed');
+        row.classList.remove('appearing');
+
+        await new Promise(r => setTimeout(r, 80));
+      }
+    }
+
+    // Hover/tap for detail
+    rows.forEach(row => {
+      row.addEventListener('mouseenter', () => {
+        const detail = row.dataset.detail || '';
+        detailText.textContent = detail;
+        detailBar.classList.add('visible');
+        row.classList.add('active');
+      });
+
+      row.addEventListener('mouseleave', () => {
+        detailBar.classList.remove('visible');
+        row.classList.remove('active');
+      });
+
+      // Touch support
+      row.addEventListener('click', () => {
+        const wasActive = row.classList.contains('active');
+        rows.forEach(r => r.classList.remove('active'));
+        detailBar.classList.remove('visible');
+
+        if (!wasActive) {
+          const detail = row.dataset.detail || '';
+          detailText.textContent = detail;
+          detailBar.classList.add('visible');
+          row.classList.add('active');
+        }
+      });
+    });
+
+    // Intersection observer — only animate when visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          typeCommand();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    const showcase = document.getElementById('skills-showcase');
+    if (showcase) observer.observe(showcase);
+  }
+
+  initSkills();
+</script>
+
+<style>
+  .skills-showcase {
+    margin-top: 2rem;
+  }
+
+  .skills-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .skills-label {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .skills-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple);
+    border-radius: 4px;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+
+  .skills-tag:hover {
+    background: rgba(168, 85, 247, 0.3);
+  }
+
+  .skills-terminal {
+    background: #0d0d0f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .skills-chrome {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: #161618;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skills-chrome .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .skills-chrome .dot.red { background: #ff5f57; }
+  .skills-chrome .dot.yellow { background: #febc2e; }
+  .skills-chrome .dot.green { background: #28c840; }
+
+  .skills-title {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  /* Prompt line */
+  .skills-prompt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  .prompt-caret {
+    color: var(--purple);
+    font-weight: 700;
+  }
+
+  .prompt-text {
+    color: var(--text);
+  }
+
+  .prompt-cursor {
+    color: var(--purple);
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* Skills list */
+  .skills-list {
+    padding: 0.5rem 0;
+  }
+
+  .skill-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.45rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s, background 0.15s;
+    cursor: default;
+  }
+
+  .skill-row.appearing,
+  .skill-row.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .skill-row.active {
+    background: rgba(168, 85, 247, 0.08);
+  }
+
+  .skill-cmd {
+    color: var(--purple);
+    font-weight: 500;
+    min-width: 155px;
+    flex-shrink: 0;
+    visibility: hidden;
+  }
+
+  .skill-desc {
+    color: var(--text-muted);
+    flex: 1;
+    visibility: hidden;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .skill-cat {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    visibility: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Detail bar */
+  .skill-detail-bar {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    padding: 0 1.25rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.25s ease, opacity 0.2s, padding 0.25s;
+    border-top: 1px solid transparent;
+    line-height: 1.5;
+  }
+
+  .skill-detail-bar.visible {
+    max-height: 80px;
+    opacity: 1;
+    padding: 0.6rem 1.25rem;
+    border-top-color: var(--border);
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .skill-cmd {
+      min-width: 120px;
+      font-size: 0.72rem;
+    }
+
+    .skill-desc {
+      font-size: 0.7rem;
+    }
+
+    .skill-cat {
+      display: none;
+    }
+
+    .skill-row {
+      padding: 0.4rem 0.75rem;
+    }
+
+    .skills-prompt {
+      padding: 0.75rem;
+    }
+
+    .skill-detail-bar.visible {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+</style>

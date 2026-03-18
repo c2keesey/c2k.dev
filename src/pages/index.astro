@@ -1,0 +1,367 @@
+---
+import TextScramble from '../components/TextScramble.astro';
+import Nav from '../components/Nav.astro';
+import StatuslineShowcase from '../components/StatuslineShowcase.astro';
+import SkillsShowcase from '../components/SkillsShowcase.astro';
+import MaiaShowcase from '../components/MaiaShowcase.astro';
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>c2k</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <Nav />
+
+    <div class="swipe-container" id="swipe-container">
+      <!-- Panel: Home -->
+      <section class="swipe-panel" data-page="/">
+        <div class="panel-content">
+          <section class="hero">
+            <TextScramble text="c2k" tag="h1" class="hero-title" always />
+            <TextScramble text="stoked on building" tag="p" class="hero-sub" delay={400} always />
+          </section>
+          <MaiaShowcase />
+        </div>
+      </section>
+
+      <!-- Panel: Projects -->
+      <section class="swipe-panel" data-page="/projects">
+        <div class="panel-content">
+          <section class="page-header">
+            <TextScramble text="Projects" tag="h1" class="page-title" />
+            <p class="page-desc">Things I'm building.</p>
+          </section>
+          <StatuslineShowcase />
+          <SkillsShowcase />
+        </div>
+      </section>
+
+      <!-- Panel: About -->
+      <section class="swipe-panel" data-page="/about">
+        <div class="panel-content">
+          <section class="page-header">
+            <TextScramble text="About" tag="h1" class="page-title" />
+          </section>
+          <div class="about-content">
+            <p>Developer running a personal VM as a second brain. Everything orchestrated through Claude Code, tracked with beads, accessed from anywhere via Tailscale and Terminus.</p>
+            <p>This site is the public layer of that system.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer class="global-footer">
+      <div class="status-row">
+        <span class="status-dot" id="status-dot"></span>
+        <span class="status-text" id="status-text">connecting...</span>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<script>
+  const container = document.getElementById('swipe-container')!;
+  const pages = ['/', '/projects', '/about'];
+
+  // Scroll to correct panel on load based on URL
+  function scrollToCurrentPage() {
+    const path = location.pathname;
+    const index = pages.findIndex(p =>
+      p === '/' ? path === '/' || path === '' : path.startsWith(p)
+    );
+    if (index > 0) {
+      container.scrollTo({ left: index * container.clientWidth, behavior: 'instant' });
+    }
+  }
+
+  scrollToCurrentPage();
+
+  // Update URL as user swipes
+  let scrollTimeout: ReturnType<typeof setTimeout>;
+  container.addEventListener('scroll', () => {
+    const panelWidth = container.clientWidth;
+    const progress = container.scrollLeft / panelWidth;
+    const activeIndex = Math.round(progress);
+
+    // Update nav indicator position (smooth tracking)
+    updateNavIndicator(progress);
+
+    // Debounce URL update until scroll settles
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const newPath = pages[activeIndex];
+      if (newPath && location.pathname !== newPath) {
+        history.replaceState(null, '', newPath);
+      }
+    }, 100);
+  }, { passive: true });
+
+  // Nav indicator tracking
+  function updateNavIndicator(progress: number) {
+    const navContainer = document.getElementById('nav-links');
+    const indicator = document.getElementById('nav-indicator');
+    const links = navContainer?.querySelectorAll<HTMLAnchorElement>('.nav-link');
+    if (!navContainer || !indicator || !links || links.length === 0) return;
+
+    const fromIndex = Math.max(0, Math.min(Math.floor(progress), links.length - 1));
+    const toIndex = Math.min(fromIndex + 1, links.length - 1);
+    const fraction = progress - fromIndex;
+
+    const containerRect = navContainer.getBoundingClientRect();
+    const fromRect = links[fromIndex].getBoundingClientRect();
+    const toRect = links[toIndex].getBoundingClientRect();
+
+    const fromX = fromRect.left - containerRect.left;
+    const toX = toRect.left - containerRect.left;
+    const x = fromX + (toX - fromX) * fraction;
+    const width = fromRect.width + (toRect.width - fromRect.width) * fraction;
+
+    indicator.style.transition = 'none';
+    indicator.style.width = `${width}px`;
+    indicator.style.transform = `translateX(${x}px)`;
+    indicator.style.opacity = '1';
+  }
+
+  // Handle nav click -> scroll to panel
+  document.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach((link, i) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      container.scrollTo({ left: i * container.clientWidth, behavior: 'smooth' });
+    });
+  });
+
+  // Position indicator on load after fonts
+  document.fonts?.ready.then(() => {
+    const path = location.pathname;
+    const index = pages.findIndex(p =>
+      p === '/' ? path === '/' || path === '' : path.startsWith(p)
+    );
+    updateNavIndicator(Math.max(0, index));
+  });
+
+  // Live status footer
+  const statusDot = document.getElementById('status-dot')!;
+  const statusText = document.getElementById('status-text')!;
+
+  const STATUS_COLORS: Record<string, string> = {
+    green: '#22c55e',
+    yellow: '#eab308',
+    red: '#ef4444',
+    offline: '#6b7280',
+  };
+
+  async function updateStatus() {
+    try {
+      const res = await fetch('/api/status');
+      const data = await res.json();
+
+      if (data.status === 'offline') {
+        statusDot.style.background = STATUS_COLORS.offline;
+        statusText.textContent = 'optiplex offline';
+        return;
+      }
+
+      statusDot.style.background = STATUS_COLORS[data.overall] ?? STATUS_COLORS.green;
+
+      const parts: string[] = ['optiplex'];
+
+      // Services
+      if (data.services.running === data.services.total) {
+        parts.push(`${data.services.total} services`);
+      } else {
+        parts.push(`${data.services.running}/${data.services.total} services`);
+      }
+
+      // Crons
+      if (data.crons.error > 0) {
+        parts.push(`${data.crons.error} cron err`);
+      } else if (data.crons.ok === data.crons.total) {
+        parts.push(`${data.crons.total} crons ok`);
+      } else {
+        parts.push(`${data.crons.ok}/${data.crons.total} crons`);
+      }
+
+      // System vitals
+      if (data.cpu !== null) parts.push(`cpu ${data.cpu}%`);
+      if (data.memory !== null) parts.push(`mem ${data.memory}%`);
+      if (data.uptime) parts.push(data.uptime);
+
+      statusText.textContent = parts.join(' · ');
+    } catch {
+      statusDot.style.background = STATUS_COLORS.offline;
+      statusText.textContent = 'status unavailable';
+    }
+  }
+
+  updateStatus();
+  setInterval(updateStatus, 30000);
+</script>
+
+<style>
+  body {
+    overflow: hidden;
+    height: 100dvh;
+  }
+
+  .swipe-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    height: calc(100dvh - 57px - 37px);
+    scrollbar-width: none;
+  }
+
+  .swipe-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .swipe-panel {
+    min-width: 100%;
+    scroll-snap-align: start;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    position: relative;
+  }
+
+  .panel-content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  /* Home */
+  .hero {
+    padding: 4rem 0 3rem;
+  }
+
+  .hero-title {
+    font-family: var(--font-mono);
+    font-size: 3.5rem;
+    font-weight: 700;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-sub {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .global-footer {
+    padding: 0.6rem 1.5rem;
+    border-top: 1px solid var(--border);
+    background: rgba(10, 10, 11, 0.8);
+    backdrop-filter: blur(12px);
+  }
+
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6b7280;
+    flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .status-text {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: lowercase;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Projects */
+  .page-header {
+    padding: 2rem 0 2.5rem;
+  }
+
+  .page-title {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-desc {
+    color: var(--text-muted);
+  }
+
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .project-card {
+    display: block;
+    padding: 1.25rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .project-card:hover {
+    background: var(--bg-hover);
+    border-color: var(--purple);
+  }
+
+  .project-name {
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .project-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple);
+    border-radius: 4px;
+    text-transform: lowercase;
+  }
+
+  /* About */
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 1.05rem;
+  }
+</style>
