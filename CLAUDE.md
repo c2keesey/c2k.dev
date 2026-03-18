@@ -67,5 +67,9 @@ expansion — maintaining the feeling of being integrated into the page, not nav
 - Claude Code statusline showcase (done — see c2k-rfc.1)
 - Full Claude Code setup showcase (future — settings, hooks, skills, workflow)
 
+## Workflow
+
+- **Build and commit after each unit of work** — after making a change, always build (`bun run build`), deploy (`systemctl --user restart c2k-website`), and commit before moving on.
+
 ### External links
 - Dotfiles repo: https://github.com/c2keesey/dotfiles (currently private)
