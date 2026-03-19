@@ -1,0 +1,212 @@
+---
+// c2k.dev — this very website
+// System monitor aesthetic with scramble preview
+---
+
+<div class="c2k-showcase">
+  <a class="c2k-card" href="https://github.com/c2keesey/c2k.dev" target="_blank" rel="noopener">
+    <div class="c2k-content">
+      <div class="c2k-header">
+        <span class="c2k-name text-scramble" data-text="c2k.dev" data-delay="100" data-always="false">c2k.dev</span>
+        <span class="c2k-badge">this site</span>
+      </div>
+      <p class="c2k-tagline">System monitor for my life</p>
+      <p class="c2k-desc">Public observability layer — projects, tools, workflow, all surfaced like a well-designed dashboard. Live status, activity feed, interactive showcases.</p>
+
+      <div class="c2k-preview">
+        <div class="c2k-preview-line">
+          <span class="c2k-glyph">c2k</span>
+          <span class="c2k-dim">CTO, context engineer</span>
+        </div>
+        <div class="c2k-preview-line">
+          <span class="c2k-pulse-dot"></span>
+          <span class="c2k-dim">currently building</span>
+          <span class="c2k-dim c2k-dots" id="c2k-dots">...</span>
+        </div>
+        <div class="c2k-preview-line c2k-status-line">
+          <span class="c2k-status-dot"></span>
+          <span class="c2k-dim">optiplex · 8 services · cpu 12%</span>
+        </div>
+      </div>
+
+      <div class="c2k-stack">
+        <span class="c2k-tech">Astro</span>
+        <span class="c2k-tech">TypeScript</span>
+        <span class="c2k-tech">Bun</span>
+      </div>
+
+      <div class="c2k-footer">
+        <span class="c2k-link">github.com/c2keesey/c2k.dev ↗</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<script>
+  // Animate the dots in the preview
+  const dots = document.getElementById('c2k-dots');
+  if (dots) {
+    let count = 0;
+    setInterval(() => {
+      count = (count + 1) % 4;
+      dots.textContent = '.'.repeat(count || 1);
+    }, 500);
+  }
+</script>
+
+<style>
+  .c2k-showcase {
+    margin-bottom: 2rem;
+  }
+
+  .c2k-card {
+    display: block;
+    position: relative;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.06), rgba(249, 115, 22, 0.03));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    transition: border-color 0.3s;
+  }
+
+  .c2k-card:hover {
+    border-color: rgba(168, 85, 247, 0.4);
+  }
+
+  .c2k-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .c2k-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .c2k-name {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .c2k-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .c2k-tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.35rem;
+  }
+
+  .c2k-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Mini site preview */
+  .c2k-preview {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .c2k-preview-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+
+  .c2k-glyph {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+
+  .c2k-dim {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .c2k-pulse-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--purple);
+    animation: c2k-pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  .c2k-status-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #22c55e;
+    flex-shrink: 0;
+  }
+
+  @keyframes c2k-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Tech stack */
+  .c2k-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .c2k-tech {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  .c2k-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .c2k-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(168, 85, 247, 0.5);
+    transition: color 0.2s;
+  }
+
+  .c2k-card:hover .c2k-link {
+    color: var(--purple);
+  }
+</style>

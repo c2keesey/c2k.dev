@@ -4,6 +4,7 @@ import Nav from '../components/Nav.astro';
 import StatuslineShowcase from '../components/StatuslineShowcase.astro';
 import SkillsShowcase from '../components/SkillsShowcase.astro';
 import MaiaShowcase from '../components/MaiaShowcase.astro';
+import C2kShowcase from '../components/C2kShowcase.astro';
 import '../styles/global.css';
 ---
 
@@ -29,14 +30,14 @@ import '../styles/global.css';
             <TextScramble text="c2k" tag="h1" class="hero-title" always />
             <div class="bio">
               <p class="bio-role">
-                <TextScramble text="CTO, context engineer " tag="span" always delay={150} />
-                <a href="https://maia-analytics.com" class="text-scramble" data-text="@maia_analytics" data-delay="150" data-always="true" target="_blank" rel="noopener">@maia_analytics</a>
+                <TextScramble text="CTO, context engineer " tag="span" delay={150} />
+                <a href="https://maia-analytics.com" class="text-scramble" data-text="@maia_analytics" data-delay="150" data-always="false" target="_blank" rel="noopener">@maia_analytics</a>
               </p>
-              <TextScramble text="Outer Sunset, SF · Ridiculous output · Living in agreement with nature" tag="p" class="bio-tagline" always delay={250} />
+              <TextScramble text="Outer Sunset, SF · Ridiculous output · Living in agreement with nature" tag="p" class="bio-tagline" delay={250} />
               <div class="bio-links">
-                <a href="https://github.com/c2keesey" class="text-scramble" data-text="github" data-delay="350" data-always="true" target="_blank" rel="noopener">github</a>
-                <a href="https://x.com/c2keesey" class="text-scramble" data-text="x" data-delay="350" data-always="true" target="_blank" rel="noopener">x</a>
-                <a href="https://linkedin.com/in/c2keesey" class="text-scramble" data-text="linkedin" data-delay="350" data-always="true" target="_blank" rel="noopener">linkedin</a>
+                <a href="https://github.com/c2keesey" class="text-scramble" data-text="github" data-delay="350" data-always="false" target="_blank" rel="noopener">github</a>
+                <a href="https://x.com/c2keesey" class="text-scramble" data-text="x" data-delay="350" data-always="false" target="_blank" rel="noopener">x</a>
+                <a href="https://linkedin.com/in/c2keesey" class="text-scramble" data-text="linkedin" data-delay="350" data-always="false" target="_blank" rel="noopener">linkedin</a>
               </div>
             </div>
           </section>
@@ -58,8 +59,9 @@ import '../styles/global.css';
         <div class="panel-content">
           <section class="page-header">
             <TextScramble text="Projects" tag="h1" class="page-title" always />
-            <p class="page-desc">Things I'm building.</p>
+            <TextScramble text="Things I'm building." tag="p" class="page-desc" delay={100} />
           </section>
+          <C2kShowcase />
           <StatuslineShowcase />
           <SkillsShowcase />
         </div>
@@ -72,8 +74,8 @@ import '../styles/global.css';
             <TextScramble text="About" tag="h1" class="page-title" always />
           </section>
           <div class="about-content">
-            <p>Developer running a personal VM as a second brain. Everything orchestrated through Claude Code, tracked with beads, accessed from anywhere via Tailscale and Terminus.</p>
-            <p>This site is the public layer of that system.</p>
+            <TextScramble text="Developer running a personal VM as a second brain. Everything orchestrated through Claude Code, tracked with beads, accessed from anywhere via Tailscale and Terminus." tag="p" delay={100} />
+            <TextScramble text="This site is the public layer of that system." tag="p" delay={250} />
           </div>
         </div>
       </section>
@@ -166,10 +168,36 @@ import '../styles/global.css';
   }
 
   // Handle nav click -> scroll to panel
+  const isDesktop = () => window.matchMedia('(min-width: 768px)').matches;
+
+  function navigateToPanel(index: number) {
+    container.scrollTo({
+      left: index * container.clientWidth,
+      behavior: isDesktop() ? 'instant' : 'smooth',
+    });
+
+    // On desktop, scrollTo with instant + overflow hidden may not fire scroll event
+    // so manually handle URL + animation re-trigger
+    if (isDesktop()) {
+      const newPath = pages[index];
+      if (newPath && location.pathname !== newPath) {
+        history.replaceState(null, '', newPath);
+      }
+      updateNavIndicator(index);
+      if (index !== lastActiveIndex) {
+        lastActiveIndex = index;
+        const panels = container.querySelectorAll('.swipe-panel');
+        panels[index]?.querySelectorAll('.text-scramble').forEach(el => {
+          el.dispatchEvent(new Event('scramble:trigger'));
+        });
+      }
+    }
+  }
+
   document.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach((link, i) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      container.scrollTo({ left: i * container.clientWidth, behavior: 'smooth' });
+      navigateToPanel(i);
     });
   });
 
@@ -318,6 +346,13 @@ import '../styles/global.css';
 
   .swipe-container::-webkit-scrollbar {
     display: none;
+  }
+
+  @media (min-width: 768px) {
+    .swipe-container {
+      overflow-x: hidden;
+      scroll-snap-type: none;
+    }
   }
 
   .swipe-panel {
