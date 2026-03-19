@@ -31,9 +31,9 @@ export async function GET() {
     if (!res.ok) throw new Error(`GitHub API ${res.status}`);
 
     const events = await res.json() as GHEvent[];
-    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-    // Collect unique repos from push events in last 24h
+    // Collect unique repos from push events in last week
     const seen = new Set<string>();
     const repoNames: Array<{ fullName: string; name: string; head?: string; pushedAt: string }> = [];
 

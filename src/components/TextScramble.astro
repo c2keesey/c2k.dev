@@ -16,14 +16,30 @@ const Tag = tag;
   data-text={text}
   data-delay={delay}
   data-always={always.toString()}
->
-  {text}
-</Tag>
+>{Array.from(text).map(c => c === ' ' ? ' ' : '–').join('')}</Tag>
 
 <script>
   // Hex-heavy charset a la Charm — reads as "data being decoded"
   const chars = '0123456789abcdefABCDEF~!@#$%^&*()+=_';
   const seen = new Set<string>();
+  const IDLE_CHAR = '–';
+
+  function setIdle(el: HTMLElement) {
+    const target = el.dataset.text || '';
+    el.textContent = '';
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < target.length; i++) {
+      if (target[i] === ' ') {
+        frag.appendChild(document.createTextNode(' '));
+      } else {
+        const span = document.createElement('span');
+        span.className = 'scramble-idle';
+        span.textContent = IDLE_CHAR;
+        frag.appendChild(span);
+      }
+    }
+    el.appendChild(frag);
+  }
 
   function scramble(el: HTMLElement) {
     const alwaysAnimate = el.dataset.always === 'true';
@@ -48,8 +64,8 @@ const Tag = tag;
       resolveOffsets[i] = birthWindow + bias + Math.random() * resolveWindow * 0.4;
     }
 
-    // Start blank (periods like Charm)
-    renderFrame(el, target, birthOffsets, resolveOffsets, -1);
+    // Start in idle dash state
+    setIdle(el);
 
     let start: number | null = null;
 
@@ -93,10 +109,10 @@ const Tag = tag;
         span.textContent = chars[Math.floor(Math.random() * chars.length)];
         frag.appendChild(span);
       } else {
-        // Not yet born: show dim placeholder
+        // Not yet born: show dim dash placeholder
         const span = document.createElement('span');
-        span.className = 'scramble-unborn';
-        span.textContent = '.';
+        span.className = 'scramble-idle';
+        span.textContent = IDLE_CHAR;
         frag.appendChild(span);
       }
     }
@@ -104,12 +120,28 @@ const Tag = tag;
   }
 
   function init() {
+    // Find the currently active panel
+    const container = document.getElementById('swipe-container');
+    const pages = ['/', '/projects', '/about'];
+    const path = location.pathname;
+    const activeIndex = Math.max(0, pages.findIndex(p =>
+      p === '/' ? path === '/' || path === '' : path.startsWith(p)
+    ));
+    const panels = container?.querySelectorAll('.swipe-panel');
+
     document.querySelectorAll<HTMLElement>('.text-scramble').forEach(el => {
       if (!el.hasAttribute('data-scramble-init')) {
         el.setAttribute('data-scramble-init', '');
         el.addEventListener('scramble:trigger', () => scramble(el));
       }
-      scramble(el);
+
+      // Only scramble elements on the active panel; idle the rest
+      const parentPanel = el.closest('.swipe-panel');
+      if (panels && parentPanel === panels[activeIndex]) {
+        scramble(el);
+      } else {
+        setIdle(el);
+      }
     });
   }
 
@@ -125,7 +157,7 @@ const Tag = tag;
     background-clip: text;
   }
 
-  .scramble-unborn {
+  .scramble-idle {
     opacity: 0.15;
   }
 </style>
