@@ -104,7 +104,13 @@ const Tag = tag;
   }
 
   function init() {
-    document.querySelectorAll<HTMLElement>('.text-scramble').forEach(scramble);
+    document.querySelectorAll<HTMLElement>('.text-scramble').forEach(el => {
+      if (!el.hasAttribute('data-scramble-init')) {
+        el.setAttribute('data-scramble-init', '');
+        el.addEventListener('scramble:trigger', () => scramble(el));
+      }
+      scramble(el);
+    });
   }
 
   init();

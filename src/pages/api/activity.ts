@@ -2,6 +2,11 @@ export const prerender = false;
 
 const GITHUB_USERNAME = 'c2keesey';
 
+// Override URLs for private repos or repos with dedicated websites
+const URL_OVERRIDES: Record<string, string> = {
+  'maia-analytics': 'https://maia-analytics.com',
+};
+
 interface GHEvent {
   type: string;
   repo: { name: string };
@@ -62,9 +67,10 @@ export async function GET() {
       const commitData = commitRes?.ok ? await commitRes.json() as { commit: { message: string } } : null;
       const lastCommit = commitData?.commit?.message?.split('\n')[0] ?? '';
 
+      const isPrivate = (repoData as { private?: boolean } | null)?.private ?? false;
       return {
         name: r.name,
-        url: `https://github.com/${r.fullName}`,
+        url: URL_OVERRIDES[r.name] ?? (isPrivate ? '#' : `https://github.com/${r.fullName}`),
         description: repoData?.description ?? '',
         lastCommit,
         pushedAt: r.pushedAt,

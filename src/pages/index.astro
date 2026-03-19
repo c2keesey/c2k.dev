@@ -28,12 +28,15 @@ import '../styles/global.css';
           <section class="hero">
             <TextScramble text="c2k" tag="h1" class="hero-title" always />
             <div class="bio">
-              <p class="bio-role">CTO, context engineer <a href="https://maia-analytics.com" target="_blank" rel="noopener">@maia_analytics</a></p>
-              <p class="bio-tagline">Outer Sunset, SF · Ridiculous output · Living in agreement with nature</p>
+              <p class="bio-role">
+                <TextScramble text="CTO, context engineer " tag="span" always delay={150} />
+                <a href="https://maia-analytics.com" class="text-scramble" data-text="@maia_analytics" data-delay="150" data-always="true" target="_blank" rel="noopener">@maia_analytics</a>
+              </p>
+              <TextScramble text="Outer Sunset, SF · Ridiculous output · Living in agreement with nature" tag="p" class="bio-tagline" always delay={250} />
               <div class="bio-links">
-                <a href="https://github.com/c2keesey" target="_blank" rel="noopener">github</a>
-                <a href="https://x.com/c2keesey" target="_blank" rel="noopener">x</a>
-                <a href="https://linkedin.com/in/c2keesey" target="_blank" rel="noopener">linkedin</a>
+                <a href="https://github.com/c2keesey" class="text-scramble" data-text="github" data-delay="350" data-always="true" target="_blank" rel="noopener">github</a>
+                <a href="https://x.com/c2keesey" class="text-scramble" data-text="x" data-delay="350" data-always="true" target="_blank" rel="noopener">x</a>
+                <a href="https://linkedin.com/in/c2keesey" class="text-scramble" data-text="linkedin" data-delay="350" data-always="true" target="_blank" rel="noopener">linkedin</a>
               </div>
             </div>
           </section>
@@ -54,7 +57,7 @@ import '../styles/global.css';
       <section class="swipe-panel" data-page="/projects">
         <div class="panel-content">
           <section class="page-header">
-            <TextScramble text="Projects" tag="h1" class="page-title" />
+            <TextScramble text="Projects" tag="h1" class="page-title" always />
             <p class="page-desc">Things I'm building.</p>
           </section>
           <StatuslineShowcase />
@@ -66,7 +69,7 @@ import '../styles/global.css';
       <section class="swipe-panel" data-page="/about">
         <div class="panel-content">
           <section class="page-header">
-            <TextScramble text="About" tag="h1" class="page-title" />
+            <TextScramble text="About" tag="h1" class="page-title" always />
           </section>
           <div class="about-content">
             <p>Developer running a personal VM as a second brain. Everything orchestrated through Claude Code, tracked with beads, accessed from anywhere via Tailscale and Terminus.</p>
@@ -101,6 +104,12 @@ import '../styles/global.css';
 
   scrollToCurrentPage();
 
+  // Track active panel for re-triggering animations
+  const initialIndex = pages.findIndex(p =>
+    p === '/' ? location.pathname === '/' || location.pathname === '' : location.pathname.startsWith(p)
+  );
+  let lastActiveIndex = Math.max(0, initialIndex);
+
   // Update URL as user swipes
   let scrollTimeout: ReturnType<typeof setTimeout>;
   container.addEventListener('scroll', () => {
@@ -117,6 +126,15 @@ import '../styles/global.css';
       const newPath = pages[activeIndex];
       if (newPath && location.pathname !== newPath) {
         history.replaceState(null, '', newPath);
+      }
+
+      // Re-trigger scramble animations when landing on a new panel
+      if (activeIndex !== lastActiveIndex) {
+        lastActiveIndex = activeIndex;
+        const panels = container.querySelectorAll('.swipe-panel');
+        panels[activeIndex]?.querySelectorAll('.text-scramble').forEach(el => {
+          el.dispatchEvent(new Event('scramble:trigger'));
+        });
       }
     }, 100);
   }, { passive: true });

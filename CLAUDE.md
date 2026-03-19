@@ -69,7 +69,7 @@ expansion — maintaining the feeling of being integrated into the page, not nav
 
 ## Workflow
 
-- **Build and commit after each unit of work** — after making a change, always build (`bun run build`), deploy (`systemctl --user restart c2k-website`), and commit before moving on.
+- **Build, commit, and push after each unit of work** — after making a change, always build (`bun run build`), deploy (`systemctl --user restart c2k-website`), commit, and push before moving on.
 
 ### External links
 - Dotfiles repo: https://github.com/c2keesey/dotfiles (currently private)
