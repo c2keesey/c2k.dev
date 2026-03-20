@@ -514,6 +514,52 @@
       .contact-row span:first-child { color: var(--text); }
       .contact-row span:nth-child(2) { color: var(--purple); opacity: 0.7; }
       .contact-row span:last-child { color: rgba(255, 255, 255, 0.25); text-align: right; }
+
+      /* Easter egg */
+      .goat-trigger { cursor: default; }
+      .goat-trigger:hover { cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='24' font-size='24'>🐐</text></svg>") 16 16, pointer; }
+
+      .egg-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        cursor: pointer;
+      }
+
+      .egg-overlay.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .egg-photo {
+        max-width: min(90vw, 500px);
+        max-height: 80vh;
+        border-radius: 12px;
+        border: 2px solid var(--purple);
+        box-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+        transform: scale(0.9) rotate(-2deg);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .egg-overlay.visible .egg-photo {
+        transform: scale(1) rotate(1deg);
+      }
+
+      .egg-caption {
+        position: absolute;
+        bottom: max(2rem, env(safe-area-inset-bottom, 2rem));
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.4);
+      }
     </style>
   </head>
   <body>
@@ -776,7 +822,7 @@
             </div>
             <div class="tl-expanded" id="sunday-options">
               <div class="option-list">
-                <div class="option-item">Sleep in, hang with the goats</div>
+                <div class="option-item goat-trigger" id="goat-trigger-2">Sleep in, hang with the goats</div>
                 <div class="option-item">Walk Bodega hamlet</div>
                 <div class="option-item">Sebastopol thrifting (Antique Society, Funk & Flash, Pine Grove)</div>
                 <div class="option-item">
@@ -813,6 +859,12 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Easter egg overlay -->
+    <div class="egg-overlay" id="egg-overlay">
+      <img class="egg-photo" src="100_0600.JPG" alt="" />
+      <span class="egg-caption">🐐</span>
     </div>
 
     <script>
@@ -944,6 +996,27 @@
 
       updateTimeline();
       setInterval(updateTimeline, 60000);
+
+      // Easter egg 🐐
+      var overlay = document.getElementById('egg-overlay');
+      function showEgg() { overlay.classList.add('visible'); }
+      function hideEgg() { overlay.classList.remove('visible'); }
+      overlay.addEventListener('click', hideEgg);
+
+      // "Goat Ranch" in header
+      document.querySelectorAll('.trip-base').forEach(function(el) {
+        el.classList.add('goat-trigger');
+        el.addEventListener('click', function(e) {
+          if (el.textContent.indexOf('Goat') !== -1) showEgg();
+        });
+      });
+
+      // "hang with the goats" option
+      var goat2 = document.getElementById('goat-trigger-2');
+      if (goat2) goat2.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showEgg();
+      });
     </script>
   </body>
 </html>
