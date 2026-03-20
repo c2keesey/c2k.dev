@@ -515,6 +515,67 @@
       .contact-row span:nth-child(2) { color: var(--purple); opacity: 0.7; }
       .contact-row span:last-child { color: rgba(255, 255, 255, 0.25); text-align: right; }
 
+      /* Packing list */
+      .packing-section {
+        display: flex;
+        align-items: center;
+        padding: 0.6rem 0;
+        border-top: 1px solid var(--border);
+        cursor: pointer;
+      }
+      .packing-section:hover { background: rgba(168, 85, 247, 0.04); }
+      .packing-label {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .pack-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        padding: 0.5rem 0;
+      }
+      @media (max-width: 480px) { .pack-columns { grid-template-columns: 1fr; } }
+      .pack-category h4 {
+        font-family: var(--font-mono);
+        font-size: 0.6rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--purple);
+        margin-bottom: 0.4rem;
+        opacity: 0.7;
+      }
+      .pack-category ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+      .pack-category li {
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: rgba(255, 255, 255, 0.45);
+        padding: 0.2rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .pack-check {
+        width: 12px;
+        height: 12px;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .pack-check.checked {
+        background: var(--purple);
+        border-color: var(--purple);
+      }
+      .pack-category li.checked-item { opacity: 0.3; text-decoration: line-through; }
+
       /* Easter egg */
       .goat-trigger { cursor: default; }
       .goat-trigger:hover { cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='24' font-size='24'>🐐</text></svg>") 16 16, pointer; }
@@ -841,6 +902,67 @@
           </div>
         </div>
 
+        <!-- Packing List -->
+        <div class="packing-section expandable" data-expand="packing-list">
+          <span class="packing-label">Packing List <span class="tl-expand-hint">+</span></span>
+        </div>
+        <div class="tl-expanded" id="packing-list">
+          <div class="pack-columns">
+            <div class="pack-category">
+              <h4>Ride Gear</h4>
+              <ul>
+                <li><span class="pack-check"></span>Bike (tuned up)</li>
+                <li><span class="pack-check"></span>Helmet</li>
+                <li><span class="pack-check"></span>Kit / chamois</li>
+                <li><span class="pack-check"></span>Cycling shoes + cleats</li>
+                <li><span class="pack-check"></span>Arm warmers / leg warmers</li>
+                <li><span class="pack-check"></span>Wind vest</li>
+                <li><span class="pack-check"></span>Gloves</li>
+                <li><span class="pack-check"></span>Sunglasses</li>
+                <li><span class="pack-check"></span>Water bottles (2x)</li>
+                <li><span class="pack-check"></span>Snacks / gels</li>
+                <li><span class="pack-check"></span>Mini pump + spare tube</li>
+                <li><span class="pack-check"></span>Tire levers + multi-tool</li>
+              </ul>
+            </div>
+            <div class="pack-category">
+              <h4>Clothes</h4>
+              <ul>
+                <li><span class="pack-check"></span>Warm jacket (sunset layers!)</li>
+                <li><span class="pack-check"></span>Jeans / casual pants</li>
+                <li><span class="pack-check"></span>Nice-ish dinner outfit (Drakes)</li>
+                <li><span class="pack-check"></span>Hiking shoes / trail runners</li>
+                <li><span class="pack-check"></span>Flip flops</li>
+                <li><span class="pack-check"></span>Beanie</li>
+                <li><span class="pack-check"></span>Pajamas</li>
+                <li><span class="pack-check"></span>Extra socks & underwear</li>
+              </ul>
+            </div>
+            <div class="pack-category">
+              <h4>Essentials</h4>
+              <ul>
+                <li><span class="pack-check"></span>Phone charger</li>
+                <li><span class="pack-check"></span>Sunscreen</li>
+                <li><span class="pack-check"></span>Toothbrush / toiletries</li>
+                <li><span class="pack-check"></span>Cash (small shops)</li>
+                <li><span class="pack-check"></span>Binoculars (whale watching!)</li>
+                <li><span class="pack-check"></span>Camera</li>
+              </ul>
+            </div>
+            <div class="pack-category">
+              <h4>Ranch Life</h4>
+              <ul>
+                <li><span class="pack-check"></span>Towels</li>
+                <li><span class="pack-check"></span>Blanket (stargazing)</li>
+                <li><span class="pack-check"></span>Snacks / drinks for the ranch</li>
+                <li><span class="pack-check"></span>Bluetooth speaker</li>
+                <li><span class="pack-check"></span>Wine / beer</li>
+                <li><span class="pack-check"></span>Firewood (if fire pit)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         <!-- Contacts -->
         <div class="contacts-section expandable" data-expand="contacts-list">
           <span class="contacts-label">Key Contacts <span class="tl-expand-hint">+</span></span>
@@ -1016,6 +1138,22 @@
       if (goat2) goat2.addEventListener('click', function(e) {
         e.stopPropagation();
         showEgg();
+      });
+
+      // Packing list checkboxes (persisted to localStorage)
+      var packState = JSON.parse(localStorage.getItem('bodega-pack') || '{}');
+      document.querySelectorAll('.pack-check').forEach(function(box, i) {
+        if (packState[i]) {
+          box.classList.add('checked');
+          box.parentElement.classList.add('checked-item');
+        }
+        box.addEventListener('click', function(e) {
+          e.stopPropagation();
+          box.classList.toggle('checked');
+          box.parentElement.classList.toggle('checked-item');
+          packState[i] = box.classList.contains('checked');
+          localStorage.setItem('bodega-pack', JSON.stringify(packState));
+        });
       });
     </script>
   </body>
