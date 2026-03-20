@@ -1,0 +1,870 @@
+---
+// Bodega Weekend Trip Dashboard — March 20–22, 2026
+// "System monitor for my life" aesthetic applied to a weekend trip
+---
+
+<div class="trip-dashboard">
+  <!-- Header -->
+  <div class="trip-header">
+    <div class="trip-meta">
+      <span class="trip-dates text-scramble" data-text="MAR 20–22, 2026" data-delay="100" data-always="false">MAR 20–22, 2026</span>
+      <span class="trip-base text-scramble" data-text="Bodega, CA · Goat Ranch" data-delay="200" data-always="false">Bodega, CA · Goat Ranch</span>
+    </div>
+  </div>
+
+  <!-- Weather Strip -->
+  <div class="weather-strip">
+    <div class="weather-day">
+      <span class="weather-label">FRI</span>
+      <span class="weather-icon">☀</span>
+      <span class="weather-temp">75°</span>
+    </div>
+    <div class="weather-day">
+      <span class="weather-label">SAT</span>
+      <span class="weather-icon">⛅</span>
+      <span class="weather-temp">67°</span>
+      <span class="weather-rain">10%</span>
+    </div>
+    <div class="weather-day">
+      <span class="weather-label">SUN</span>
+      <span class="weather-icon">⛅</span>
+      <span class="weather-temp">63°</span>
+      <span class="weather-rain">10%</span>
+    </div>
+    <div class="weather-day sunset-info">
+      <span class="weather-label">SUNSET</span>
+      <span class="weather-icon">🌅</span>
+      <span class="weather-temp">7:25p</span>
+    </div>
+  </div>
+
+  <!-- FRIDAY -->
+  <div class="day-block">
+    <div class="day-header">
+      <span class="day-marker"></span>
+      <span class="day-label">Friday — Arrival</span>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <span class="tl-time">~2:00p</span>
+        <div class="tl-content">
+          <span class="tl-title">Drive from SF</span>
+          <span class="tl-detail">~1.5 hrs · 101 → Petaluma → Bodega Hwy west</span>
+        </div>
+      </div>
+
+      <div class="tl-item expandable" data-expand="thrift-friday">
+        <span class="tl-time">opt</span>
+        <div class="tl-content">
+          <span class="tl-title">Sebastopol Thrifting <span class="tl-expand-hint">+</span></span>
+          <span class="tl-detail">20 min detour on the way</span>
+        </div>
+      </div>
+      <div class="tl-expanded" id="thrift-friday">
+        <div class="place-card">
+          <span class="place-name">Antique Society</span>
+          <span class="place-info">2661 Gravenstein Hwy S · Massive antique mall, dozens of vendors</span>
+          <span class="place-hours">10–5 · (707) 829-1733</span>
+        </div>
+        <div class="place-card">
+          <span class="place-name">Funk & Flash</span>
+          <span class="place-info">200 S Main St #110 · Vintage/festival clothing, leather, boots, jewelry</span>
+        </div>
+        <div class="place-card">
+          <span class="place-name">Pine Grove General Store</span>
+          <span class="place-info">149 N Main St · Well-curated consignment</span>
+          <span class="place-hours">11–5 · (707) 829-1138</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <span class="tl-time">~4:00p</span>
+        <div class="tl-content">
+          <span class="tl-title">Settle in at the ranch</span>
+          <span class="tl-detail">Explore Bodega hamlet</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SATURDAY -->
+  <div class="day-block">
+    <div class="day-header">
+      <span class="day-marker"></span>
+      <span class="day-label">Saturday — Ride, Eat, Hike, Sunset</span>
+    </div>
+
+    <div class="timeline">
+      <!-- THE RIDE -->
+      <div class="tl-item ride-item expandable" data-expand="ride-detail">
+        <span class="tl-time">8:30a</span>
+        <div class="tl-content">
+          <span class="tl-title">The Ride <span class="tl-badge">~30 mi</span> <span class="tl-expand-hint">+</span></span>
+          <span class="tl-detail">Bodega → Valley Ford → Freestone → Occidental → Coleman Valley Rd → Hwy 1 → Bodega</span>
+        </div>
+      </div>
+      <div class="tl-expanded ride-expanded" id="ride-detail">
+        <!-- Elevation Profile -->
+        <div class="elevation-section">
+          <div class="elevation-label">ELEVATION PROFILE</div>
+          <div class="elevation-chart">
+            <div class="elev-bar" style="--h: 15%" data-label="Bodega"></div>
+            <div class="elev-bar" style="--h: 10%" data-label=""></div>
+            <div class="elev-bar" style="--h: 12%" data-label="Valley Ford"></div>
+            <div class="elev-bar" style="--h: 18%" data-label=""></div>
+            <div class="elev-bar" style="--h: 25%" data-label=""></div>
+            <div class="elev-bar" style="--h: 35%" data-label="Freestone"></div>
+            <div class="elev-bar" style="--h: 50%" data-label=""></div>
+            <div class="elev-bar" style="--h: 65%" data-label=""></div>
+            <div class="elev-bar" style="--h: 80%" data-label="Occidental"></div>
+            <div class="elev-bar" style="--h: 85%" data-label=""></div>
+            <div class="elev-bar highlight" style="--h: 100%" data-label="Coleman"></div>
+            <div class="elev-bar highlight" style="--h: 95%" data-label="Valley Rd"></div>
+            <div class="elev-bar highlight" style="--h: 88%" data-label=""></div>
+            <div class="elev-bar" style="--h: 70%" data-label=""></div>
+            <div class="elev-bar" style="--h: 45%" data-label=""></div>
+            <div class="elev-bar" style="--h: 25%" data-label=""></div>
+            <div class="elev-bar" style="--h: 12%" data-label="Hwy 1"></div>
+            <div class="elev-bar" style="--h: 18%" data-label=""></div>
+            <div class="elev-bar" style="--h: 20%" data-label=""></div>
+            <div class="elev-bar" style="--h: 15%" data-label="Bodega"></div>
+          </div>
+          <div class="elevation-stats">
+            <span>~2,200 ft climbing</span>
+            <span>Coleman Valley: 10% grade</span>
+          </div>
+        </div>
+
+        <!-- Turn by turn -->
+        <div class="route-section">
+          <div class="route-label">ROUTE</div>
+          <ol class="route-turns">
+            <li>Head south on Bodega Hwy from Tannery Creek Rd</li>
+            <li>Right onto Valley Ford Rd — quiet dairy roads, rolling green pastureland</li>
+            <li>Through Valley Ford</li>
+            <li>North to Freestone on Bohemian Hwy</li>
+            <li class="route-highlight">Wild Flour Bread scone stop — 140 Bohemian Hwy, Freestone</li>
+            <li>Continue north to Occidental</li>
+            <li class="route-highlight">West onto Coleman Valley Road — THE highlight. Forest → open ridgeline → sweeping Pacific views. Legendary cycling road.</li>
+            <li>Epic descent toward the coast</li>
+            <li>Left (south) onto Hwy 1 — ~2 miles, only trafficked part</li>
+            <li>Left onto Bodega Hwy back to Bodega</li>
+          </ol>
+        </div>
+
+        <!-- Gear Notes -->
+        <div class="gear-section">
+          <div class="route-label">GEAR</div>
+          <div class="gear-grid">
+            <span class="gear-item">Arm warmers (50s AM)</span>
+            <span class="gear-item">28mm+ tires</span>
+            <span class="gear-item">Extra water</span>
+            <span class="gear-item">Watch for coastal fog</span>
+          </div>
+        </div>
+
+        <!-- Scone Stop -->
+        <div class="place-card accent">
+          <span class="place-name">Wild Flour Bread</span>
+          <span class="place-info">140 Bohemian Hwy, Freestone · Legendary scones & sourdough. Expect a line.</span>
+          <span class="place-hours">Sat 8AM–6PM · (707) 874-2938</span>
+        </div>
+      </div>
+
+      <!-- Post-ride -->
+      <div class="tl-item">
+        <span class="tl-time">11:30a</span>
+        <div class="tl-content">
+          <span class="tl-title">Back at ranch</span>
+          <span class="tl-detail">Shower & change</span>
+        </div>
+      </div>
+
+      <!-- Lunch -->
+      <div class="tl-item expandable" data-expand="lunch-detail">
+        <span class="tl-time">12:30p</span>
+        <div class="tl-content">
+          <span class="tl-title">Spud Point Crab Company <span class="tl-expand-hint">+</span></span>
+          <span class="tl-detail">Clam chowder & crab sandwich · Picnic tables overlooking the marina</span>
+        </div>
+      </div>
+      <div class="tl-expanded" id="lunch-detail">
+        <div class="place-card">
+          <span class="place-name">Spud Point Crab Company</span>
+          <span class="place-info">1910 Westshore Rd, Bodega Bay · No-frills, cash-friendly. 4.7★ (3,400+ reviews). Arrive by 12:30 to beat line.</span>
+          <span class="place-hours">9AM–5PM · (707) 875-9472</span>
+        </div>
+        <div class="place-card dim">
+          <span class="place-name">Backup: Fisherman's Cove</span>
+          <span class="place-info">1850 Bay Flat Rd · Fish tacos, grilled oysters</span>
+          <span class="place-hours">(707) 377-4238</span>
+        </div>
+      </div>
+
+      <!-- Thrift -->
+      <div class="tl-item">
+        <span class="tl-time">1:15p</span>
+        <div class="tl-content">
+          <span class="tl-title">Bodega Thrift</span>
+          <span class="tl-detail">17125 Bodega Ave · Organic materials (silk, wool) · Sat & Sun 11–6</span>
+        </div>
+      </div>
+
+      <!-- Hike -->
+      <div class="tl-item expandable" data-expand="hike-detail">
+        <span class="tl-time">2:00p</span>
+        <div class="tl-content">
+          <span class="tl-title">Bodega Head Trail <span class="tl-badge">~2 mi</span> <span class="tl-expand-hint">+</span></span>
+          <span class="tl-detail">Bluff loop · 360° ocean views · Whale season</span>
+        </div>
+      </div>
+      <div class="tl-expanded" id="hike-detail">
+        <div class="hike-info">
+          <p>Easy bluff loop. Sea stacks, harbor seals, wildflowers. March = prime gray whale migration. Look for spouts offshore. Whale Watch volunteers may be at the cliffs weekends through Mother's Day.</p>
+          <div class="trail-grid">
+            <div class="trail-card">
+              <span class="trail-name">East Trail</span>
+              <span class="trail-desc">1.7 mi loop · Southern coastal bluffs · Views of Bodega Bay & Doran Spit</span>
+            </div>
+            <div class="trail-card">
+              <span class="trail-name">West Trail</span>
+              <span class="trail-desc">1.2 mi loop · Horseshoe Cove overlook · Climbs to 265 ft, 360° views</span>
+            </div>
+          </div>
+          <p class="hike-directions">From Hwy 1: East Shore Rd exit → 1/4 mi to Bay Flat Rd → right. Becomes Westshore Rd. In 3.3 mi, veer left (east) or right (west trailhead). Free parking. No dogs.</p>
+        </div>
+      </div>
+
+      <!-- Wine -->
+      <div class="tl-item">
+        <span class="tl-time">3:30p</span>
+        <div class="tl-content">
+          <span class="tl-title">Gourmet Au Bay</span>
+          <span class="tl-detail">1412 Bay Flat Rd · Wine bar, harbor views, dog-friendly patio · Wood-fired oysters, smoked clam pizza</span>
+        </div>
+      </div>
+
+      <!-- Sunset -->
+      <div class="tl-item sunset-item">
+        <span class="tl-time">6:45p</span>
+        <div class="tl-content">
+          <span class="tl-title">Sunset at Portuguese Beach</span>
+          <span class="tl-detail">Off Hwy 1, ~15 min north of Bodega Bay · Wide sandy, west-facing · Best sunset spot on Sonoma Coast · Bring blanket + warm layers · Sunset ~7:25p</span>
+        </div>
+      </div>
+
+      <!-- Dinner -->
+      <div class="tl-item expandable" data-expand="dinner-detail">
+        <span class="tl-time">8:00p</span>
+        <div class="tl-content">
+          <span class="tl-title">Dinner <span class="tl-expand-hint">+</span></span>
+          <span class="tl-detail">Sit-down or cook at the ranch</span>
+        </div>
+      </div>
+      <div class="tl-expanded" id="dinner-detail">
+        <div class="place-card">
+          <span class="place-name">Drakes Sonoma Coast</span>
+          <span class="place-info">103 Coast Hwy 1, Bodega Bay · Bodega Bay Lodge · Fire pits, ocean views, seasonal California cuisine · $$</span>
+          <span class="place-hours">Dinner 5–9PM · Reservations rec. · (707) 875-3525</span>
+        </div>
+        <div class="place-card dim">
+          <span class="place-name">Cook at the ranch</span>
+          <span class="place-info">Groceries from Bodega Country Store · 17190 Bodega Hwy</span>
+          <span class="place-hours">Daily 8–6 · (707) 377-4080</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUNDAY -->
+  <div class="day-block">
+    <div class="day-header">
+      <span class="day-marker"></span>
+      <span class="day-label">Sunday — Depart</span>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item expandable" data-expand="sunday-options">
+        <span class="tl-time">AM</span>
+        <div class="tl-content">
+          <span class="tl-title">Morning Options <span class="tl-expand-hint">+</span></span>
+          <span class="tl-detail">Choose your own adventure before heading home</span>
+        </div>
+      </div>
+      <div class="tl-expanded" id="sunday-options">
+        <div class="option-list">
+          <div class="option-item">Sleep in, hang with the goats</div>
+          <div class="option-item">Walk Bodega hamlet</div>
+          <div class="option-item">Sebastopol thrifting (Antique Society, Funk & Flash, Pine Grove)</div>
+          <div class="option-item">
+            <span>Howard Station Cafe, Occidental</span>
+            <span class="option-detail">3611 Bohemian Hwy · 7:30AM–3PM · (707) 874-2838</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <span class="tl-time">~12:00p</span>
+        <div class="tl-content">
+          <span class="tl-title">Drive home via 101</span>
+          <span class="tl-detail">~1.5 hrs to SF</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contacts -->
+  <div class="contacts-section expandable" data-expand="contacts-list">
+    <span class="contacts-label">Key Contacts <span class="tl-expand-hint">+</span></span>
+  </div>
+  <div class="tl-expanded" id="contacts-list">
+    <div class="contacts-grid">
+      <div class="contact-row"><span>Wild Flour Bread</span><span>(707) 874-2938</span><span>8a–6p</span></div>
+      <div class="contact-row"><span>Spud Point Crab Co</span><span>(707) 875-9472</span><span>9a–5p</span></div>
+      <div class="contact-row"><span>Fisherman's Cove</span><span>(707) 377-4238</span><span>11a–6p</span></div>
+      <div class="contact-row"><span>Gourmet Au Bay</span><span>(707) 875-9875</span><span>12–6p</span></div>
+      <div class="contact-row"><span>Drakes Sonoma Coast</span><span>(707) 875-3525</span><span>5–9p</span></div>
+      <div class="contact-row"><span>Bodega Thrift</span><span>(707) 824-0912</span><span>11a–6p</span></div>
+      <div class="contact-row"><span>Antique Society</span><span>(707) 829-1733</span><span>10a–5p</span></div>
+      <div class="contact-row"><span>Howard Station Cafe</span><span>(707) 874-2838</span><span>7:30a–3p</span></div>
+      <div class="contact-row"><span>Bodega Country Store</span><span>(707) 377-4080</span><span>8a–6p</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initBodega() {
+    document.querySelectorAll<HTMLElement>('.expandable').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const targetId = trigger.dataset.expand;
+        if (!targetId) return;
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        const isOpen = target.classList.contains('open');
+        target.classList.toggle('open');
+        // Update hint
+        const hint = trigger.querySelector('.tl-expand-hint');
+        if (hint) hint.textContent = isOpen ? '+' : '−';
+      });
+    });
+  }
+
+  initBodega();
+  document.addEventListener('astro:page-load', initBodega);
+</script>
+
+<style>
+  .trip-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Header */
+  .trip-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+  }
+
+  .trip-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .trip-dates {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--purple);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .trip-base {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* Weather */
+  .weather-strip {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .weather-day {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.6rem 0.5rem;
+    background: var(--bg-surface);
+  }
+
+  .weather-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .weather-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .weather-temp {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .weather-rain {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Day blocks */
+  .day-block {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+  }
+
+  .day-marker {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--purple);
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+    flex-shrink: 0;
+  }
+
+  .day-label {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    padding-left: 3px;
+    border-left: 1px solid var(--border);
+    margin-left: 3px;
+  }
+
+  .tl-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.6rem 0 0.6rem 1rem;
+    position: relative;
+    transition: background 0.15s;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+  }
+
+  .expandable {
+    cursor: pointer;
+  }
+
+  .expandable:hover {
+    background: rgba(168, 85, 247, 0.04);
+  }
+
+  .tl-time {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    min-width: 42px;
+    flex-shrink: 0;
+    padding-top: 0.15rem;
+  }
+
+  .tl-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .tl-title {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .tl-detail {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.3);
+    line-height: 1.4;
+  }
+
+  .tl-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    padding: 0.05rem 0.35rem;
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple);
+    border-radius: 3px;
+    font-weight: 400;
+    vertical-align: middle;
+  }
+
+  .tl-expand-hint {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--purple);
+    margin-left: 0.25rem;
+    opacity: 0.6;
+    font-weight: 400;
+  }
+
+  .expandable:hover .tl-expand-hint {
+    opacity: 1;
+  }
+
+  /* Ride item special styling */
+  .ride-item::before {
+    border-color: var(--purple);
+    background: var(--purple);
+    box-shadow: 0 0 6px rgba(168, 85, 247, 0.4);
+  }
+
+  /* Sunset item */
+  .sunset-item .tl-title {
+    background: linear-gradient(90deg, var(--purple), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Expanded sections */
+  .tl-expanded {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid transparent;
+  }
+
+  .tl-expanded.open {
+    max-height: 2000px;
+    opacity: 1;
+    border-left-color: rgba(168, 85, 247, 0.2);
+    padding-top: 0.25rem;
+    padding-bottom: 0.75rem;
+  }
+
+  /* Place cards */
+  .place-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+  }
+
+  .place-card.accent {
+    border-left: 2px solid var(--purple);
+  }
+
+  .place-card.dim {
+    opacity: 0.5;
+  }
+
+  .place-name {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .place-info {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    line-height: 1.4;
+  }
+
+  .place-hours {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--purple);
+    opacity: 0.7;
+  }
+
+  /* Elevation chart */
+  .elevation-section {
+    margin-bottom: 1rem;
+  }
+
+  .elevation-label,
+  .route-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .elevation-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 80px;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .elev-bar {
+    flex: 1;
+    height: var(--h);
+    background: rgba(168, 85, 247, 0.25);
+    border-radius: 2px 2px 0 0;
+    position: relative;
+    transition: background 0.2s;
+    min-width: 0;
+  }
+
+  .elev-bar.highlight {
+    background: rgba(168, 85, 247, 0.5);
+  }
+
+  .elev-bar[data-label]:not([data-label=""])::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .elevation-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Route turns */
+  .route-section {
+    margin-bottom: 1rem;
+  }
+
+  .route-turns {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-left: 1.25rem;
+    list-style: decimal;
+  }
+
+  .route-turns li {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.5;
+  }
+
+  .route-turns li.route-highlight {
+    color: var(--purple);
+    opacity: 0.8;
+  }
+
+  .route-turns li::marker {
+    color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Gear */
+  .gear-section {
+    margin-bottom: 1rem;
+  }
+
+  .gear-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .gear-item {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(249, 115, 22, 0.08);
+    color: var(--orange);
+    border-radius: 4px;
+    border: 1px solid rgba(249, 115, 22, 0.15);
+  }
+
+  /* Hike */
+  .hike-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hike-info p {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.5;
+  }
+
+  .hike-directions {
+    font-size: 0.6rem !important;
+    color: rgba(255, 255, 255, 0.25) !important;
+  }
+
+  .trail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    .trail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .trail-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.5rem 0.6rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .trail-name {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .trail-desc {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.3);
+    line-height: 1.4;
+  }
+
+  /* Sunday options */
+  .option-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .option-item {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 0.4rem 0.6rem;
+    background: var(--bg-surface);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .option-detail {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Contacts */
+  .contacts-section {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .contacts-section:hover {
+    background: rgba(168, 85, 247, 0.04);
+  }
+
+  .contacts-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .contacts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .contact-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    padding: 0.35rem 0.6rem;
+    background: var(--bg-surface);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+  }
+
+  .contact-row span:first-child {
+    color: var(--text);
+  }
+
+  .contact-row span:nth-child(2) {
+    color: var(--purple);
+    opacity: 0.7;
+  }
+
+  .contact-row span:last-child {
+    color: rgba(255, 255, 255, 0.25);
+    text-align: right;
+  }
+</style>

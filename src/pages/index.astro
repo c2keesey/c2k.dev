@@ -5,6 +5,7 @@ import StatuslineShowcase from '../components/StatuslineShowcase.astro';
 import SkillsShowcase from '../components/SkillsShowcase.astro';
 import MaiaShowcase from '../components/MaiaShowcase.astro';
 import C2kShowcase from '../components/C2kShowcase.astro';
+import BodegaWeekend from '../components/BodegaWeekend.astro';
 import '../styles/global.css';
 ---
 
@@ -79,6 +80,17 @@ import '../styles/global.css';
           </div>
         </div>
       </section>
+
+      <!-- Panel: Bodega -->
+      <section class="swipe-panel" data-page="/bodega">
+        <div class="panel-content">
+          <section class="page-header">
+            <TextScramble text="Bodega Weekend" tag="h1" class="page-title" always />
+            <TextScramble text="Goat ranch, bike ride, crab shack, sunset." tag="p" class="page-desc" delay={100} />
+          </section>
+          <BodegaWeekend />
+        </div>
+      </section>
     </div>
     <footer class="global-footer">
       <div class="status-row">
@@ -91,7 +103,7 @@ import '../styles/global.css';
 
 <script>
   const container = document.getElementById('swipe-container')!;
-  const pages = ['/', '/projects', '/about'];
+  const pages = ['/', '/projects', '/about', '/bodega'];
 
   // Scroll to correct panel on load based on URL
   function scrollToCurrentPage() {
