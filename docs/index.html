@@ -621,6 +621,118 @@
         font-size: 0.7rem;
         color: rgba(255, 255, 255, 0.4);
       }
+      /* Sunset sky overlay */
+      .sunset-sky {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 3s ease;
+        pointer-events: none;
+      }
+      .sunset-sky.active {
+        opacity: 1;
+      }
+      .sunset-sky canvas { width: 100%; height: 100%; }
+
+      /* Bike rider */
+      .bike-rider {
+        position: fixed;
+        bottom: 20px;
+        font-size: 1.2rem;
+        z-index: 999;
+        pointer-events: none;
+        opacity: 0;
+      }
+      .bike-rider.riding {
+        opacity: 1;
+        animation: bikeRide 4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+      }
+      @keyframes bikeRide {
+        0% { left: -40px; transform: translateY(0); }
+        20% { transform: translateY(-8px); }
+        40% { transform: translateY(-2px); }
+        60% { transform: translateY(-12px); }
+        80% { transform: translateY(-4px); }
+        100% { left: calc(100vw + 40px); transform: translateY(0); }
+      }
+
+      /* Whale spout */
+      .whale-spout {
+        position: fixed;
+        right: -60px;
+        bottom: 15%;
+        font-size: 1.5rem;
+        z-index: 998;
+        pointer-events: none;
+        opacity: 0;
+      }
+      .whale-spout.spouting {
+        animation: whalePeek 6s ease-in-out forwards;
+      }
+      @keyframes whalePeek {
+        0% { opacity: 0; right: -60px; }
+        15% { opacity: 1; right: 10px; }
+        30% { opacity: 1; right: 10px; }
+        35% { opacity: 1; right: 10px; }
+        50% { opacity: 1; right: 15px; }
+        70% { opacity: 0.8; right: 10px; }
+        100% { opacity: 0; right: -60px; }
+      }
+      .whale-water {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        opacity: 0;
+      }
+      .whale-spout.spouting .whale-water {
+        animation: spout 2s ease-out 1s forwards;
+      }
+      @keyframes spout {
+        0% { opacity: 0; top: -5px; }
+        30% { opacity: 1; top: -22px; }
+        100% { opacity: 0; top: -35px; }
+      }
+
+      /* Secret packing item */
+      .pack-secret {
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .pack-secret.revealed {
+        opacity: 1;
+        max-height: 40px;
+      }
+      .pack-secret .pack-check { background: var(--purple); border-color: var(--purple); }
+
+      /* Ambient sunset mode */
+      html.sunset-mode {
+        --bg: #0d0908;
+        --bg-surface: #161210;
+        --bg-hover: #1e1815;
+        --border: #2a2220;
+      }
+
+      /* Bottom secret message */
+      .bottom-whisper {
+        text-align: center;
+        padding: 3rem 0 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0);
+        transition: color 1.5s ease;
+      }
+      .bottom-whisper.visible {
+        color: rgba(255, 255, 255, 0.15);
+      }
+
+      /* Sunset click target */
+      .weather-day.sunset-click { cursor: pointer; }
+      .weather-day.sunset-click:hover { background: rgba(249, 115, 22, 0.08); }
     </style>
   </head>
   <body>
@@ -658,7 +770,7 @@
             <span class="weather-temp">63°</span>
             <span class="weather-rain">10%</span>
           </div>
-          <div class="weather-day">
+          <div class="weather-day sunset-click" id="sunset-trigger">
             <span class="weather-label">SUNSET</span>
             <span class="weather-icon">🌅</span>
             <span class="weather-temp">7:25p</span>
@@ -716,7 +828,7 @@
             <div class="tl-item ride-item expandable" data-time="08:30" data-expand="ride-detail">
               <span class="tl-time">8:30a</span>
               <div class="tl-content">
-                <span class="tl-title">The Ride <span class="tl-badge">~30 mi</span> <span class="tl-expand-hint">+</span></span>
+                <span class="tl-title" id="ride-trigger">The Ride <span class="tl-badge">~30 mi</span> <span class="tl-expand-hint">+</span></span>
                 <span class="tl-detail">Bodega → Valley Ford → Freestone → Occidental → Coleman Valley Rd → Hwy 1 → Bodega</span>
               </div>
             </div>
@@ -983,6 +1095,7 @@
                 <li><span class="pack-check"></span>Chair <span style="font-size:0.5rem;color:var(--purple);opacity:0.6">c2k</span></li>
                 <li><span class="pack-check"></span>Wine / beer</li>
                 <li><span class="pack-check"></span>Firewood (if fire pit)</li>
+                <li class="pack-secret" id="pack-secret"><span class="pack-check checked"></span>Your cute butt</li>
               </ul>
             </div>
           </div>
@@ -1007,6 +1120,13 @@
         </div>
       </div>
     </div>
+
+    <div class="bottom-whisper" id="bottom-whisper">see you on the water 🌊</div>
+
+    <!-- Floating easter egg elements -->
+    <div class="bike-rider" id="bike-rider">🚴</div>
+    <div class="whale-spout" id="whale-spout">🐋<span class="whale-water">💨</span></div>
+    <div class="sunset-sky" id="sunset-sky"><canvas id="sunset-canvas"></canvas></div>
 
     <!-- Easter egg overlay -->
     <div class="egg-overlay" id="egg-overlay">
@@ -1167,6 +1287,17 @@
 
       // Packing list checkboxes (persisted to localStorage)
       var packState = JSON.parse(localStorage.getItem('bodega-pack') || '{}');
+      var allChecks = document.querySelectorAll('.pack-check:not(.pack-secret .pack-check)');
+      var secretItem = document.getElementById('pack-secret');
+
+      function checkSecretReveal() {
+        var checked = 0;
+        allChecks.forEach(function(b) { if (b.classList.contains('checked')) checked++; });
+        if (checked / allChecks.length >= 0.8) {
+          secretItem.classList.add('revealed');
+        }
+      }
+
       document.querySelectorAll('.pack-check').forEach(function(box, i) {
         if (packState[i]) {
           box.classList.add('checked');
@@ -1178,8 +1309,100 @@
           box.parentElement.classList.toggle('checked-item');
           packState[i] = box.classList.contains('checked');
           localStorage.setItem('bodega-pack', JSON.stringify(packState));
+          checkSecretReveal();
         });
       });
+      checkSecretReveal();
+
+      // 🚴 Bike rider — click "The Ride"
+      var rideTrigger = document.getElementById('ride-trigger');
+      var bikeEl = document.getElementById('bike-rider');
+      if (rideTrigger) {
+        rideTrigger.style.cursor = 'pointer';
+        rideTrigger.addEventListener('click', function(e) {
+          e.stopPropagation();
+          bikeEl.classList.remove('riding');
+          void bikeEl.offsetWidth; // reflow
+          bikeEl.classList.add('riding');
+          setTimeout(function() { bikeEl.classList.remove('riding'); }, 4200);
+        });
+      }
+
+      // 🌅 Sunset sky — click sunset weather cell
+      var sunsetTrigger = document.getElementById('sunset-trigger');
+      var sunsetSky = document.getElementById('sunset-sky');
+      var sunsetCanvas = document.getElementById('sunset-canvas');
+      if (sunsetTrigger && sunsetCanvas) {
+        sunsetTrigger.addEventListener('click', function() {
+          var ctx = sunsetCanvas.getContext('2d');
+          sunsetCanvas.width = window.innerWidth;
+          sunsetCanvas.height = window.innerHeight;
+          var grad = ctx.createLinearGradient(0, 0, 0, sunsetCanvas.height);
+          grad.addColorStop(0, '#0c1445');
+          grad.addColorStop(0.3, '#2d1b69');
+          grad.addColorStop(0.5, '#c2185b');
+          grad.addColorStop(0.7, '#ff6f00');
+          grad.addColorStop(0.85, '#ffab00');
+          grad.addColorStop(1, '#0a0a0b');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, sunsetCanvas.width, sunsetCanvas.height);
+          // Stars
+          for (var s = 0; s < 60; s++) {
+            var sx = Math.random() * sunsetCanvas.width;
+            var sy = Math.random() * sunsetCanvas.height * 0.4;
+            var sr = Math.random() * 1.5;
+            ctx.beginPath();
+            ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,' + (Math.random() * 0.6 + 0.2) + ')';
+            ctx.fill();
+          }
+          sunsetSky.classList.add('active');
+          setTimeout(function() { sunsetSky.classList.remove('active'); }, 5000);
+        });
+      }
+
+      // 🐋 Whale spout — random chance on scroll
+      var whaleEl = document.getElementById('whale-spout');
+      var whaleShown = false;
+      var scrollCount = 0;
+      window.addEventListener('scroll', function() {
+        scrollCount++;
+        if (!whaleShown && scrollCount > 8 && Math.random() < 0.08) {
+          whaleShown = true;
+          whaleEl.classList.add('spouting');
+          setTimeout(function() {
+            whaleEl.classList.remove('spouting');
+            // Allow another sighting after a while
+            setTimeout(function() { whaleShown = false; scrollCount = 0; }, 30000);
+          }, 6500);
+        }
+      });
+
+      // 🌊 Bottom whisper — scroll to very bottom
+      var whisper = document.getElementById('bottom-whisper');
+      var whisperObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) whisper.classList.add('visible');
+          else whisper.classList.remove('visible');
+        });
+      }, { threshold: 0.5 });
+      whisperObserver.observe(whisper);
+
+      // 🌙 Ambient sunset mode — after 7:25pm Pacific
+      function checkSunsetMode() {
+        var now = new Date();
+        var pacificStr = now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+        var pacific = new Date(pacificStr);
+        var mins = pacific.getHours() * 60 + pacific.getMinutes();
+        // After 7:25pm (19:25) = 1165 minutes
+        if (mins >= 1165 || mins < 360) {
+          document.documentElement.classList.add('sunset-mode');
+        } else {
+          document.documentElement.classList.remove('sunset-mode');
+        }
+      }
+      checkSunsetMode();
+      setInterval(checkSunsetMode, 60000);
     </script>
   </body>
 </html>
