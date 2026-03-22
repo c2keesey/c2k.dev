@@ -30,6 +30,30 @@
         <div class="crn-detail" id="crn-detail"></div>
       </div>
 
+      <div class="crn-combos" id="crn-combos">
+        <button class="crn-combos-toggle" id="crn-combos-toggle">
+          <span>combos</span>
+          <span class="crn-combos-arrow" id="crn-combos-arrow">+</span>
+        </button>
+        <div class="crn-combos-list" id="crn-combos-list">
+          <div class="crn-combo"><span class="crn-combo-keys">S + D</span><span class="crn-combo-out">bspc</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">D + F</span><span class="crn-combo-out">return</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">W + E</span><span class="crn-combo-out">=</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">U + I</span><span class="crn-combo-out">_</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">I + O</span><span class="crn-combo-out">-</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">Q + W</span><span class="crn-combo-out">:</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">J + K</span><span class="crn-combo-out">( )</span><span class="crn-combo-note">shift: &lt; &gt;</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">K + L</span><span class="crn-combo-out">)</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">M + ,</span><span class="crn-combo-out">[ ]</span><span class="crn-combo-note">nav: { }</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">, + .</span><span class="crn-combo-out">]</span><span class="crn-combo-note">nav: }</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">X + C</span><span class="crn-combo-out">copy</span><span class="crn-combo-note">2x: select all + copy</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">C + V</span><span class="crn-combo-out">paste</span><span class="crn-combo-note">2x: select all + paste</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">X + V</span><span class="crn-combo-out">cut</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">F + S</span><span class="crn-combo-out">⌘A</span><span class="crn-combo-note">select all</span></div>
+          <div class="crn-combo"><span class="crn-combo-keys">S + D + F</span><span class="crn-combo-out">⇧bspc</span><span class="crn-combo-note">delete line</span></div>
+        </div>
+      </div>
+
       <div class="crn-features">
         <span class="crn-feat">homerow mods</span>
         <span class="crn-feat">smart-shift</span>
@@ -286,6 +310,17 @@
   }
 
   initCorne();
+
+  // Combos toggle
+  const combosToggle = document.getElementById('crn-combos-toggle');
+  const combosList = document.getElementById('crn-combos-list');
+  const combosArrow = document.getElementById('crn-combos-arrow');
+  if (combosToggle && combosList && combosArrow) {
+    combosToggle.addEventListener('click', () => {
+      const isOpen = combosList.classList.toggle('crn-combos-open');
+      combosArrow.textContent = isOpen ? '−' : '+';
+    });
+  }
 </script>
 
 <style>
@@ -535,6 +570,76 @@
     opacity: 1;
     padding: 0.4rem 0.75rem;
     border-top-color: var(--border);
+  }
+
+  /* Combos */
+  .crn-combos {
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .crn-combos-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    color: rgba(6, 182, 212, 0.6);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .crn-combos-toggle:hover {
+    background: rgba(6, 182, 212, 0.06);
+  }
+
+  .crn-combos-arrow {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .crn-combos-list {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+  }
+
+  .crn-combos-list.crn-combos-open {
+    max-height: 600px;
+    opacity: 1;
+  }
+
+  .crn-combo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .crn-combo-keys {
+    color: rgba(6, 182, 212, 0.7);
+    min-width: 65px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .crn-combo-out {
+    color: rgba(255, 255, 255, 0.6);
+    min-width: 50px;
+  }
+
+  .crn-combo-note {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 0.6rem;
   }
 
   /* Features */
