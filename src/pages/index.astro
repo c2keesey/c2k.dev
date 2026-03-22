@@ -5,6 +5,10 @@ import StatuslineShowcase from '../components/StatuslineShowcase.astro';
 import SkillsShowcase from '../components/SkillsShowcase.astro';
 import MaiaShowcase from '../components/MaiaShowcase.astro';
 import C2kShowcase from '../components/C2kShowcase.astro';
+import LightningCloudShowcase from '../components/LightningCloudShowcase.astro';
+import FluxGauntletShowcase from '../components/FluxGauntletShowcase.astro';
+import CorneShowcase from '../components/CorneShowcase.astro';
+import SpotifyMacroShowcase from '../components/SpotifyMacroShowcase.astro';
 import '../styles/global.css';
 ---
 
@@ -62,6 +66,10 @@ import '../styles/global.css';
             <TextScramble text="Things I'm building." tag="p" class="page-desc" delay={100} />
           </section>
           <C2kShowcase />
+          <SpotifyMacroShowcase />
+          <FluxGauntletShowcase />
+          <CorneShowcase />
+          <LightningCloudShowcase />
           <StatuslineShowcase />
           <SkillsShowcase />
         </div>
@@ -194,6 +202,12 @@ import '../styles/global.css';
     }
   }
 
+  // Logo: reload if already on home, otherwise navigate to home
+  document.querySelector('.logo')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (lastActiveIndex === 0) { window.location.href = '/'; } else { navigateToPanel(0); }
+  });
+
   document.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach((link, i) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
@@ -266,6 +280,16 @@ import '../styles/global.css';
 
   updateStatus();
   setInterval(updateStatus, 30000);
+
+  // Dev shortcut: double-tap footer to reload
+  let lastFooterTap = 0;
+  document.querySelector('.global-footer')?.addEventListener('click', () => {
+    const now = Date.now();
+    if (now - lastFooterTap < 400) {
+      window.location.href = '/' + location.hash;
+    }
+    lastFooterTap = now;
+  });
 
   // Currently building
   const buildingRepos = document.getElementById('building-repos');

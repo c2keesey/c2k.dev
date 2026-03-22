@@ -1,0 +1,334 @@
+---
+// LightningCloud — Arduino lightning cloud with FastLED
+// Interactive canvas with branching lightning bolt simulation
+---
+
+<div class="lc-showcase">
+  <a class="lc-card" href="https://github.com/c2keesey/LightningCloud" target="_blank" rel="noopener">
+    <div class="lc-content">
+      <div class="lc-header">
+        <span class="lc-name text-scramble" data-text="LightningCloud" data-delay="100" data-always="false">LightningCloud</span>
+        <span class="lc-badge">hardware</span>
+      </div>
+      <p class="lc-tagline">LED lightning cloud</p>
+      <p class="lc-desc">Arduino-powered storm cloud with 4 WS2812 LED strips. Branching bolts with fork propagation, strobe flash, and smooth fade — all driven by a custom Lightning class on an ESP32.</p>
+
+      <div class="lc-media">
+        <img src="/lightning-cloud.gif" alt="Lightning cloud in action" class="lc-photo" onerror="this.parentElement.style.display='none'" />
+      </div>
+
+      <div class="lc-viz" id="lc-viz">
+        <canvas id="lc-canvas"></canvas>
+      </div>
+
+      <div class="lc-stack">
+        <span class="lc-tech">C++</span>
+        <span class="lc-tech">Arduino</span>
+        <span class="lc-tech">FastLED</span>
+        <span class="lc-tech">ESP32</span>
+        <span class="lc-tech">WS2812</span>
+      </div>
+
+      <div class="lc-footer">
+        <span class="lc-pre-llm">hand-written · 2021 · pre-LLM</span>
+        <span class="lc-link">github.com/c2keesey/LightningCloud ↗</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<script>
+  function initLightningCloud() {
+    const canvas = document.getElementById('lc-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+
+    // Cloud shape (top area)
+    const cloudY = h * 0.2;
+
+    interface Segment { x1: number; y1: number; x2: number; y2: number; alpha: number; width: number; }
+    interface Bolt { segments: Segment[]; born: number; flashCount: number; lastFlash: number; fading: boolean; fadeStart: number; }
+
+    let bolts: Bolt[] = [];
+    let lastBolt = 0;
+
+    function createBolt(time: number): Bolt {
+      const segments: Segment[] = [];
+      const startX = w * 0.2 + Math.random() * w * 0.6;
+      let x = startX;
+      let y = cloudY;
+      const mainLen = 8 + Math.floor(Math.random() * 6);
+
+      // Main bolt
+      for (let i = 0; i < mainLen; i++) {
+        const nx = x + (Math.random() - 0.5) * 20;
+        const ny = y + (h - cloudY) / mainLen + Math.random() * 4;
+        segments.push({ x1: x, y1: y, x2: nx, y2: ny, alpha: 1, width: 2 });
+        x = nx;
+        y = ny;
+
+        // Fork chance
+        if (i > 2 && Math.random() < 0.3) {
+          let fx = x, fy = y;
+          const forkLen = 2 + Math.floor(Math.random() * 4);
+          const dir = Math.random() < 0.5 ? -1 : 1;
+          for (let j = 0; j < forkLen; j++) {
+            const fnx = fx + dir * (5 + Math.random() * 10);
+            const fny = fy + (h - cloudY) / mainLen * 0.7 + Math.random() * 3;
+            segments.push({ x1: fx, y1: fy, x2: fnx, y2: fny, alpha: 0.7, width: 1 });
+            fx = fnx;
+            fy = fny;
+          }
+        }
+      }
+
+      return { segments, born: time, flashCount: 0, lastFlash: time, fading: false, fadeStart: 0 };
+    }
+
+    function drawCloud(time: number) {
+      // Ambient glow from active bolts
+      const hasActive = bolts.some(b => !b.fading);
+      const glowAlpha = hasActive ? 0.06 + Math.sin(time / 200) * 0.02 : 0.02;
+
+      // Cloud body
+      const gradient = ctx.createRadialGradient(w / 2, cloudY * 0.6, 10, w / 2, cloudY * 0.6, w * 0.5);
+      gradient.addColorStop(0, `rgba(140, 160, 200, ${glowAlpha * 2})`);
+      gradient.addColorStop(1, 'transparent');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, cloudY + 10);
+    }
+
+    function draw(time: number) {
+      ctx.clearRect(0, 0, w, h);
+
+      drawCloud(time);
+
+      // Spawn new bolt
+      if (time - lastBolt > 1200 + Math.random() * 2000) {
+        bolts.push(createBolt(time));
+        lastBolt = time;
+      }
+
+      bolts = bolts.filter(bolt => {
+        const age = time - bolt.born;
+
+        // Flash phase
+        if (!bolt.fading && bolt.flashCount < 4) {
+          if (time - bolt.lastFlash > 60) {
+            bolt.flashCount++;
+            bolt.lastFlash = time;
+          }
+          const flashOn = bolt.flashCount % 2 === 1;
+          const brightness = flashOn ? 1 : 0.5;
+
+          bolt.segments.forEach(seg => {
+            drawSegment(seg, brightness);
+          });
+
+          if (bolt.flashCount >= 4) {
+            bolt.fading = true;
+            bolt.fadeStart = time;
+          }
+          return true;
+        }
+
+        // Fade phase
+        if (bolt.fading) {
+          const fadeAge = time - bolt.fadeStart;
+          const fadeAlpha = Math.max(0, 1 - fadeAge / 800);
+          if (fadeAlpha <= 0) return false;
+
+          bolt.segments.forEach(seg => {
+            drawSegment(seg, fadeAlpha);
+          });
+          return true;
+        }
+
+        // Initial draw phase (bolt propagating)
+        bolt.segments.forEach(seg => {
+          drawSegment(seg, 1);
+        });
+        return age < 5000;
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    function drawSegment(seg: Segment, brightness: number) {
+      const alpha = seg.alpha * brightness;
+
+      // Outer glow
+      ctx.beginPath();
+      ctx.moveTo(seg.x1, seg.y1);
+      ctx.lineTo(seg.x2, seg.y2);
+      ctx.strokeStyle = `rgba(165, 180, 255, ${alpha * 0.3})`;
+      ctx.lineWidth = seg.width + 4;
+      ctx.stroke();
+
+      // Core
+      ctx.beginPath();
+      ctx.moveTo(seg.x1, seg.y1);
+      ctx.lineTo(seg.x2, seg.y2);
+      ctx.strokeStyle = `rgba(200, 210, 255, ${alpha})`;
+      ctx.lineWidth = seg.width;
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  initLightningCloud();
+</script>
+
+<style>
+  .lc-showcase {
+    margin-bottom: 2rem;
+  }
+
+  .lc-card {
+    display: block;
+    position: relative;
+    background: linear-gradient(135deg, rgba(100, 120, 180, 0.06), rgba(60, 60, 100, 0.03));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    transition: border-color 0.3s;
+  }
+
+  .lc-card:hover {
+    border-color: rgba(165, 180, 255, 0.4);
+  }
+
+  .lc-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .lc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .lc-name {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(200, 210, 255, 0.9);
+  }
+
+  .lc-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(165, 180, 255, 0.15);
+    color: rgba(165, 180, 255, 0.8);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .lc-tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.35rem;
+  }
+
+  .lc-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Photo/GIF */
+  .lc-media {
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .lc-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 200px;
+  }
+
+  /* Lightning visualization */
+  .lc-viz {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  #lc-canvas {
+    display: block;
+    width: 100%;
+    height: 120px;
+  }
+
+  /* Tech stack */
+  .lc-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .lc-tech {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  .lc-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .lc-pre-llm {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(165, 180, 255, 0.08);
+    border: 1px solid rgba(165, 180, 255, 0.15);
+    border-radius: 4px;
+    color: rgba(165, 180, 255, 0.5);
+    letter-spacing: 0.03em;
+  }
+
+  .lc-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(165, 180, 255, 0.5);
+    transition: color 0.2s;
+  }
+
+  .lc-card:hover .lc-link {
+    color: rgba(165, 180, 255, 0.9);
+  }
+</style>

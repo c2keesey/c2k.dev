@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/home/c2k/repos/c2k.dev
-Environment=HOST=0.0.0.0
+Environment=HOST=127.0.0.1
 Environment=PORT=4321
 ExecStart=/home/c2k/.bun/bin/bun ./dist/server/entry.mjs
 Restart=on-failure

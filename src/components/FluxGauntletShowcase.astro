@@ -1,0 +1,562 @@
+---
+// Flux Gauntlet — wearable LED controller with per-finger buttons
+// Interactive showcase with animated LED strip and effect switching
+---
+
+<div class="fg-showcase">
+  <a class="fg-card" href="https://github.com/c2keesey/Flux-Gauntlet" target="_blank" rel="noopener">
+    <div class="fg-glow"></div>
+    <div class="fg-content">
+      <div class="fg-header">
+        <span class="fg-name text-scramble" data-text="Flux Gauntlet" data-delay="100" data-always="false">Flux Gauntlet</span>
+        <span class="fg-badge">wearable</span>
+      </div>
+      <p class="fg-tagline">Wearable LED instrument</p>
+      <p class="fg-desc">Custom gauntlet with 300 WS2812 LEDs, 5 per-finger buttons, rotary encoder, and OLED display. 15+ effects — blasts, fire rings, lightning, collisions — all switchable in real time.</p>
+
+      <div class="fg-media">
+        <img src="/flux-gauntlet.gif" alt="Flux Gauntlet in action" class="fg-photo" onerror="this.parentElement.style.display='none'" />
+      </div>
+
+      <div class="fg-viz">
+        <canvas id="fg-canvas"></canvas>
+        <div class="fg-controls">
+          <button class="fg-btn" data-effect="blast" title="Blast">blast</button>
+          <button class="fg-btn" data-effect="fire" title="Fire Rings">fire</button>
+          <button class="fg-btn" data-effect="pew" title="Pew">pew</button>
+          <button class="fg-btn" data-effect="rings" title="Rings">rings</button>
+          <button class="fg-btn" data-effect="lightning" title="Lightning">⚡</button>
+        </div>
+      </div>
+
+      <div class="fg-specs">
+        <div class="fg-spec">
+          <span class="fg-spec-val">300</span>
+          <span class="fg-spec-label">LEDs</span>
+        </div>
+        <div class="fg-spec-sep"></div>
+        <div class="fg-spec">
+          <span class="fg-spec-val">5</span>
+          <span class="fg-spec-label">buttons</span>
+        </div>
+        <div class="fg-spec-sep"></div>
+        <div class="fg-spec">
+          <span class="fg-spec-val">15+</span>
+          <span class="fg-spec-label">effects</span>
+        </div>
+        <div class="fg-spec-sep"></div>
+        <div class="fg-spec">
+          <span class="fg-spec-val">ESP32</span>
+          <span class="fg-spec-label">brain</span>
+        </div>
+      </div>
+
+      <div class="fg-stack">
+        <span class="fg-tech">C++</span>
+        <span class="fg-tech">PlatformIO</span>
+        <span class="fg-tech">FastLED</span>
+        <span class="fg-tech">ESP32</span>
+        <span class="fg-tech">U8g2</span>
+        <span class="fg-tech">WS2812</span>
+      </div>
+
+      <div class="fg-footer">
+        <span class="fg-pre-llm">hand-written · 2024 · pre-LLM</span>
+        <span class="fg-link">github.com/c2keesey/Flux-Gauntlet ↗</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<script>
+  function initFluxGauntlet() {
+    const canvas = document.getElementById('fg-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+
+    const numLeds = 80;
+    let leds: { r: number; g: number; b: number }[] = Array.from({ length: numLeds }, () => ({ r: 0, g: 0, b: 0 }));
+    let effect = 'blast';
+    let time = 0;
+
+    // Spiral arm geometry — LED positions on a cylinder viewed from the side
+    const wraps = 5; // how many times the strip wraps around the arm
+    const cx = w / 2;
+    const cy = h / 2;
+    const armRadiusY = h * 0.32; // vertical radius of the ellipse (arm cross-section)
+    const armRadiusX = armRadiusY * 0.55; // horizontal squash for perspective
+    const armLeft = w * 0.12;
+    const armRight = w * 0.88;
+    const armLen = armRight - armLeft;
+
+    interface LedPos { x: number; y: number; z: number; } // z: -1 (back) to 1 (front)
+    const ledPositions: LedPos[] = [];
+
+    for (let i = 0; i < numLeds; i++) {
+      const t = i / numLeds; // 0 to 1 along the strip
+      const angle = t * wraps * Math.PI * 2; // spiral angle
+      const xPos = armLeft + t * armLen; // position along the arm
+      const yOff = Math.sin(angle) * armRadiusY;
+      const zVal = Math.cos(angle); // -1 = back, 1 = front
+      ledPositions.push({ x: xPos, y: cy + yOff, z: zVal });
+    }
+
+    // Particles for effects
+    interface Particle { pos: number; vel: number; hue: number; life: number; maxLife: number; }
+    let particles: Particle[] = [];
+
+    function hslToRgb(h: number, s: number, l: number) {
+      h /= 360; s /= 100; l /= 100;
+      let r, g, b;
+      if (s === 0) { r = g = b = l; } else {
+        const hue2rgb = (p: number, q: number, t: number) => {
+          if (t < 0) t += 1; if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q - p) * 6 * t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+      return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+    }
+
+    function clear() {
+      for (let i = 0; i < numLeds; i++) leds[i] = { r: 0, g: 0, b: 0 };
+    }
+
+    function fade(amount: number) {
+      for (let i = 0; i < numLeds; i++) {
+        leds[i].r = Math.max(0, leds[i].r - amount);
+        leds[i].g = Math.max(0, leds[i].g - amount);
+        leds[i].b = Math.max(0, leds[i].b - amount);
+      }
+    }
+
+    // Effects
+    function tickBlast() {
+      fade(15);
+      if (time % 20 === 0) {
+        const hue = (time * 3) % 360;
+        particles.push({ pos: numLeds / 2, vel: 2 + Math.random() * 2, hue, life: 0, maxLife: 30 });
+        particles.push({ pos: numLeds / 2, vel: -(2 + Math.random() * 2), hue, life: 0, maxLife: 30 });
+      }
+      particles.forEach(p => {
+        p.pos += p.vel;
+        p.life++;
+        const alpha = 1 - p.life / p.maxLife;
+        const idx = Math.round(p.pos);
+        if (idx >= 0 && idx < numLeds) {
+          const c = hslToRgb(p.hue, 100, 50);
+          leds[idx].r = Math.min(255, leds[idx].r + c.r * alpha);
+          leds[idx].g = Math.min(255, leds[idx].g + c.g * alpha);
+          leds[idx].b = Math.min(255, leds[idx].b + c.b * alpha);
+        }
+      });
+      particles = particles.filter(p => p.life < p.maxLife && p.pos >= -1 && p.pos <= numLeds);
+    }
+
+    function tickFire() {
+      fade(8);
+      for (let i = 0; i < numLeds; i++) {
+        const wave1 = Math.sin(i * 0.15 + time * 0.08) * 0.5 + 0.5;
+        const wave2 = Math.sin(i * 0.3 - time * 0.12) * 0.5 + 0.5;
+        const heat = wave1 * wave2;
+        const hue = 10 + heat * 30;
+        const c = hslToRgb(hue, 100, heat * 50);
+        leds[i].r = Math.min(255, leds[i].r + c.r * 0.3);
+        leds[i].g = Math.min(255, leds[i].g + c.g * 0.3);
+        leds[i].b = Math.min(255, leds[i].b + c.b * 0.3);
+      }
+    }
+
+    function tickPew() {
+      fade(20);
+      if (time % 30 === 0) {
+        const hue = 270 + Math.random() * 60;
+        particles.push({ pos: 0, vel: 3 + Math.random() * 2, hue, life: 0, maxLife: 25 });
+      }
+      particles.forEach(p => {
+        p.pos += p.vel;
+        p.life++;
+        const idx = Math.round(p.pos);
+        for (let j = 0; j < 4; j++) {
+          const k = idx - j;
+          if (k >= 0 && k < numLeds) {
+            const trail = 1 - j * 0.25;
+            const c = hslToRgb(p.hue, 100, 60);
+            leds[k].r = Math.min(255, c.r * trail);
+            leds[k].g = Math.min(255, c.g * trail);
+            leds[k].b = Math.min(255, c.b * trail);
+          }
+        }
+      });
+      particles = particles.filter(p => p.pos < numLeds + 5);
+    }
+
+    function tickRings() {
+      fade(10);
+      const center = numLeds / 2;
+      const radius = (time * 0.5) % (numLeds / 2);
+      const hue = (time * 2) % 360;
+      for (let i = 0; i < numLeds; i++) {
+        const dist = Math.abs(i - center);
+        if (Math.abs(dist - radius) < 2) {
+          const c = hslToRgb(hue, 100, 60);
+          const bright = 1 - Math.abs(dist - radius) / 2;
+          leds[i].r = Math.min(255, c.r * bright);
+          leds[i].g = Math.min(255, c.g * bright);
+          leds[i].b = Math.min(255, c.b * bright);
+        }
+      }
+    }
+
+    function tickLightning() {
+      fade(30);
+      if (Math.random() < 0.06) {
+        const start = Math.floor(Math.random() * numLeds);
+        const len = 5 + Math.floor(Math.random() * 15);
+        for (let i = start; i < Math.min(start + len, numLeds); i++) {
+          const bright = 180 + Math.random() * 75;
+          leds[i] = { r: bright * 0.8, g: bright * 0.85, b: bright };
+        }
+      }
+    }
+
+    const effects: Record<string, () => void> = {
+      blast: tickBlast, fire: tickFire, pew: tickPew, rings: tickRings, lightning: tickLightning,
+    };
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+
+      // Draw faint arm silhouette
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, armLen / 2, armRadiusY + 6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.015)';
+      ctx.fill();
+      ctx.restore();
+
+      // Tick effect
+      effects[effect]?.();
+      time++;
+
+      // Sort LEDs by z so back ones draw first (painter's algorithm)
+      const indices = Array.from({ length: numLeds }, (_, i) => i);
+      indices.sort((a, b) => ledPositions[a].z - ledPositions[b].z);
+
+      for (const i of indices) {
+        const pos = ledPositions[i];
+        const { r, g, b } = leds[i];
+        const brightness = (r + g + b) / 3;
+
+        // Depth-based sizing and opacity
+        const depthScale = 0.5 + (pos.z + 1) / 2 * 0.5; // 0.5 (back) to 1.0 (front)
+        const depthAlpha = 0.3 + (pos.z + 1) / 2 * 0.7; // 0.3 (back) to 1.0 (front)
+        const ledR = 2.5 * depthScale;
+
+        if (brightness > 5) {
+          // Glow — bigger and more visible on front-facing LEDs
+          const glowR = ledR * (3 + depthScale * 2);
+          const grd = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, glowR);
+          grd.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${0.35 * depthAlpha})`);
+          grd.addColorStop(1, 'transparent');
+          ctx.fillStyle = grd;
+          ctx.fillRect(pos.x - glowR, pos.y - glowR, glowR * 2, glowR * 2);
+        }
+
+        // LED dot
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, ledR, 0, Math.PI * 2);
+        if (brightness > 5) {
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${depthAlpha})`;
+        } else {
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.06 * depthAlpha})`;
+        }
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    // Button handlers
+    document.querySelectorAll<HTMLButtonElement>('.fg-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const fx = btn.dataset.effect;
+        if (fx) {
+          effect = fx;
+          particles = [];
+          clear();
+          time = 0;
+          document.querySelectorAll('.fg-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        }
+      });
+    });
+
+    // Set initial active
+    document.querySelector('.fg-btn[data-effect="blast"]')?.classList.add('active');
+
+    requestAnimationFrame(draw);
+  }
+
+  initFluxGauntlet();
+</script>
+
+<style>
+  .fg-showcase {
+    margin-bottom: 2rem;
+  }
+
+  .fg-card {
+    display: block;
+    position: relative;
+    background: linear-gradient(145deg, rgba(255, 60, 20, 0.05), rgba(180, 40, 255, 0.04), rgba(20, 20, 30, 0.95));
+    border: 1px solid rgba(255, 100, 50, 0.2);
+    border-radius: 12px;
+    padding: 1.75rem;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .fg-card:hover {
+    border-color: rgba(255, 100, 50, 0.5);
+    box-shadow: 0 0 30px rgba(255, 60, 20, 0.08), 0 0 60px rgba(180, 40, 255, 0.04);
+  }
+
+  .fg-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(255, 80, 30, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(140, 50, 255, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    animation: fg-glow-shift 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes fg-glow-shift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(5%, -5%); }
+  }
+
+  .fg-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .fg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .fg-name {
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff6b35, #c850c0, #6a5aff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .fg-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(255, 100, 50, 0.15);
+    color: rgba(255, 130, 70, 0.9);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fg-tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.35rem;
+  }
+
+  .fg-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Photo/GIF */
+  .fg-media {
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 100, 50, 0.15);
+  }
+
+  .fg-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 200px;
+  }
+
+  /* LED visualization */
+  .fg-viz {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 100, 50, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  #fg-canvas {
+    display: block;
+    width: 100%;
+    height: 120px;
+  }
+
+  .fg-controls {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid rgba(255, 100, 50, 0.1);
+  }
+
+  .fg-btn {
+    flex: 1;
+    padding: 0.4rem;
+    background: none;
+    border: none;
+    border-right: 1px solid rgba(255, 100, 50, 0.1);
+    color: rgba(255, 255, 255, 0.3);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .fg-btn:last-child {
+    border-right: none;
+  }
+
+  .fg-btn:hover {
+    background: rgba(255, 100, 50, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .fg-btn.active {
+    background: rgba(255, 100, 50, 0.12);
+    color: rgba(255, 130, 70, 0.9);
+  }
+
+  /* Spec bar */
+  .fg-specs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    margin-bottom: 0.75rem;
+    border: 1px solid rgba(255, 100, 50, 0.1);
+    border-radius: 6px;
+    background: rgba(255, 100, 50, 0.03);
+  }
+
+  .fg-spec {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+  }
+
+  .fg-spec-val {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: rgba(255, 130, 70, 0.9);
+  }
+
+  .fg-spec-label {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fg-spec-sep {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 100, 50, 0.15);
+  }
+
+  /* Tech stack */
+  .fg-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .fg-tech {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  /* Footer */
+  .fg-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .fg-pre-llm {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(255, 100, 50, 0.08);
+    border: 1px solid rgba(255, 100, 50, 0.15);
+    border-radius: 4px;
+    color: rgba(255, 130, 70, 0.5);
+    letter-spacing: 0.03em;
+  }
+
+  .fg-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(255, 130, 70, 0.5);
+    transition: color 0.2s;
+  }
+
+  .fg-card:hover .fg-link {
+    color: rgba(255, 130, 70, 0.9);
+  }
+</style>

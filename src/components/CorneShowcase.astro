@@ -1,0 +1,575 @@
+---
+// C2K-Corne — custom split keyboard with ZMK firmware
+// Interactive keymap visualization with layer switching
+---
+
+<div class="crn-showcase">
+  <a class="crn-card" href="https://github.com/c2keesey/zmk-config-corne-2" target="_blank" rel="noopener">
+    <div class="crn-content">
+      <div class="crn-header">
+        <span class="crn-name text-scramble" data-text="C2K-Corne" data-delay="100" data-always="false">C2K-Corne</span>
+        <span class="crn-badge">keyboard</span>
+      </div>
+      <p class="crn-tagline">42-key split keyboard</p>
+      <p class="crn-desc">Custom Corne build running ZMK with urob's config. Homerow mods, smart-shift, combos, mod-morphs, mouse emulation, and leader keys — all on 42 keys.</p>
+
+      <div class="crn-media">
+        <img src="/corne.gif" alt="C2K-Corne keyboard" class="crn-photo" onerror="this.parentElement.style.display='none'" />
+      </div>
+
+      <div class="crn-keymap" id="crn-keymap">
+        <div class="crn-layers" id="crn-layers">
+          <button class="crn-layer-btn active" data-layer="base">base</button>
+          <button class="crn-layer-btn" data-layer="nav">nav</button>
+          <button class="crn-layer-btn" data-layer="num">num</button>
+          <button class="crn-layer-btn" data-layer="sym">sym</button>
+        </div>
+        <div class="crn-board" id="crn-board"></div>
+        <div class="crn-detail" id="crn-detail"></div>
+      </div>
+
+      <div class="crn-features">
+        <span class="crn-feat">homerow mods</span>
+        <span class="crn-feat">smart-shift</span>
+        <span class="crn-feat">combos</span>
+        <span class="crn-feat">mod-morphs</span>
+        <span class="crn-feat">mouse keys</span>
+        <span class="crn-feat">leader key</span>
+        <span class="crn-feat">tented</span>
+      </div>
+
+      <div class="crn-stack">
+        <span class="crn-tech">ZMK</span>
+        <span class="crn-tech">C</span>
+        <span class="crn-tech">Devicetree</span>
+        <span class="crn-tech">Bluetooth</span>
+      </div>
+
+      <div class="crn-footer">
+        <span class="crn-pre-llm">hand-configured · 2024</span>
+        <span class="crn-link">github.com/c2keesey/zmk-config-corne-2 ↗</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<script>
+  function initCorne() {
+    const board = document.getElementById('crn-board');
+    const detail = document.getElementById('crn-detail');
+    if (!board || !detail) return;
+
+    type Key = { label: string; sub?: string; mod?: string; width?: number; detail?: string; };
+
+    const layers: Record<string, { left: Key[][]; right: Key[][]; }> = {
+      base: {
+        left: [
+          [{ label: 'Q', detail: 'Sleep on outer column' }, { label: 'W' }, { label: 'E' }, { label: 'R' }, { label: 'T' }],
+          [{ label: 'A', sub: 'ctrl', mod: 'hrm', detail: 'Homerow mod: hold for Ctrl' }, { label: 'S', sub: 'alt', mod: 'hrm', detail: 'Homerow mod: hold for Alt' }, { label: 'D', sub: 'gui', mod: 'hrm', detail: 'Homerow mod: hold for Cmd' }, { label: 'F', sub: 'sft', mod: 'hrm', detail: 'Homerow mod: hold for Shift' }, { label: 'G' }],
+          [{ label: 'Z' }, { label: 'X' }, { label: 'C' }, { label: 'V' }, { label: 'B' }],
+        ],
+        right: [
+          [{ label: 'Y' }, { label: 'U' }, { label: 'I' }, { label: 'O' }, { label: 'P' }],
+          [{ label: 'H' }, { label: 'J', sub: 'sft', mod: 'hrm', detail: 'Homerow mod: hold for Shift' }, { label: 'K', sub: 'gui', mod: 'hrm', detail: 'Homerow mod: hold for Cmd' }, { label: 'L', sub: 'alt', mod: 'hrm', detail: 'Homerow mod: hold for Alt' }, { label: "'", sub: 'ctrl', mod: 'hrm', detail: 'Homerow mod: hold for Ctrl' }],
+          [{ label: 'N' }, { label: 'M' }, { label: ',;', detail: 'Tap: comma | Shift: semicolon | Ctrl+Shift: <' }, { label: '.:', detail: 'Tap: dot | Shift: colon | Ctrl+Shift: >' }, { label: '/' }],
+        ],
+      },
+      nav: {
+        left: [
+          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
+          [{ label: 'ctrl', mod: 'mod' }, { label: 'alt', mod: 'mod' }, { label: 'gui', mod: 'mod' }, { label: 'sft', mod: 'mod' }, { label: '' }],
+          [{ label: '' }, { label: 'cut' }, { label: 'copy', detail: 'Tap: copy | Double-tap: cut' }, { label: 'paste' }, { label: '' }],
+        ],
+        right: [
+          [{ label: '' }, { label: 'home' }, { label: 'up' }, { label: 'end' }, { label: 'pgup' }],
+          [{ label: '' }, { label: 'left', mod: 'nav' }, { label: 'down', mod: 'nav' }, { label: 'right', mod: 'nav' }, { label: 'pgdn' }],
+          [{ label: '' }, { label: 'bspc', detail: 'Tap: bspc | Hold: delete word backward' }, { label: '' }, { label: 'del', detail: 'Tap: del | Hold: delete word forward' }, { label: '' }],
+        ],
+      },
+      num: {
+        left: [
+          [{ label: '' }, { label: '7' }, { label: '8' }, { label: '9' }, { label: '' }],
+          [{ label: '' }, { label: '4' }, { label: '5' }, { label: '6' }, { label: '0' }],
+          [{ label: '' }, { label: '1' }, { label: '2' }, { label: '3' }, { label: '' }],
+        ],
+        right: [
+          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
+          [{ label: '+' }, { label: '-' }, { label: '*' }, { label: '/' }, { label: '=' }],
+          [{ label: '' }, { label: '.' }, { label: ',' }, { label: '' }, { label: '' }],
+        ],
+      },
+      sym: {
+        left: [
+          [{ label: '`' }, { label: '&' }, { label: '{' }, { label: '}' }, { label: '|' }],
+          [{ label: '~' }, { label: '$' }, { label: '(' }, { label: ')' }, { label: '#' }],
+          [{ label: '' }, { label: '@' }, { label: '[' }, { label: ']' }, { label: '' }],
+        ],
+        right: [
+          [{ label: '^' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
+          [{ label: '-' }, { label: '=' }, { label: '\\' }, { label: '%' }, { label: '!' }],
+          [{ label: '_' }, { label: '+' }, { label: '' }, { label: '' }, { label: '?' }],
+        ],
+      },
+    };
+
+    const thumbs: Record<string, { left: Key[]; right: Key[]; }> = {
+      base: {
+        left: [{ label: 'esc', sub: 'fn', detail: 'Tap: Esc | Hold: Fn layer' }, { label: 'spc', sub: 'nav', detail: 'Tap: Space | Hold: Nav layer | Shift: dot + space + sticky shift' }, { label: 'tab', sub: 'sym', detail: 'Tap: Tab | Hold: Sym layer' }],
+        right: [{ label: 'ret', sub: 'sys', detail: 'Tap: Return | Hold: Sys layer' }, { label: 'bspc', sub: 'num', detail: 'Tap: Backspace | Hold: Num layer' }, { label: '\u21e7', detail: 'Smart shift: tap = sticky shift, shift+tap = caps word' }],
+      },
+      nav: { left: [{ label: 'esc' }, { label: '\u2593', mod: 'active' }, { label: 'tab' }], right: [{ label: 'ret' }, { label: 'bspc' }, { label: '\u21e7' }] },
+      num: { left: [{ label: 'esc' }, { label: 'spc' }, { label: 'tab' }], right: [{ label: 'ret' }, { label: '\u2593', mod: 'active' }, { label: '\u21e7' }] },
+      sym: { left: [{ label: 'esc' }, { label: 'spc' }, { label: '\u2593', mod: 'active' }], right: [{ label: 'ret' }, { label: 'bspc' }, { label: '\u21e7' }] },
+    };
+
+    let currentLayer = 'base';
+
+    function renderBoard() {
+      const layer = layers[currentLayer];
+      const thumb = thumbs[currentLayer];
+      while (board.firstChild) board.removeChild(board.firstChild);
+
+      const container = document.createElement('div');
+      container.className = 'crn-halves';
+
+      function renderHalf(rows: Key[][], thumbKeys: Key[], isRight: boolean): HTMLElement {
+        const half = document.createElement('div');
+        half.className = 'crn-half' + (isRight ? ' crn-right' : ' crn-left');
+
+        // Column stagger: margin-top per column (px). Pinky low, middle high.
+        const stagger = [8, 3, 0, 3, 6];
+
+        // Build columns instead of rows so stagger applies to the whole column
+        const cols = rows[0].length;
+        const colContainer = document.createElement('div');
+        colContainer.className = 'crn-cols';
+
+        for (let c = 0; c < cols; c++) {
+          const colEl = document.createElement('div');
+          colEl.className = 'crn-col';
+          const sIdx = isRight ? (cols - 1 - c) : c;
+          colEl.style.marginTop = (stagger[sIdx] || 0) + 'px';
+
+          for (let r = 0; r < rows.length; r++) {
+            colEl.appendChild(makeKey(rows[r][c]));
+          }
+          colContainer.appendChild(colEl);
+        }
+        half.appendChild(colContainer);
+
+        // Thumb row
+        const thumbRow = document.createElement('div');
+        thumbRow.className = 'crn-row crn-thumbs';
+        thumbKeys.forEach(key => thumbRow.appendChild(makeKey(key, true)));
+        half.appendChild(thumbRow);
+
+        return half;
+      }
+
+      container.appendChild(renderHalf(layer.left, thumb.left, false));
+      container.appendChild(renderHalf(layer.right, thumb.right, true));
+      board.appendChild(container);
+    }
+
+    function makeKey(key: Key, isThumb = false): HTMLElement {
+      const el = document.createElement('div');
+      el.className = 'crn-key' + (isThumb ? ' crn-thumb' : '') + (key.mod ? ` crn-${key.mod}` : '') + (!key.label ? ' crn-empty' : '');
+
+      const label = document.createElement('span');
+      label.className = 'crn-key-label';
+      label.textContent = key.label;
+      el.appendChild(label);
+
+      if (key.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'crn-key-sub';
+        sub.textContent = key.sub;
+        el.appendChild(sub);
+      }
+
+      if (key.detail) {
+        el.addEventListener('mouseenter', () => {
+          detail.textContent = key.detail!;
+          detail.classList.add('visible');
+        });
+        el.addEventListener('mouseleave', () => {
+          detail.classList.remove('visible');
+        });
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          detail.textContent = key.detail!;
+          detail.classList.toggle('visible');
+        });
+      }
+
+      return el;
+    }
+
+    // Layer switching
+    document.querySelectorAll<HTMLButtonElement>('.crn-layer-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const layer = btn.dataset.layer;
+        if (layer) {
+          currentLayer = layer;
+          document.querySelectorAll('.crn-layer-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          detail.classList.remove('visible');
+          renderBoard();
+        }
+      });
+    });
+
+    renderBoard();
+  }
+
+  initCorne();
+</script>
+
+<style>
+  .crn-showcase {
+    margin-bottom: 2rem;
+  }
+
+  .crn-card {
+    display: block;
+    position: relative;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.04), rgba(20, 184, 166, 0.03));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    transition: border-color 0.3s;
+  }
+
+  .crn-card:hover {
+    border-color: rgba(34, 197, 94, 0.4);
+  }
+
+  .crn-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .crn-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .crn-name {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(34, 197, 94, 0.9);
+  }
+
+  .crn-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(34, 197, 94, 0.15);
+    color: rgba(34, 197, 94, 0.8);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .crn-tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.35rem;
+  }
+
+  .crn-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Photo/GIF */
+  .crn-media {
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .crn-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 200px;
+  }
+
+  /* Keymap visualization */
+  .crn-keymap {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .crn-layers {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .crn-layer-btn {
+    flex: 1;
+    padding: 0.4rem;
+    background: none;
+    border: none;
+    border-right: 1px solid var(--border);
+    color: rgba(255, 255, 255, 0.3);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .crn-layer-btn:last-child { border-right: none; }
+
+  .crn-layer-btn:hover {
+    background: rgba(34, 197, 94, 0.06);
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .crn-layer-btn.active {
+    background: rgba(34, 197, 94, 0.1);
+    color: rgba(34, 197, 94, 0.9);
+  }
+
+  /* Board layout */
+  .crn-board {
+    padding: 0.75rem;
+  }
+
+  :global(.crn-halves) {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+
+  :global(.crn-half) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  :global(.crn-cols) {
+    display: flex;
+    gap: 3px;
+    align-items: flex-start;
+  }
+
+  :global(.crn-col) {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  :global(.crn-row) {
+    display: flex;
+    gap: 3px;
+  }
+
+  :global(.crn-thumbs) {
+    padding-top: 4px;
+  }
+
+  :global(.crn-left .crn-thumbs) {
+    justify-content: flex-end;
+  }
+
+  :global(.crn-right .crn-thumbs) {
+    justify-content: flex-start;
+  }
+
+  :global(.crn-key) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    cursor: default;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  :global(.crn-key:hover) {
+    background: rgba(34, 197, 94, 0.08);
+    border-color: rgba(34, 197, 94, 0.3);
+  }
+
+  :global(.crn-thumb) {
+    width: 34px;
+    height: 26px;
+    border-radius: 4px 4px 8px 8px;
+  }
+
+  :global(.crn-empty) {
+    opacity: 0.3;
+  }
+
+  :global(.crn-hrm) {
+    border-color: rgba(168, 85, 247, 0.3);
+    background: rgba(168, 85, 247, 0.06);
+  }
+
+  :global(.crn-mod) {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+
+  :global(.crn-nav) {
+    background: rgba(34, 197, 94, 0.08);
+    border-color: rgba(34, 197, 94, 0.2);
+  }
+
+  :global(.crn-active) {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.4);
+  }
+
+  :global(.crn-key-label) {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1;
+  }
+
+  :global(.crn-key-sub) {
+    font-family: var(--font-mono);
+    font-size: 0.4rem;
+    color: rgba(168, 85, 247, 0.6);
+    line-height: 1;
+    margin-top: 1px;
+  }
+
+  /* Detail bar */
+  .crn-detail {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.2s, opacity 0.2s, padding 0.2s;
+    border-top: 1px solid transparent;
+    line-height: 1.4;
+  }
+
+  .crn-detail.visible {
+    max-height: 40px;
+    opacity: 1;
+    padding: 0.4rem 0.75rem;
+    border-top-color: var(--border);
+  }
+
+  /* Features */
+  .crn-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .crn-feat {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.12rem 0.4rem;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.12);
+    color: rgba(34, 197, 94, 0.6);
+    border-radius: 3px;
+  }
+
+  /* Tech stack */
+  .crn-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .crn-tech {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  /* Footer */
+  .crn-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .crn-pre-llm {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(34, 197, 94, 0.06);
+    border: 1px solid rgba(34, 197, 94, 0.12);
+    border-radius: 4px;
+    color: rgba(34, 197, 94, 0.45);
+    letter-spacing: 0.03em;
+  }
+
+  .crn-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(34, 197, 94, 0.5);
+    transition: color 0.2s;
+  }
+
+  .crn-card:hover .crn-link {
+    color: rgba(34, 197, 94, 0.9);
+  }
+
+  /* Mobile */
+  @media (max-width: 500px) {
+    :global(.crn-key) {
+      width: 26px;
+      height: 24px;
+    }
+    :global(.crn-thumb) {
+      width: 28px;
+      height: 22px;
+    }
+    :global(.crn-key-label) {
+      font-size: 0.45rem;
+    }
+    :global(.crn-key-sub) {
+      font-size: 0.35rem;
+    }
+    :global(.crn-halves) {
+      gap: 0.5rem;
+    }
+    .crn-board {
+      padding: 0.5rem;
+    }
+  }
+</style>

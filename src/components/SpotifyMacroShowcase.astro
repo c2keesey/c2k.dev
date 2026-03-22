@@ -1,0 +1,598 @@
+---
+// Spotify Macro — suite of Spotify automations
+// Interactive showcase highlighting each automation's flow
+---
+
+<div class="sm-showcase">
+  <div class="sm-card">
+    <div class="sm-content">
+      <div class="sm-header">
+        <span class="sm-name text-scramble" data-text="spotify-macro" data-delay="100" data-always="false">spotify-macro</span>
+        <span class="sm-badge">automation</span>
+      </div>
+      <p class="sm-tagline">Spotify library automation suite</p>
+      <p class="sm-desc">Collection of Python automations that manage my Spotify library — routing songs between playlists, classifying genres, syncing liked songs, and keeping everything organized via cron.</p>
+
+      <div class="sm-automations" id="sm-automations">
+        <button class="sm-auto-card sm-active" data-auto="flow">
+          <div class="sm-auto-icon">↔</div>
+          <div class="sm-auto-info">
+            <span class="sm-auto-name">playlist flow</span>
+            <span class="sm-auto-detail">emoji-based routing</span>
+          </div>
+        </button>
+        <button class="sm-auto-card" data-auto="classify">
+          <div class="sm-auto-icon">◈</div>
+          <div class="sm-auto-info">
+            <span class="sm-auto-name">classifier</span>
+            <span class="sm-auto-detail">genre sorting</span>
+          </div>
+        </button>
+        <button class="sm-auto-card" data-auto="daily">
+          <div class="sm-auto-icon">♡</div>
+          <div class="sm-auto-info">
+            <span class="sm-auto-name">daily likes</span>
+            <span class="sm-auto-detail">liked → playlist</span>
+          </div>
+        </button>
+        <button class="sm-auto-card" data-auto="save">
+          <div class="sm-auto-icon">⌘</div>
+          <div class="sm-auto-info">
+            <span class="sm-auto-name">save current</span>
+            <span class="sm-auto-detail">hotkey → library</span>
+          </div>
+        </button>
+        <button class="sm-auto-card" data-auto="sync">
+          <div class="sm-auto-icon">⇅</div>
+          <div class="sm-auto-info">
+            <span class="sm-auto-name">playlist sync</span>
+            <span class="sm-auto-detail">local DJ mirror</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="sm-viz" id="sm-viz">
+        <canvas id="sm-canvas"></canvas>
+      </div>
+
+      <div class="sm-stack">
+        <span class="sm-tech">Python</span>
+        <span class="sm-tech">Spotipy</span>
+        <span class="sm-tech">cron</span>
+        <span class="sm-tech">macOS</span>
+        <span class="sm-tech">LaunchAgents</span>
+      </div>
+
+      <div class="sm-footer">
+        <span class="sm-pre-llm">hand-written · 2024 · pre-LLM</span>
+        <a class="sm-link" href="https://github.com/c2keesey/spotify-macro" target="_blank" rel="noopener">github.com/c2keesey/spotify-macro ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initSpotifyMacro() {
+    const canvas = document.getElementById('sm-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+
+    let activeAuto = 'flow';
+
+    // Colors
+    const green = [30, 215, 96]; // Spotify green
+    const dim = [255, 255, 255];
+
+    // ---- Flow visualization: playlists routing songs via emoji ----
+    interface Playlist {
+      x: number; y: number; name: string; emoji: string; isParent: boolean;
+    }
+    interface Particle {
+      x: number; y: number; tx: number; ty: number; progress: number; speed: number; color: number[];
+    }
+
+    let particles: Particle[] = [];
+    let lastSpawn = 0;
+
+    function getFlowPlaylists(): Playlist[] {
+      const cx = w / 2;
+      return [
+        { x: cx, y: 14, name: '♪ Jazz Collection', emoji: '♪', isParent: true },
+        { x: w * 0.15, y: h - 14, name: 'Daily Mix ♪', emoji: '♪', isParent: false },
+        { x: w * 0.5, y: h - 14, name: 'Favorites ♪', emoji: '♪', isParent: false },
+        { x: w * 0.85, y: h - 14, name: 'Workout ♪', emoji: '♪', isParent: false },
+      ];
+    }
+
+    function drawFlow(time: number) {
+      const pls = getFlowPlaylists();
+
+      // Draw connection lines
+      for (let i = 1; i < pls.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(pls[i].x, pls[i].y);
+        ctx.lineTo(pls[0].x, pls[0].y);
+        ctx.strokeStyle = 'rgba(30, 215, 96, 0.12)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Spawn particles flowing upward
+      if (time - lastSpawn > 600) {
+        const src = pls[1 + Math.floor(Math.random() * 3)];
+        particles.push({
+          x: src.x, y: src.y,
+          tx: pls[0].x, ty: pls[0].y,
+          progress: 0, speed: 0.008 + Math.random() * 0.006,
+          color: green,
+        });
+        lastSpawn = time;
+      }
+
+      // Update and draw particles
+      particles = particles.filter(p => {
+        p.progress += p.speed;
+        if (p.progress >= 1) return false;
+        const cx = p.x + (p.tx - p.x) * p.progress;
+        const cy = p.y + (p.ty - p.y) * p.progress;
+        const alpha = Math.sin(p.progress * Math.PI);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${alpha * 0.9})`;
+        ctx.fill();
+
+        // Trail glow
+        ctx.beginPath();
+        ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${alpha * 0.15})`;
+        ctx.fill();
+
+        return true;
+      });
+
+      // Draw playlist labels
+      pls.forEach(pl => {
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = pl.isParent ? 'rgba(30, 215, 96, 0.9)' : 'rgba(255, 255, 255, 0.5)';
+        ctx.fillText(pl.name, pl.x, pl.y + (pl.isParent ? 4 : -2));
+      });
+    }
+
+    // ---- Classifier visualization: songs getting sorted into buckets ----
+    interface ClassifyItem {
+      x: number; y: number; genre: string; targetX: number; progress: number; assigned: boolean;
+    }
+    let classifyItems: ClassifyItem[] = [];
+    let lastClassify = 0;
+    const genres = ['jazz', 'electronic', 'rock', 'ambient', 'hip-hop'];
+    const genreColors: Record<string, number[]> = {
+      jazz: [255, 180, 50], electronic: [100, 200, 255], rock: [255, 100, 100],
+      ambient: [150, 255, 150], 'hip-hop': [255, 150, 255],
+    };
+
+    function drawClassify(time: number) {
+      const bucketW = w / genres.length;
+
+      // Draw genre buckets at bottom
+      genres.forEach((g, i) => {
+        const bx = bucketW * i + bucketW / 2;
+        const col = genreColors[g];
+        ctx.font = '9px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(${col[0]}, ${col[1]}, ${col[2]}, 0.6)`;
+        ctx.fillText(g, bx, h - 6);
+
+        // Bucket line
+        ctx.beginPath();
+        ctx.moveTo(bucketW * i + 4, h - 16);
+        ctx.lineTo(bucketW * (i + 1) - 4, h - 16);
+        ctx.strokeStyle = `rgba(${col[0]}, ${col[1]}, ${col[2]}, 0.2)`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // Spawn from staging area (top center)
+      if (time - lastClassify > 800) {
+        const genre = genres[Math.floor(Math.random() * genres.length)];
+        const gi = genres.indexOf(genre);
+        classifyItems.push({
+          x: w / 2, y: 10,
+          genre,
+          targetX: bucketW * gi + bucketW / 2,
+          progress: 0, assigned: false,
+        });
+        lastClassify = time;
+      }
+
+      // "Staging" label
+      ctx.font = '9px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.fillText('staging', w / 2, 10);
+
+      classifyItems = classifyItems.filter(item => {
+        item.progress += 0.012;
+        if (item.progress >= 1) return false;
+
+        const col = genreColors[item.genre];
+        const cx = item.x + (item.targetX - item.x) * Math.min(1, item.progress * 2);
+        const cy = item.y + (h - 24 - item.y) * item.progress;
+        const alpha = item.progress < 0.9 ? 0.8 : (1 - item.progress) * 8;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${col[0]}, ${col[1]}, ${col[2]}, ${alpha})`;
+        ctx.fill();
+
+        return true;
+      });
+    }
+
+    // ---- Daily likes: heart pulses flowing into playlist ----
+    interface Heart { x: number; y: number; progress: number; }
+    let hearts: Heart[] = [];
+    let lastHeart = 0;
+
+    function drawDaily(time: number) {
+      // Liked Songs source (left)
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'rgba(30, 215, 96, 0.7)';
+      ctx.fillText('♡ Liked Songs', 12, h / 2 + 4);
+
+      // Arrow line
+      ctx.beginPath();
+      ctx.moveTo(w * 0.38, h / 2);
+      ctx.lineTo(w * 0.58, h / 2);
+      ctx.strokeStyle = 'rgba(30, 215, 96, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Target playlist (right)
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.fillText('Daily ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), w - 12, h / 2 + 4);
+
+      // Spawn heart particles
+      if (time - lastHeart > 700) {
+        hearts.push({ x: w * 0.38, y: h / 2, progress: 0 });
+        lastHeart = time;
+      }
+
+      hearts = hearts.filter(hrt => {
+        hrt.progress += 0.015;
+        if (hrt.progress >= 1) return false;
+        const cx = hrt.x + (w * 0.58 - hrt.x) * hrt.progress;
+        const alpha = Math.sin(hrt.progress * Math.PI);
+
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(30, 215, 96, ${alpha * 0.8})`;
+        ctx.fillText('♡', cx, hrt.y + 4);
+        return true;
+      });
+    }
+
+    // ---- Save current: hotkey trigger animation ----
+    let saveFlash = 0;
+    let saveInterval = 0;
+
+    function drawSave(time: number) {
+      // Keyboard shortcut
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+
+      const pulse = Math.sin(time / 1000) * 0.15 + 0.5;
+      ctx.fillStyle = `rgba(255, 255, 255, ${pulse})`;
+      ctx.fillText('⌘ + shift + S', w / 2, h / 2 - 12);
+
+      // Flash effect on periodic "press"
+      if (time - saveFlash > 2500) {
+        saveFlash = time;
+      }
+      const flashAge = time - saveFlash;
+      if (flashAge < 400) {
+        const fa = 1 - flashAge / 400;
+        ctx.fillStyle = `rgba(30, 215, 96, ${fa * 0.6})`;
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(30, 215, 96, ${fa})`;
+        ctx.fillText('✓ saved to library', w / 2, h / 2 + 12);
+      } else {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.fillText('→ save playing track to library', w / 2, h / 2 + 12);
+      }
+    }
+
+    // ---- Sync: bidirectional arrows with file icons ----
+    interface SyncDot { x: number; y: number; progress: number; dir: number; }
+    let syncDots: SyncDot[] = [];
+    let lastSync = 0;
+
+    function drawSync(time: number) {
+      ctx.font = '10px "JetBrains Mono", monospace';
+
+      // Spotify (left)
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'rgba(30, 215, 96, 0.7)';
+      ctx.fillText('Spotify', 12, h / 2 + 4);
+
+      // Local (right)
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.fillText('~/Music', w - 12, h / 2 + 4);
+
+      // Connection line
+      ctx.beginPath();
+      ctx.moveTo(w * 0.28, h / 2);
+      ctx.lineTo(w * 0.72, h / 2);
+      ctx.strokeStyle = 'rgba(30, 215, 96, 0.12)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Spawn sync dots
+      if (time - lastSync > 500) {
+        const dir = Math.random() < 0.7 ? 1 : -1; // mostly download
+        syncDots.push({
+          x: dir > 0 ? w * 0.28 : w * 0.72,
+          y: h / 2,
+          progress: 0, dir,
+        });
+        lastSync = time;
+      }
+
+      syncDots = syncDots.filter(d => {
+        d.progress += 0.018;
+        if (d.progress >= 1) return false;
+        const tx = d.dir > 0 ? w * 0.72 : w * 0.28;
+        const cx = d.x + (tx - d.x) * d.progress;
+        const alpha = Math.sin(d.progress * Math.PI);
+
+        ctx.beginPath();
+        ctx.arc(cx, d.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(30, 215, 96, ${alpha * 0.7})`;
+        ctx.fill();
+        return true;
+      });
+    }
+
+    // ---- Main draw loop ----
+    function draw(time: number) {
+      ctx.clearRect(0, 0, w, h);
+
+      switch (activeAuto) {
+        case 'flow': drawFlow(time); break;
+        case 'classify': drawClassify(time); break;
+        case 'daily': drawDaily(time); break;
+        case 'save': drawSave(time); break;
+        case 'sync': drawSync(time); break;
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    // Button handlers
+    const btns = document.querySelectorAll('.sm-auto-card');
+    btns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        btns.forEach(b => b.classList.remove('sm-active'));
+        btn.classList.add('sm-active');
+        activeAuto = (btn as HTMLElement).dataset.auto || 'flow';
+        // Reset particles
+        particles = [];
+        classifyItems = [];
+        hearts = [];
+        syncDots = [];
+        lastSpawn = 0;
+        lastClassify = 0;
+        lastHeart = 0;
+        lastSync = 0;
+        saveFlash = 0;
+      });
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  initSpotifyMacro();
+</script>
+
+<style>
+  .sm-showcase {
+    margin-bottom: 2rem;
+  }
+
+  .sm-card {
+    display: block;
+    position: relative;
+    background: linear-gradient(135deg, rgba(30, 215, 96, 0.04), rgba(30, 60, 30, 0.03));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    overflow: hidden;
+    color: white;
+  }
+
+  .sm-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .sm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .sm-name {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(30, 215, 96, 0.9);
+  }
+
+  .sm-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(30, 215, 96, 0.15);
+    color: rgba(30, 215, 96, 0.8);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .sm-tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.35rem;
+  }
+
+  .sm-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  /* Automation selector cards */
+  .sm-automations {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sm-auto-card {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: inherit;
+    color: inherit;
+  }
+
+  .sm-auto-card:hover {
+    background: rgba(30, 215, 96, 0.08);
+    border-color: rgba(30, 215, 96, 0.2);
+  }
+
+  .sm-auto-card.sm-active {
+    background: rgba(30, 215, 96, 0.1);
+    border-color: rgba(30, 215, 96, 0.35);
+  }
+
+  .sm-auto-icon {
+    font-size: 1rem;
+    line-height: 1;
+    color: rgba(30, 215, 96, 0.7);
+  }
+
+  .sm-auto-info {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .sm-auto-name {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .sm-auto-detail {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  /* Visualization canvas */
+  .sm-viz {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  #sm-canvas {
+    display: block;
+    width: 100%;
+    height: 100px;
+  }
+
+  /* Tech stack */
+  .sm-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sm-tech {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  .sm-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .sm-pre-llm {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(30, 215, 96, 0.08);
+    border: 1px solid rgba(30, 215, 96, 0.15);
+    border-radius: 4px;
+    color: rgba(30, 215, 96, 0.5);
+    letter-spacing: 0.03em;
+  }
+
+  .sm-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(30, 215, 96, 0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .sm-link:hover {
+    color: rgba(30, 215, 96, 0.9);
+  }
+</style>

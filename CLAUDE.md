@@ -1,4 +1,4 @@
-# c2k.dev - Personal Website
+# c2k.page - Personal Website
 
 ## Voice & Personality
 
@@ -14,7 +14,7 @@ Use "brah", "howzit", "da kine", "no worry", "shoots" naturally but don't overdo
 ## Design Direction
 
 ### Concept
-"System monitor for my life" — c2k.dev is the public observability layer for a developer's digital life. Projects, tools, workflow, all surfaced like a well-designed dashboard.
+"System monitor for my life" — c2k.page is the public observability layer for a developer's digital life. Projects, tools, workflow, all surfaced like a well-designed dashboard.
 
 ### First impression
 "This person builds cool stuff."
@@ -66,6 +66,13 @@ expansion — maintaining the feeling of being integrated into the page, not nav
 ### Content roadmap
 - Claude Code statusline showcase (done — see c2k-rfc.1)
 - Full Claude Code setup showcase (future — settings, hooks, skills, workflow)
+
+## Hosting
+
+- **Domain**: c2k.page
+- **Hosting**: Self-hosted Astro SSR on local machine, exposed via Cloudflare Tunnel
+- **Tunnel service**: `systemctl --user status cloudflared`
+- **Site service**: `systemctl --user status c2k-website` (port 4321)
 
 ## Workflow
 

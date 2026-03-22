@@ -7,6 +7,9 @@ const URL_OVERRIDES: Record<string, string> = {
   'maia-analytics': 'https://maia-analytics.com',
 };
 
+// Repos that should never show commit messages publicly
+const HIDE_COMMITS: Set<string> = new Set(['maia-analytics']);
+
 interface GHEvent {
   type: string;
   repo: { name: string };
@@ -68,11 +71,12 @@ export async function GET() {
       const lastCommit = commitData?.commit?.message?.split('\n')[0] ?? '';
 
       const isPrivate = (repoData as { private?: boolean } | null)?.private ?? false;
+      const hideCommit = isPrivate || HIDE_COMMITS.has(r.name);
       return {
         name: r.name,
         url: URL_OVERRIDES[r.name] ?? (isPrivate ? '#' : `https://github.com/${r.fullName}`),
         description: repoData?.description ?? '',
-        lastCommit,
+        lastCommit: hideCommit ? '' : lastCommit,
         pushedAt: r.pushedAt,
       };
     }));
