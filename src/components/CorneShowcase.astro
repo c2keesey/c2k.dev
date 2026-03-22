@@ -11,7 +11,7 @@
         <span class="crn-badge">keyboard</span>
       </div>
       <p class="crn-tagline">42-key split keyboard</p>
-      <p class="crn-desc">Custom Corne build running ZMK with urob's config. Homerow mods, smart-shift, combos, mod-morphs, mouse emulation, and leader keys — all on 42 keys.</p>
+      <p class="crn-desc">Custom Corne build running ZMK with urob's config. 7 layers, homerow mods, smart-shift, combos, mod-morphs, tri-state swappers, and app shortcuts — all on 42 keys.</p>
 
       <div class="crn-media">
         <img src="/corne.gif" alt="C2K-Corne keyboard" class="crn-photo" onerror="this.parentElement.style.display='none'" />
@@ -21,8 +21,10 @@
         <div class="crn-layers" id="crn-layers">
           <button class="crn-layer-btn active" data-layer="base">base</button>
           <button class="crn-layer-btn" data-layer="nav">nav</button>
+          <button class="crn-layer-btn" data-layer="fn">fn</button>
           <button class="crn-layer-btn" data-layer="num">num</button>
           <button class="crn-layer-btn" data-layer="sym">sym</button>
+          <button class="crn-layer-btn" data-layer="sys">sys</button>
         </div>
         <div class="crn-board" id="crn-board"></div>
         <div class="crn-detail" id="crn-detail"></div>
@@ -33,8 +35,8 @@
         <span class="crn-feat">smart-shift</span>
         <span class="crn-feat">combos</span>
         <span class="crn-feat">mod-morphs</span>
-        <span class="crn-feat">mouse keys</span>
-        <span class="crn-feat">leader key</span>
+        <span class="crn-feat">tri-state swappers</span>
+        <span class="crn-feat">7 layers</span>
         <span class="crn-feat">tented</span>
       </div>
 
@@ -83,62 +85,88 @@
     const layers: Record<string, { left: Key[][]; right: Key[][]; }> = {
       base: {
         left: [
-          [{ label: 'Q', detail: 'Sleep on outer column' }, { label: 'W' }, { label: 'E' }, { label: 'R' }, { label: 'T' }],
-          [{ label: 'A', sub: 'ctrl', mod: 'hrm', detail: 'Homerow mod: hold for Ctrl' }, { label: 'S', sub: 'alt', mod: 'hrm', detail: 'Homerow mod: hold for Alt' }, { label: 'D', sub: 'gui', mod: 'hrm', detail: 'Homerow mod: hold for Cmd' }, { label: 'F', sub: 'sft', mod: 'hrm', detail: 'Homerow mod: hold for Shift' }, { label: 'G' }],
+          [{ label: 'Q' }, { label: 'W' }, { label: 'E' }, { label: 'R' }, { label: 'T' }],
+          [{ label: 'A', sub: 'ctrl', mod: 'hrm', detail: 'Homerow mod: hold for Ctrl (balanced, 280ms)' }, { label: 'S', sub: 'alt', mod: 'hrm', detail: 'Homerow mod: hold for Alt' }, { label: 'D', sub: 'gui', mod: 'hrm', detail: 'Homerow mod: hold for Cmd' }, { label: 'F', sub: 'sft', mod: 'hrm', detail: 'Homerow mod: hold for Shift' }, { label: 'G' }],
           [{ label: 'Z' }, { label: 'X' }, { label: 'C' }, { label: 'V' }, { label: 'B' }],
         ],
         right: [
           [{ label: 'Y' }, { label: 'U' }, { label: 'I' }, { label: 'O' }, { label: 'P' }],
           [{ label: 'H' }, { label: 'J', sub: 'sft', mod: 'hrm', detail: 'Homerow mod: hold for Shift' }, { label: 'K', sub: 'gui', mod: 'hrm', detail: 'Homerow mod: hold for Cmd' }, { label: 'L', sub: 'alt', mod: 'hrm', detail: 'Homerow mod: hold for Alt' }, { label: "'", sub: 'ctrl', mod: 'hrm', detail: 'Homerow mod: hold for Ctrl' }],
-          [{ label: 'N' }, { label: 'M' }, { label: ',;', detail: 'Tap: comma | Shift: semicolon | Ctrl+Shift: <' }, { label: '.:', detail: 'Tap: dot | Shift: colon | Ctrl+Shift: >' }, { label: '/' }],
+          [{ label: 'N' }, { label: 'M' }, { label: ',', detail: 'Tap: , | Shift: ; | Ctrl+Shift: <' }, { label: '.', detail: 'Tap: . | Shift: : | Ctrl+Shift: >' }, { label: '/' }],
         ],
       },
       nav: {
         left: [
-          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
-          [{ label: 'ctrl', mod: 'mod' }, { label: 'alt', mod: 'mod' }, { label: 'gui', mod: 'mod' }, { label: 'sft', mod: 'mod' }, { label: '' }],
-          [{ label: '' }, { label: 'cut' }, { label: 'copy', detail: 'Tap: copy | Double-tap: cut' }, { label: 'paste' }, { label: '' }],
+          [{ label: '' }, { label: 'WHSP', detail: 'Whisper hotkey (Hyper+1)' }, { label: '⇧Tab' }, { label: 'win↔', mod: 'nav', detail: 'Alt+Tab window swapper (tri-state)' }, { label: '' }],
+          [{ label: '⌘[', sub: 'ctrl', mod: 'hrm', detail: 'Back | Hold: Ctrl' }, { label: '⌘]', sub: 'alt', mod: 'hrm', detail: 'Forward | Hold: Alt' }, { label: 'F5', sub: 'gui', mod: 'hrm', detail: 'Hold: Cmd' }, { label: 'F6', sub: 'sft', mod: 'hrm', detail: 'Hold: Shift' }, { label: '⌘D' }],
+          [{ label: 'F16' }, { label: 'F4' }, { label: '←' }, { label: 'tab↔', mod: 'nav', detail: 'App tab swapper (tri-state)' }, { label: '' }],
         ],
         right: [
-          [{ label: '' }, { label: 'home' }, { label: 'up' }, { label: 'end' }, { label: 'pgup' }],
-          [{ label: '' }, { label: 'left', mod: 'nav' }, { label: 'down', mod: 'nav' }, { label: 'right', mod: 'nav' }, { label: 'pgdn' }],
-          [{ label: '' }, { label: 'bspc', detail: 'Tap: bspc | Hold: delete word backward' }, { label: '' }, { label: 'del', detail: 'Tap: del | Hold: delete word forward' }, { label: '' }],
+          [{ label: '' }, { label: '' }, { label: 'del', detail: 'Tap: DEL | Long: Ctrl+DEL (delete word forward)' }, { label: 'cancel' }, { label: '' }],
+          [{ label: '' }, { label: '←', mod: 'nav' }, { label: '↓', mod: 'nav', detail: 'Alt+tap: 5x down' }, { label: '↑', mod: 'nav', detail: 'Alt+tap: 5x up' }, { label: '→', mod: 'nav' }],
+          [{ label: '' }, { label: 'tab' }, { label: 'pgdn' }, { label: 'pgup' }, { label: '' }],
+        ],
+      },
+      fn: {
+        left: [
+          [{ label: 'F12' }, { label: 'F7' }, { label: 'F8' }, { label: 'F9' }, { label: '' }],
+          [{ label: 'F11', sub: 'ctrl', mod: 'hrm' }, { label: 'F4', sub: 'alt', mod: 'hrm' }, { label: 'F5', sub: 'gui', mod: 'hrm' }, { label: 'F6', sub: 'sft', mod: 'hrm' }, { label: '' }],
+          [{ label: 'F10' }, { label: 'F1' }, { label: 'F2' }, { label: 'F3' }, { label: '' }],
+        ],
+        right: [
+          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
+          [{ label: '' }, { label: '⏮', mod: 'nav' }, { label: '🔉', detail: 'Volume down | Hold: Ctrl' }, { label: '🔊' }, { label: '⏭', mod: 'nav' }],
+          [{ label: 'pin◉', detail: 'Pin app (⌘⌃⇧A)' }, { label: 'pin◫', detail: 'Pin window (⌘⌃⇧Q)' }, { label: 'desk', detail: 'Desktop manager (Alt+`)' }, { label: '' }, { label: '' }],
         ],
       },
       num: {
         left: [
           [{ label: '' }, { label: '7' }, { label: '8' }, { label: '9' }, { label: '' }],
-          [{ label: '' }, { label: '4' }, { label: '5' }, { label: '6' }, { label: '0' }],
+          [{ label: '0', sub: 'ctrl', mod: 'hrm' }, { label: '4', sub: 'alt', mod: 'hrm' }, { label: '5', sub: 'gui', mod: 'hrm' }, { label: '6', sub: 'sft', mod: 'hrm' }, { label: '' }],
           [{ label: '' }, { label: '1' }, { label: '2' }, { label: '3' }, { label: '' }],
         ],
         right: [
           [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
-          [{ label: '+' }, { label: '-' }, { label: '*' }, { label: '/' }, { label: '=' }],
-          [{ label: '' }, { label: '.' }, { label: ',' }, { label: '' }, { label: '' }],
+          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
+          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
         ],
       },
       sym: {
         left: [
-          [{ label: '`' }, { label: '&' }, { label: '{' }, { label: '}' }, { label: '|' }],
-          [{ label: '~' }, { label: '$' }, { label: '(' }, { label: ')' }, { label: '#' }],
-          [{ label: '' }, { label: '@' }, { label: '[' }, { label: ']' }, { label: '' }],
+          [{ label: '⌘Q', detail: 'Quit app' }, { label: 'M1', detail: 'Hyper+2 macro' }, { label: 'M2', detail: 'Hyper+3 macro' }, { label: 'M3', detail: 'Hyper+4 macro' }, { label: 'M4', detail: 'Hyper+5 macro' }],
+          [{ label: 'F2', sub: 'ctrl', mod: 'hrm', detail: 'Rename | Hold: Ctrl' }, { label: '⌘W', sub: 'alt', mod: 'hrm', detail: 'Close tab | Hold: Alt' }, { label: '⌘T', sub: 'gui', mod: 'hrm', detail: 'New tab | Hold: Cmd' }, { label: '⌘R', sub: 'sft', mod: 'hrm', detail: 'Reload | Hold: Shift' }, { label: '⌘⇧T', detail: 'Reopen closed tab' }],
+          [{ label: '⌘F', detail: 'Find' }, { label: '⌘S', detail: 'Save' }, { label: '⌘Z', detail: 'Undo' }, { label: '⌘⇧Z', detail: 'Redo' }, { label: 'F3' }],
         ],
         right: [
-          [{ label: '^' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
-          [{ label: '-' }, { label: '=' }, { label: '\\' }, { label: '%' }, { label: '!' }],
-          [{ label: '_' }, { label: '+' }, { label: '' }, { label: '' }, { label: '?' }],
+          [{ label: '`' }, { label: '&' }, { label: '|' }, { label: '~' }, { label: '\\' }],
+          [{ label: '' }, { label: '#', sub: 'sft', mod: 'hrm' }, { label: '@', sub: 'gui', mod: 'hrm' }, { label: '+', sub: 'alt', mod: 'hrm' }, { label: '*', sub: 'ctrl', mod: 'hrm' }],
+          [{ label: '' }, { label: '^' }, { label: '%' }, { label: '$' }, { label: '!' }],
+        ],
+      },
+      sys: {
+        left: [
+          [{ label: 'BT0', mod: 'mod', detail: 'Bluetooth profile 0' }, { label: 'BT1', mod: 'mod', detail: 'Bluetooth profile 1' }, { label: 'BT2', mod: 'mod', detail: 'Bluetooth profile 2' }, { label: 'BT3', mod: 'mod', detail: 'Bluetooth profile 3' }, { label: 'CLR', mod: 'mod', detail: 'Clear bluetooth' }],
+          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: 'boot', mod: 'mod', detail: 'Bootloader mode' }],
+          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: 'reset', mod: 'mod', detail: 'System reset' }],
+        ],
+        right: [
+          [{ label: '' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
+          [{ label: 'boot', mod: 'mod', detail: 'Bootloader mode' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
+          [{ label: 'reset', mod: 'mod', detail: 'System reset' }, { label: '' }, { label: '' }, { label: '' }, { label: '' }],
         ],
       },
     };
 
     const thumbs: Record<string, { left: Key[]; right: Key[]; }> = {
       base: {
-        left: [{ label: 'esc', sub: 'fn', detail: 'Tap: Esc | Hold: Fn layer' }, { label: 'spc', sub: 'nav', detail: 'Tap: Space | Hold: Nav layer | Shift: dot + space + sticky shift' }, { label: 'tab', sub: 'sym', detail: 'Tap: Tab | Hold: Sym layer' }],
-        right: [{ label: 'ret', sub: 'sys', detail: 'Tap: Return | Hold: Sys layer' }, { label: 'bspc', sub: 'num', detail: 'Tap: Backspace | Hold: Num layer' }, { label: '\u21e7', detail: 'Smart shift: tap = sticky shift, shift+tap = caps word' }],
+        left: [{ label: 'esc', sub: 'fn', detail: 'Tap: Esc | Hold: FN layer' }, { label: 'spc', sub: 'nav', detail: 'Tap: Space | Hold: NAV layer | Shift: dot + space + sticky shift' }, { label: 'tab', sub: 'sym', detail: 'Tap: Tab | Hold: SYM layer' }],
+        right: [{ label: 'ret', sub: 'sys', detail: 'Tap: Return | Hold: SYS layer' }, { label: 'bspc', sub: 'num', detail: 'Tap: Bspc | Hold: NUM layer | Shift: DEL' }, { label: '\u21e7', detail: 'Smart shift: tap = sticky shift, double-tap = caps word' }],
       },
-      nav: { left: [{ label: 'esc' }, { label: '\u2593', mod: 'active' }, { label: 'tab' }], right: [{ label: 'ret' }, { label: 'bspc' }, { label: '\u21e7' }] },
-      num: { left: [{ label: 'esc' }, { label: 'spc' }, { label: 'tab' }], right: [{ label: 'ret' }, { label: '\u2593', mod: 'active' }, { label: '\u21e7' }] },
-      sym: { left: [{ label: 'esc' }, { label: 'spc' }, { label: '\u2593', mod: 'active' }], right: [{ label: 'ret' }, { label: 'bspc' }, { label: '\u21e7' }] },
+      nav: { left: [{ label: '' }, { label: '\u2593', mod: 'active' }, { label: '' }], right: [{ label: 'ret' }, { label: 'bspc', detail: 'Tap: Bspc | Long: Ctrl+Bspc (delete word)' }, { label: '\u21e7' }] },
+      fn: { left: [{ label: '\u2593', mod: 'active' }, { label: '' }, { label: '' }], right: [{ label: '⏹', detail: 'Mute' }, { label: '⏯', detail: 'Play/pause' }, { label: '\u21e7' }] },
+      num: { left: [{ label: '_', detail: 'Underscore' }, { label: 'spc' }, { label: '' }], right: [{ label: '' }, { label: '\u2593', mod: 'active' }, { label: '\u21e7' }] },
+      sym: { left: [{ label: '' }, { label: '' }, { label: '\u2593', mod: 'active' }], right: [{ label: 'ret' }, { label: 'bspc' }, { label: '\u21e7' }] },
+      sys: { left: [{ label: '' }, { label: '' }, { label: '' }], right: [{ label: '\u2593', mod: 'active' }, { label: '' }, { label: '' }] },
     };
 
     let currentLayer = 'base';
