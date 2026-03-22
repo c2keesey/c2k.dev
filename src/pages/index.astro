@@ -8,6 +8,7 @@ import LightningCloudShowcase from '../components/LightningCloudShowcase.astro';
 import FluxGauntletShowcase from '../components/FluxGauntletShowcase.astro';
 import CorneShowcase from '../components/CorneShowcase.astro';
 import SpotifyMacroShowcase from '../components/SpotifyMacroShowcase.astro';
+import MiniProjectCard from '../components/MiniProjectCard.astro';
 import '../styles/global.css';
 ---
 
@@ -74,6 +75,27 @@ import '../styles/global.css';
           <CorneShowcase />
           <LightningCloudShowcase />
           <DotfilesShowcase />
+          <MiniProjectCard
+            name="secret-gate"
+            tagline="Human-in-the-loop approval gate"
+            description="Routes AI agent requests for secrets (1Password) and sudo commands through Telegram for explicit approval. Ships as a Claude Code plugin with PreToolUse hooks."
+            badge="security"
+            wip={true}
+            tech={['Python', '1Password CLI', 'Telegram', 'Claude Code Plugin']}
+            link="https://github.com/c2keesey/secret-gate"
+            linkText="github.com/c2keesey/secret-gate"
+            accentColor="239, 68, 68"
+          />
+          <MiniProjectCard
+            name="propeller-scrape"
+            tagline="Concert ticket monitor"
+            description="Scrapes Propeller rewards for new concert tickets in LA, SF, and Boulder. Sends Telegram notifications when shows appear. Runs on cron."
+            badge="utility"
+            tech={['Python', 'BeautifulSoup', 'Telegram', 'cron']}
+            link="https://github.com/c2keesey/propeller-scrape"
+            linkText="github.com/c2keesey/propeller-scrape"
+            accentColor="249, 115, 22"
+          />
         </div>
       </section>
 

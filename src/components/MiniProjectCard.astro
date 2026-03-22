@@ -1,0 +1,139 @@
+---
+// Compact project card — for smaller/WIP projects
+// No interactive preview, just title + description + tags + link
+interface Props {
+  name: string;
+  tagline: string;
+  description: string;
+  badge: string;
+  wip?: boolean;
+  tech: string[];
+  link?: string;
+  linkText?: string;
+  accentColor?: string;
+}
+
+const { name, tagline, description, badge, wip = false, tech, link, linkText, accentColor = '168, 85, 247' } = Astro.props;
+---
+
+<div class="mini-card" style={`--mini-accent: ${accentColor};`}>
+  <div class="mini-header">
+    <span class="mini-name text-scramble" data-text={name} data-delay="100" data-always="false">{name}</span>
+    <div class="mini-badges">
+      {wip && <span class="mini-wip">WIP</span>}
+      <span class="mini-badge">{badge}</span>
+    </div>
+  </div>
+  <p class="mini-tagline">{tagline}</p>
+  <p class="mini-desc">{description}</p>
+  <div class="mini-stack">
+    {tech.map(t => <span class="mini-tech">{t}</span>)}
+  </div>
+  {link && (
+    <div class="mini-footer">
+      <a class="mini-link" href={link} target="_blank" rel="noopener">{linkText || link.replace('https://', '')} ↗</a>
+    </div>
+  )}
+</div>
+
+<style>
+  .mini-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+    color: white;
+  }
+
+  .mini-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+  }
+
+  .mini-name {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: rgba(var(--mini-accent), 0.9);
+  }
+
+  .mini-badges {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .mini-wip {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(234, 179, 8, 0.15);
+    color: rgba(234, 179, 8, 0.8);
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .mini-badge {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(var(--mini-accent), 0.12);
+    color: rgba(var(--mini-accent), 0.7);
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .mini-tagline {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.25rem;
+  }
+
+  .mini-desc {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.38);
+    line-height: 1.5;
+    margin-bottom: 0.6rem;
+  }
+
+  .mini-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mini-tech {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.08rem 0.35rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
+  }
+
+  .mini-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .mini-link {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: rgba(var(--mini-accent), 0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .mini-link:hover {
+    color: rgba(var(--mini-accent), 0.85);
+  }
+</style>
