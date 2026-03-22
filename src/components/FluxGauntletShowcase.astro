@@ -94,7 +94,7 @@
     for (const s of ringSizes) { ringStart.push(acc); acc += s; }
 
     let leds: { r: number; g: number; b: number }[] = Array.from({ length: numLeds }, () => ({ r: 0, g: 0, b: 0 }));
-    let effect = 'blast';
+    let effect = 'firework';
     let time = 0;
 
     // Spiral arm geometry — 300 LEDs wrapping around a cylinder
@@ -472,7 +472,7 @@
       });
     });
 
-    document.querySelector('.fg-btn[data-effect="blast"]')?.classList.add('active');
+    document.querySelector('.fg-btn[data-effect="firework"]')?.classList.add('active');
     requestAnimationFrame(draw);
   }
 

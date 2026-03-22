@@ -74,9 +74,17 @@ expansion — maintaining the feeling of being integrated into the page, not nav
 - **Tunnel service**: `systemctl --user status cloudflared`
 - **Site service**: `systemctl --user status c2k-website` (port 4321)
 
+### Preview (feature branches)
+
+- **Preview service**: `systemctl --user status c2k-preview` (port 4322)
+- **URL**: http://100.82.177.26:4322 (Tailscale only, not public)
+- **Worktree**: `/home/c2k/repos/c2k.dev-preview`
+- **To update preview**: `cd ~/repos/c2k.dev-preview && git checkout <branch> && bun run build && systemctl --user restart c2k-preview`
+
 ## Workflow
 
-- **Build, commit, and push after each unit of work** — after making a change, always build (`bun run build`), deploy (`systemctl --user restart c2k-website`), commit, and push before moving on.
+- **Only deploy to production from main** — never build/deploy to `c2k-website` from feature branches. Use the preview service for testing feature branches.
+- **Build, commit, and push after each unit of work** — after making a change on main, always build (`bun run build`), deploy (`systemctl --user restart c2k-website`), commit, and push before moving on.
 
 ### External links
 - Dotfiles repo: https://github.com/c2keesey/dotfiles (currently private)
