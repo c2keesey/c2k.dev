@@ -21,11 +21,13 @@
       <div class="fg-viz">
         <canvas id="fg-canvas"></canvas>
         <div class="fg-controls">
-          <button class="fg-btn" data-effect="blast" title="Blast">blast</button>
-          <button class="fg-btn" data-effect="fire" title="Fire Rings">fire</button>
-          <button class="fg-btn" data-effect="pew" title="Pew">pew</button>
-          <button class="fg-btn" data-effect="rings" title="Rings">rings</button>
-          <button class="fg-btn" data-effect="lightning" title="Lightning">⚡</button>
+          <button class="fg-btn" data-effect="blast" title="Ring-by-ring expanding pulse">blast</button>
+          <button class="fg-btn" data-effect="lightning" title="Jagged bolt with flash">lightning</button>
+          <button class="fg-btn" data-effect="fire" title="Heat simulation">fire</button>
+          <button class="fg-btn" data-effect="firework" title="Particle explosion">firework</button>
+          <button class="fg-btn" data-effect="casimir" title="Ring segments paint & erase">casimir</button>
+          <button class="fg-btn" data-effect="twinkle" title="Fading stars">twinkle</button>
+          <button class="fg-btn" data-effect="pew" title="Projectile shot">pew</button>
         </div>
       </div>
 
@@ -82,61 +84,86 @@
     canvas.height = h * dpr;
     ctx.scale(dpr, dpr);
 
-    const numLeds = 80;
+    // Real ring layout: 16 rings, wrist (21) to fingertip (10), total 300
+    const ringSizes = [21, 27, 25, 23, 23, 22, 20, 19, 19, 19, 17, 16, 15, 12, 12, 10];
+    const numRings = ringSizes.length;
+    const numLeds = ringSizes.reduce((a, b) => a + b, 0); // 300
+    // Precompute ring start indices
+    const ringStart: number[] = [];
+    let acc = 0;
+    for (const s of ringSizes) { ringStart.push(acc); acc += s; }
+
     let leds: { r: number; g: number; b: number }[] = Array.from({ length: numLeds }, () => ({ r: 0, g: 0, b: 0 }));
     let effect = 'blast';
     let time = 0;
 
-    // Spiral arm geometry — LED positions on a cylinder viewed from the side
-    const wraps = 5; // how many times the strip wraps around the arm
-    const cx = w / 2;
+    // Spiral arm geometry — 300 LEDs wrapping around a cylinder
     const cy = h / 2;
-    const armRadiusY = h * 0.32; // vertical radius of the ellipse (arm cross-section)
-    const armRadiusX = armRadiusY * 0.55; // horizontal squash for perspective
-    const armLeft = w * 0.12;
-    const armRight = w * 0.88;
+    const armRadiusY = h * 0.32;
+    const armLeft = w * 0.10;
+    const armRight = w * 0.90;
     const armLen = armRight - armLeft;
 
-    interface LedPos { x: number; y: number; z: number; } // z: -1 (back) to 1 (front)
+    interface LedPos { x: number; y: number; z: number; ring: number; }
     const ledPositions: LedPos[] = [];
 
-    for (let i = 0; i < numLeds; i++) {
-      const t = i / numLeds; // 0 to 1 along the strip
-      const angle = t * wraps * Math.PI * 2; // spiral angle
-      const xPos = armLeft + t * armLen; // position along the arm
-      const yOff = Math.sin(angle) * armRadiusY;
-      const zVal = Math.cos(angle); // -1 = back, 1 = front
-      ledPositions.push({ x: xPos, y: cy + yOff, z: zVal });
-    }
-
-    // Particles for effects
-    interface Particle { pos: number; vel: number; hue: number; life: number; maxLife: number; }
-    let particles: Particle[] = [];
-
-    function hslToRgb(h: number, s: number, l: number) {
-      h /= 360; s /= 100; l /= 100;
-      let r, g, b;
-      if (s === 0) { r = g = b = l; } else {
-        const hue2rgb = (p: number, q: number, t: number) => {
-          if (t < 0) t += 1; if (t > 1) t -= 1;
-          if (t < 1/6) return p + (q - p) * 6 * t;
-          if (t < 1/2) return q;
-          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-          return p;
-        };
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
-        r = hue2rgb(p, q, h + 1/3);
-        g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1/3);
+    // Place LEDs ring by ring, each ring wraps around the arm at its x position
+    for (let ring = 0; ring < numRings; ring++) {
+      const ringX = armLeft + (ring / (numRings - 1)) * armLen;
+      const size = ringSizes[ring];
+      for (let j = 0; j < size; j++) {
+        const angle = (j / size) * Math.PI * 2;
+        const yOff = Math.sin(angle) * armRadiusY;
+        const zVal = Math.cos(angle);
+        ledPositions.push({ x: ringX, y: cy + yOff, z: zVal, ring });
       }
-      return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
     }
 
-    function clear() {
-      for (let i = 0; i < numLeds; i++) leds[i] = { r: 0, g: 0, b: 0 };
+    // Color helpers
+    let hueCounter = 0;
+    function nextHue() { hueCounter = (hueCounter + 37) % 360; return hueCounter; }
+
+    function hsvToRgb(h: number, s: number, v: number) {
+      h = ((h % 360) + 360) % 360;
+      s = Math.min(1, Math.max(0, s));
+      v = Math.min(1, Math.max(0, v));
+      const c = v * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = v - c;
+      let r = 0, g = 0, b = 0;
+      if (h < 60) { r = c; g = x; }
+      else if (h < 120) { r = x; g = c; }
+      else if (h < 180) { g = c; b = x; }
+      else if (h < 240) { g = x; b = c; }
+      else if (h < 300) { r = x; b = c; }
+      else { r = c; b = x; }
+      return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) };
     }
 
+    function heatColor(heat: number) {
+      // Mimic FastLED HeatColor: black → red → orange → yellow → white
+      const t = Math.min(1, Math.max(0, heat));
+      if (t < 0.33) { const s = t / 0.33; return { r: Math.round(s * 255), g: 0, b: 0 }; }
+      if (t < 0.66) { const s = (t - 0.33) / 0.33; return { r: 255, g: Math.round(s * 180), b: 0 }; }
+      const s = (t - 0.66) / 0.34;
+      return { r: 255, g: 180 + Math.round(s * 75), b: Math.round(s * 140) };
+    }
+
+    function setLed(i: number, r: number, g: number, b: number) {
+      if (i >= 0 && i < numLeds) {
+        leds[i].r = Math.min(255, Math.max(0, r));
+        leds[i].g = Math.min(255, Math.max(0, g));
+        leds[i].b = Math.min(255, Math.max(0, b));
+      }
+    }
+
+    function addLed(i: number, r: number, g: number, b: number) {
+      if (i >= 0 && i < numLeds) {
+        leds[i].r = Math.min(255, leds[i].r + r);
+        leds[i].g = Math.min(255, leds[i].g + g);
+        leds[i].b = Math.min(255, leds[i].b + b);
+      }
+    }
+
+    function clear() { for (let i = 0; i < numLeds; i++) leds[i] = { r: 0, g: 0, b: 0 }; }
     function fade(amount: number) {
       for (let i = 0; i < numLeds; i++) {
         leds[i].r = Math.max(0, leds[i].r - amount);
@@ -145,106 +172,255 @@
       }
     }
 
-    // Effects
+    // Fill an entire ring with a color
+    function fillRing(ring: number, r: number, g: number, b: number) {
+      if (ring < 0 || ring >= numRings) return;
+      const start = ringStart[ring];
+      for (let j = 0; j < ringSizes[ring]; j++) setLed(start + j, r, g, b);
+    }
+
+    // === BLAST: ring-by-ring expanding pulse from wrist to fingertip ===
+    interface BlastRing { ring: number; hue: number; }
+    let blastRings: BlastRing[] = [];
     function tickBlast() {
-      fade(15);
-      if (time % 20 === 0) {
-        const hue = (time * 3) % 360;
-        particles.push({ pos: numLeds / 2, vel: 2 + Math.random() * 2, hue, life: 0, maxLife: 30 });
-        particles.push({ pos: numLeds / 2, vel: -(2 + Math.random() * 2), hue, life: 0, maxLife: 30 });
+      fade(18);
+      if (time % 8 === 0) {
+        blastRings.push({ ring: 0, hue: nextHue() });
       }
-      particles.forEach(p => {
-        p.pos += p.vel;
-        p.life++;
-        const alpha = 1 - p.life / p.maxLife;
-        const idx = Math.round(p.pos);
-        if (idx >= 0 && idx < numLeds) {
-          const c = hslToRgb(p.hue, 100, 50);
-          leds[idx].r = Math.min(255, leds[idx].r + c.r * alpha);
-          leds[idx].g = Math.min(255, leds[idx].g + c.g * alpha);
-          leds[idx].b = Math.min(255, leds[idx].b + c.b * alpha);
+      for (let i = blastRings.length - 1; i >= 0; i--) {
+        const b = blastRings[i];
+        if (b.ring < numRings) {
+          const c = hsvToRgb(b.hue, 1, 1);
+          fillRing(b.ring, c.r, c.g, c.b);
+          b.ring++;
+        } else {
+          blastRings.splice(i, 1);
         }
-      });
-      particles = particles.filter(p => p.life < p.maxLife && p.pos >= -1 && p.pos <= numLeds);
+      }
     }
 
+    // === LIGHTNING: jagged bolt grows, flashes, dissipates ===
+    interface Bolt { path: number[]; state: 'grow' | 'flash' | 'fade'; step: number; hue: number; brightness: number; flashCount: number; }
+    let bolts: Bolt[] = [];
+    function tickLightning() {
+      fade(12);
+      // Spawn new bolt periodically
+      if (time % 40 === 0) {
+        const startLed = ringStart[0] + Math.floor(Math.random() * ringSizes[0]);
+        bolts.push({ path: [startLed], state: 'grow', step: 0, hue: nextHue(), brightness: 255, flashCount: 0 });
+      }
+      for (let i = bolts.length - 1; i >= 0; i--) {
+        const bolt = bolts[i];
+        if (bolt.state === 'grow') {
+          // Grow one ring per tick
+          const currentRing = bolt.path.length - 1;
+          if (currentRing < numRings - 1) {
+            const nextRing = currentRing + 1;
+            const basePos = ringStart[nextRing];
+            const jitter = Math.floor(Math.random() * 5) - 2;
+            const nextLed = basePos + Math.max(0, Math.min(ringSizes[nextRing] - 1,
+              Math.floor(ringSizes[nextRing] / 2) + jitter));
+            bolt.path.push(nextLed);
+          } else {
+            bolt.state = 'flash'; bolt.step = 0;
+          }
+        } else if (bolt.state === 'flash') {
+          bolt.step++;
+          bolt.brightness = bolt.step % 2 === 0 ? 255 : 60;
+          if (bolt.step >= 8) { bolt.state = 'fade'; bolt.brightness = 255; }
+        } else {
+          bolt.brightness -= 15;
+          if (bolt.brightness <= 0) { bolts.splice(i, 1); continue; }
+        }
+        // Draw bolt path
+        const c = hsvToRgb(bolt.hue, 0.3, bolt.brightness / 255);
+        for (const led of bolt.path) {
+          setLed(led, c.r, c.g, c.b);
+          // Light neighbors for thickness
+          if (led > 0) addLed(led - 1, c.r >> 2, c.g >> 2, c.b >> 2);
+          if (led < numLeds - 1) addLed(led + 1, c.r >> 2, c.g >> 2, c.b >> 2);
+        }
+      }
+    }
+
+    // === FIRE: heat diffusion simulation ===
+    const heatMap: number[] = new Array(numLeds).fill(0);
     function tickFire() {
-      fade(8);
+      // Cool
       for (let i = 0; i < numLeds; i++) {
-        const wave1 = Math.sin(i * 0.15 + time * 0.08) * 0.5 + 0.5;
-        const wave2 = Math.sin(i * 0.3 - time * 0.12) * 0.5 + 0.5;
-        const heat = wave1 * wave2;
-        const hue = 10 + heat * 30;
-        const c = hslToRgb(hue, 100, heat * 50);
-        leds[i].r = Math.min(255, leds[i].r + c.r * 0.3);
-        leds[i].g = Math.min(255, leds[i].g + c.g * 0.3);
-        leds[i].b = Math.min(255, leds[i].b + c.b * 0.3);
+        heatMap[i] = Math.max(0, heatMap[i] - Math.random() * 0.012);
       }
-    }
-
-    function tickPew() {
-      fade(20);
-      if (time % 30 === 0) {
-        const hue = 270 + Math.random() * 60;
-        particles.push({ pos: 0, vel: 3 + Math.random() * 2, hue, life: 0, maxLife: 25 });
+      // Diffuse
+      const prev = [...heatMap];
+      for (let i = 2; i < numLeds - 2; i++) {
+        heatMap[i] = (prev[i] * 4 + prev[i - 1] * 5 + prev[i + 1] * 4 + prev[i - 2] * 3 + prev[i + 2] * 2) / 18;
       }
-      particles.forEach(p => {
-        p.pos += p.vel;
-        p.life++;
-        const idx = Math.round(p.pos);
-        for (let j = 0; j < 4; j++) {
-          const k = idx - j;
-          if (k >= 0 && k < numLeds) {
-            const trail = 1 - j * 0.25;
-            const c = hslToRgb(p.hue, 100, 60);
-            leds[k].r = Math.min(255, c.r * trail);
-            leds[k].g = Math.min(255, c.g * trail);
-            leds[k].b = Math.min(255, c.b * trail);
+      // Spark near fingertip end (reversed like the real effect)
+      for (let ring = numRings - 3; ring < numRings; ring++) {
+        const start = ringStart[ring];
+        for (let j = 0; j < ringSizes[ring]; j++) {
+          if (Math.random() < 0.03) {
+            heatMap[start + j] = Math.min(1, heatMap[start + j] + 0.5 + Math.random() * 0.5);
           }
         }
-      });
-      particles = particles.filter(p => p.pos < numLeds + 5);
+      }
+      // Periodic burst (simulates button press)
+      if (time % 60 === 0) {
+        for (let k = 0; k < 10; k++) {
+          const ring = numRings - 1 - Math.floor(Math.random() * 3);
+          const idx = ringStart[ring] + Math.floor(Math.random() * ringSizes[ring]);
+          heatMap[idx] = 0.7 + Math.random() * 0.3;
+        }
+      }
+      // Render
+      for (let i = 0; i < numLeds; i++) {
+        const c = heatColor(heatMap[i]);
+        leds[i] = c;
+      }
     }
 
-    function tickRings() {
-      fade(10);
-      const center = numLeds / 2;
-      const radius = (time * 0.5) % (numLeds / 2);
-      const hue = (time * 2) % 360;
-      for (let i = 0; i < numLeds; i++) {
-        const dist = Math.abs(i - center);
-        if (Math.abs(dist - radius) < 2) {
-          const c = hslToRgb(hue, 100, 60);
-          const bright = 1 - Math.abs(dist - radius) / 2;
-          leds[i].r = Math.min(255, c.r * bright);
-          leds[i].g = Math.min(255, c.g * bright);
-          leds[i].b = Math.min(255, c.b * bright);
+    // === FIREWORK: particle explosion ===
+    interface FwParticle { pos: number; vel: number; hue: number; brightness: number; }
+    let fwParticles: FwParticle[] = [];
+    function tickFirework() {
+      fade(6);
+      // Auto-spawn fireworks
+      if (time % 35 === 0) {
+        const center = 50 + Math.floor(Math.random() * (numLeds - 100));
+        const hue = nextHue();
+        const count = 20 + Math.floor(Math.random() * 30);
+        for (let k = 0; k < count; k++) {
+          const speed = (Math.random() < 0.5 ? -1 : 1) * (2 + Math.random() * 8);
+          fwParticles.push({ pos: center, vel: speed, hue: hue + Math.random() * 30, brightness: 255 });
+        }
+      }
+      for (let i = fwParticles.length - 1; i >= 0; i--) {
+        const p = fwParticles[i];
+        p.pos += p.vel * 0.15;
+        p.vel *= 0.97; // deceleration
+        // Fade faster when slow
+        const fadeRate = Math.abs(p.vel) < 1 ? 8 : 3;
+        p.brightness -= fadeRate;
+        if (p.brightness <= 0 || p.pos < 0 || p.pos >= numLeds) {
+          fwParticles.splice(i, 1); continue;
+        }
+        const idx = Math.round(p.pos);
+        const v = p.brightness / 255;
+        const c = hsvToRgb(p.hue, 1, v);
+        addLed(idx, c.r, c.g, c.b);
+      }
+    }
+
+    // === CASIMIR: ring segments that paint in then erase ===
+    interface CasimirSeg { start: number; len: number; step: number; erasing: boolean; hue: number; }
+    let casimirSegs: CasimirSeg[] = [];
+    function tickCasimir() {
+      fade(4);
+      // Spawn new segments
+      if (time % 6 === 0) {
+        const ring = Math.floor(Math.random() * numRings);
+        casimirSegs.push({
+          start: ringStart[ring], len: ringSizes[ring],
+          step: 0, erasing: false, hue: nextHue()
+        });
+      }
+      for (let i = casimirSegs.length - 1; i >= 0; i--) {
+        const seg = casimirSegs[i];
+        if (!seg.erasing) {
+          // Paint LED by LED
+          if (seg.step < seg.len) {
+            const c = hsvToRgb(seg.hue + seg.step * 8, 1, 1);
+            setLed(seg.start + seg.step, c.r, c.g, c.b);
+            seg.step++;
+          } else {
+            seg.erasing = true; seg.step = 0;
+          }
+        } else {
+          // Erase LED by LED
+          if (seg.step < seg.len) {
+            setLed(seg.start + seg.step, 0, 0, 0);
+            seg.step++;
+          } else {
+            casimirSegs.splice(i, 1);
+          }
         }
       }
     }
 
-    function tickLightning() {
-      fade(30);
-      if (Math.random() < 0.06) {
-        const start = Math.floor(Math.random() * numLeds);
-        const len = 5 + Math.floor(Math.random() * 15);
-        for (let i = start; i < Math.min(start + len, numLeds); i++) {
-          const bright = 180 + Math.random() * 75;
-          leds[i] = { r: bright * 0.8, g: bright * 0.85, b: bright };
+    // === TWINKLE: stars that fade in/out with drift ===
+    interface Star { pos: number; hue: number; val: number; fadeSpeed: number; fadingIn: boolean; drift: number; }
+    let stars: Star[] = [];
+    function tickTwinkle() {
+      // Dim background
+      for (let i = 0; i < numLeds; i++) {
+        leds[i].r = Math.max(0, leds[i].r - 2);
+        leds[i].g = Math.max(0, leds[i].g - 2);
+        leds[i].b = Math.max(0, leds[i].b - 2);
+      }
+      // Spawn new stars
+      if (time % 2 === 0 && stars.length < 60) {
+        stars.push({
+          pos: Math.random() * numLeds,
+          hue: Math.random() < 0.5 ? 0 + Math.random() * 30 : 200 + Math.random() * 160,
+          val: 0, fadeSpeed: 1 + Math.random() * 4, fadingIn: true,
+          drift: (Math.random() - 0.5) * 0.06,
+        });
+      }
+      for (let i = stars.length - 1; i >= 0; i--) {
+        const s = stars[i];
+        s.pos += s.drift;
+        if (s.fadingIn) {
+          s.val = Math.min(255, s.val + s.fadeSpeed * 2);
+          if (s.val >= 255) s.fadingIn = false;
+        } else {
+          s.val -= s.fadeSpeed;
+          if (s.val <= 0) { stars.splice(i, 1); continue; }
+        }
+        const idx = Math.round(s.pos);
+        const v = s.val / 255;
+        const c = hsvToRgb(s.hue, 0.85, v);
+        addLed(idx, c.r, c.g, c.b);
+      }
+    }
+
+    // === PEW: projectile shot from fingertip to wrist ===
+    interface Beam { pos: number; hue: number; }
+    let beams: Beam[] = [];
+    function tickPew() {
+      fade(25);
+      if (time % 20 === 0) {
+        beams.push({ pos: numLeds - 1, hue: 270 + Math.random() * 60 });
+      }
+      for (let i = beams.length - 1; i >= 0; i--) {
+        const b = beams[i];
+        b.pos -= 2.5;
+        if (b.pos < -5) { beams.splice(i, 1); continue; }
+        const c = hsvToRgb(b.hue, 1, 1);
+        // 4-LED projectile with trail
+        for (let j = 0; j < 5; j++) {
+          const idx = Math.round(b.pos + j);
+          const trail = 1 - j * 0.2;
+          if (idx >= 0 && idx < numLeds) {
+            setLed(idx, c.r * trail, c.g * trail, c.b * trail);
+          }
         }
       }
     }
 
     const effects: Record<string, () => void> = {
-      blast: tickBlast, fire: tickFire, pew: tickPew, rings: tickRings, lightning: tickLightning,
+      blast: tickBlast, lightning: tickLightning, fire: tickFire,
+      firework: tickFirework, casimir: tickCasimir, twinkle: tickTwinkle, pew: tickPew,
     };
+
+    function resetState() {
+      blastRings = []; bolts = []; fwParticles = []; casimirSegs = []; stars = []; beams = [];
+      heatMap.fill(0);
+      clear();
+      time = 0;
+    }
 
     function draw() {
       ctx.clearRect(0, 0, w, h);
-
-      // (arm silhouette removed — blends with background)
-
-      // Tick effect
       effects[effect]?.();
       time++;
 
@@ -252,18 +428,16 @@
       const indices = Array.from({ length: numLeds }, (_, i) => i);
       indices.sort((a, b) => ledPositions[a].z - ledPositions[b].z);
 
-      for (const i of indices) {
-        const pos = ledPositions[i];
-        const { r, g, b } = leds[i];
+      for (const idx of indices) {
+        const pos = ledPositions[idx];
+        const { r, g, b } = leds[idx];
         const brightness = (r + g + b) / 3;
 
-        // Depth-based sizing and opacity
-        const depthScale = 0.5 + (pos.z + 1) / 2 * 0.5; // 0.5 (back) to 1.0 (front)
-        const depthAlpha = 0.3 + (pos.z + 1) / 2 * 0.7; // 0.3 (back) to 1.0 (front)
-        const ledR = 2.5 * depthScale;
+        const depthScale = 0.5 + (pos.z + 1) / 2 * 0.5;
+        const depthAlpha = 0.3 + (pos.z + 1) / 2 * 0.7;
+        const ledR = 2 * depthScale;
 
         if (brightness > 5) {
-          // Glow — bigger and more visible on front-facing LEDs
           const glowR = ledR * (3 + depthScale * 2);
           const grd = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, glowR);
           grd.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${0.35 * depthAlpha})`);
@@ -272,14 +446,11 @@
           ctx.fillRect(pos.x - glowR, pos.y - glowR, glowR * 2, glowR * 2);
         }
 
-        // LED dot
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, ledR, 0, Math.PI * 2);
-        if (brightness > 5) {
-          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${depthAlpha})`;
-        } else {
-          ctx.fillStyle = `rgba(255, 255, 255, ${0.06 * depthAlpha})`;
-        }
+        ctx.fillStyle = brightness > 5
+          ? `rgba(${r}, ${g}, ${b}, ${depthAlpha})`
+          : `rgba(255, 255, 255, ${0.04 * depthAlpha})`;
         ctx.fill();
       }
 
@@ -294,18 +465,14 @@
         const fx = btn.dataset.effect;
         if (fx) {
           effect = fx;
-          particles = [];
-          clear();
-          time = 0;
+          resetState();
           document.querySelectorAll('.fg-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
         }
       });
     });
 
-    // Set initial active
     document.querySelector('.fg-btn[data-effect="blast"]')?.classList.add('active');
-
     requestAnimationFrame(draw);
   }
 
