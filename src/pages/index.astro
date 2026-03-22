@@ -1,8 +1,7 @@
 ---
 import TextScramble from '../components/TextScramble.astro';
 import Nav from '../components/Nav.astro';
-import StatuslineShowcase from '../components/StatuslineShowcase.astro';
-import SkillsShowcase from '../components/SkillsShowcase.astro';
+import DotfilesShowcase from '../components/DotfilesShowcase.astro';
 import MaiaShowcase from '../components/MaiaShowcase.astro';
 import C2kShowcase from '../components/C2kShowcase.astro';
 import LightningCloudShowcase from '../components/LightningCloudShowcase.astro';
@@ -74,8 +73,7 @@ import '../styles/global.css';
           <FluxGauntletShowcase />
           <CorneShowcase />
           <LightningCloudShowcase />
-          <StatuslineShowcase />
-          <SkillsShowcase />
+          <DotfilesShowcase />
         </div>
       </section>
 
@@ -85,9 +83,129 @@ import '../styles/global.css';
           <section class="page-header">
             <TextScramble text="About" tag="h1" class="page-title" always />
           </section>
-          <div class="about-content">
-            <TextScramble text="Developer running a personal VM as a second brain. Everything orchestrated through Claude Code, tracked with beads, accessed from anywhere via Tailscale and Terminus." tag="p" delay={100} />
-            <TextScramble text="This site is the public layer of that system." tag="p" delay={250} />
+
+          <!-- Fastfetch-style readout -->
+          <div class="about-fetch">
+            <div class="fetch-block">
+              <div class="fetch-row">
+                <span class="fetch-key">name</span>
+                <span class="fetch-val text-scramble" data-text="Cooper Keesey" data-delay="100" data-always="false">Cooper Keesey</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">handle</span>
+                <span class="fetch-val text-scramble" data-text="c2k" data-delay="150" data-always="false">c2k</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">role</span>
+                <span class="fetch-val text-scramble" data-text="CTO · context engineer" data-delay="200" data-always="false">CTO · context engineer</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">company</span>
+                <span class="fetch-val"><a href="https://maia-analytics.com" class="fetch-link text-scramble" data-text="MAIA Analytics" data-delay="250" data-always="false" target="_blank" rel="noopener">MAIA Analytics</a></span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">location</span>
+                <span class="fetch-val text-scramble" data-text="Outer Sunset, SF" data-delay="300" data-always="false">Outer Sunset, SF</span>
+              </div>
+            </div>
+
+            <div class="fetch-divider"></div>
+
+            <div class="fetch-block">
+              <div class="fetch-row">
+                <span class="fetch-key">editor</span>
+                <span class="fetch-val">Claude Code</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">terminal</span>
+                <span class="fetch-val">Ghostty + Tmux</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">keyboard</span>
+                <span class="fetch-val">Corne 42-key split</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">host</span>
+                <span class="fetch-val">OptiPlex micro · Ubuntu</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">network</span>
+                <span class="fetch-val">Tailscale + Cloudflare Tunnel</span>
+              </div>
+            </div>
+
+            <div class="fetch-divider"></div>
+
+            <div class="fetch-block">
+              <div class="fetch-row">
+                <span class="fetch-key">languages</span>
+                <span class="fetch-val">TypeScript · Python · Bash</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">frontend</span>
+                <span class="fetch-val">React · Astro</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">backend</span>
+                <span class="fetch-val">FastAPI · Node · Postgres</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">infra</span>
+                <span class="fetch-val">GCP · Docker · systemd</span>
+              </div>
+              <div class="fetch-row">
+                <span class="fetch-key">ai</span>
+                <span class="fetch-val">Claude · Pydantic AI · DuckDB</span>
+              </div>
+            </div>
+
+            <div class="fetch-divider"></div>
+
+            <div class="fetch-block">
+              <div class="fetch-row fetch-philosophy">
+                <span class="fetch-key">uptime</span>
+                <span class="fetch-val fetch-accent">ridiculous output</span>
+              </div>
+              <div class="fetch-row fetch-philosophy">
+                <span class="fetch-key">ethos</span>
+                <span class="fetch-val fetch-accent">living in agreement with nature</span>
+              </div>
+              <div class="fetch-row fetch-philosophy">
+                <span class="fetch-key">approach</span>
+                <span class="fetch-val fetch-accent">simple code · minimal abstraction · ship it</span>
+              </div>
+            </div>
+
+            <div class="fetch-colors" id="fetch-colors">
+              <span class="fetch-swatch" style="background: #a855f7;"></span>
+              <span class="fetch-swatch" style="background: #f97316;"></span>
+              <span class="fetch-swatch" style="background: #22c55e;"></span>
+              <span class="fetch-swatch" style="background: #3b82f6;"></span>
+              <span class="fetch-swatch" style="background: #ef4444;"></span>
+              <span class="fetch-swatch" style="background: #eab308;"></span>
+              <span class="fetch-swatch" style="background: #06b6d4;"></span>
+              <span class="fetch-swatch" style="background: #e4e4e7;"></span>
+            </div>
+          </div>
+
+          <div class="about-blurb">
+            <p>Building the interface between people and their data at MAIA. Before that, aerospace engineering and CFD simulation. Traded rocketry for startups but kept the obsession with systems.</p>
+            <p>Everything I use is version-controlled, self-hosted where it matters, and accessible from anywhere. This site is the public layer of that system.</p>
+          </div>
+
+          <div class="about-links">
+            <a href="https://github.com/c2keesey" class="about-link-card" target="_blank" rel="noopener">
+              <span class="about-link-name">GitHub</span>
+              <span class="about-link-handle">c2keesey</span>
+            </a>
+            <a href="https://x.com/c2keesey" class="about-link-card" target="_blank" rel="noopener">
+              <span class="about-link-name">X</span>
+              <span class="about-link-handle">c2keesey</span>
+            </a>
+            <a href="https://linkedin.com/in/c2keesey" class="about-link-card" target="_blank" rel="noopener">
+              <span class="about-link-name">LinkedIn</span>
+              <span class="about-link-handle">c2keesey</span>
+            </a>
           </div>
         </div>
       </section>
@@ -689,13 +807,133 @@ import '../styles/global.css';
     text-transform: lowercase;
   }
 
-  /* About */
-  .about-content {
+  /* About — fastfetch readout */
+  .about-fetch {
+    background: #0d0d0f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .fetch-block {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    color: var(--text-muted);
+    gap: 0.3rem;
+  }
+
+  .fetch-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0.7rem 0;
+  }
+
+  .fetch-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .fetch-key {
+    color: var(--purple);
+    min-width: 90px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .fetch-val {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .fetch-link {
+    color: rgba(0, 220, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .fetch-link:hover {
+    color: rgba(0, 220, 255, 1);
+  }
+
+  .fetch-accent {
+    color: rgba(255, 255, 255, 0.4);
+    font-style: italic;
+  }
+
+  .fetch-colors {
+    display: flex;
+    gap: 6px;
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+  }
+
+  .fetch-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+  }
+
+  /* About blurb */
+  .about-blurb {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.45);
     line-height: 1.7;
-    font-size: 1.05rem;
+    font-size: 0.85rem;
+  }
+
+  /* About social links */
+  .about-links {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .about-link-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.75rem 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .about-link-card:hover {
+    background: rgba(168, 85, 247, 0.06);
+    border-color: rgba(168, 85, 247, 0.3);
+  }
+
+  .about-link-name {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .about-link-handle {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  @media (max-width: 500px) {
+    .fetch-key {
+      min-width: 72px;
+      font-size: 0.7rem;
+    }
+    .fetch-val {
+      font-size: 0.7rem;
+    }
+    .about-fetch {
+      padding: 1rem;
+    }
   }
 </style>

@@ -46,14 +46,33 @@
       </div>
 
       <div class="crn-footer">
-        <span class="crn-pre-llm">hand-configured · 2024</span>
-        <a class="crn-link" href="https://github.com/c2keesey/urob-zmk-config-corne" target="_blank" rel="noopener">github.com/c2keesey/urob-zmk-config-corne ↗</a>
+        <span class="crn-pre-llm">hand-assembled · hand-configured · 2024</span>
+        <div class="crn-footer-right">
+          <span class="crn-stats" id="crn-stats"></span>
+          <a class="crn-link" href="https://github.com/c2keesey/urob-zmk-config-corne" target="_blank" rel="noopener">github.com/c2keesey/urob-zmk-config-corne ↗</a>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+  // Fetch GitHub stats
+  fetch('https://api.github.com/repos/c2keesey/urob-zmk-config-corne')
+    .then(r => r.json())
+    .then(data => {
+      const stars = data.stargazers_count ?? 0;
+      const forks = data.forks_count ?? 0;
+      const el = document.getElementById('crn-stats');
+      if (el && (stars > 5 || forks > 5)) {
+        const parts: string[] = [];
+        if (stars > 5) parts.push(`★ ${stars}`);
+        if (forks > 5) parts.push(`⑂ ${forks}`);
+        el.textContent = parts.join('  ');
+      }
+    })
+    .catch(() => {});
+
   function initCorne() {
     const board = document.getElementById('crn-board');
     const detail = document.getElementById('crn-detail');
@@ -530,6 +549,19 @@
     border-radius: 4px;
     color: rgba(34, 197, 94, 0.45);
     letter-spacing: 0.03em;
+  }
+
+  .crn-footer-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .crn-stats {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: rgba(34, 197, 94, 0.5);
+    white-space: nowrap;
   }
 
   .crn-link {

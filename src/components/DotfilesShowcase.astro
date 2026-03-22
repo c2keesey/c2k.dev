@@ -1,0 +1,274 @@
+---
+// Dotfiles — developer environment as code
+// Groups statusline, skills, and other dotfiles highlights into one expandable card
+import StatuslineShowcase from './StatuslineShowcase.astro';
+import SkillsShowcase from './SkillsShowcase.astro';
+---
+
+<div class="df-showcase">
+  <div class="df-card">
+    <div class="df-content">
+      <div class="df-header">
+        <span class="df-name text-scramble" data-text="dotfiles" data-delay="100" data-always="false">dotfiles</span>
+        <span class="df-badge">config</span>
+      </div>
+      <p class="df-tagline">Developer environment as code</p>
+      <p class="df-desc">Shell, editor, Claude Code setup, and custom tools — version-controlled and synced across machines via symlinks. One repo powers everything.</p>
+
+      <div class="df-items" id="df-items">
+        <button class="df-item-btn" data-item="statusline">
+          <div class="df-item-icon">▊</div>
+          <div class="df-item-info">
+            <span class="df-item-name">statusline</span>
+            <span class="df-item-sub">bash prompt</span>
+          </div>
+        </button>
+        <button class="df-item-btn" data-item="skills">
+          <div class="df-item-icon">/</div>
+          <div class="df-item-info">
+            <span class="df-item-name">skills</span>
+            <span class="df-item-sub">slash commands</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="df-section" id="df-section-statusline">
+        <StatuslineShowcase />
+      </div>
+      <div class="df-section" id="df-section-skills">
+        <SkillsShowcase />
+      </div>
+
+      <div class="df-stack">
+        <span class="df-tech">Bash</span>
+        <span class="df-tech">Zsh</span>
+        <span class="df-tech">Claude Code</span>
+        <span class="df-tech">Tmux</span>
+        <span class="df-tech">Git</span>
+      </div>
+
+      <div class="df-footer">
+        <a class="df-link" href="https://github.com/c2keesey/dotfiles" target="_blank" rel="noopener">github.com/c2keesey/dotfiles ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initDotfiles() {
+    const btns = document.querySelectorAll<HTMLElement>('.df-item-btn');
+    const sections: Record<string, HTMLElement | null> = {
+      statusline: document.getElementById('df-section-statusline'),
+      skills: document.getElementById('df-section-skills'),
+    };
+
+    let activeItem: string | null = null;
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.dataset.item;
+        if (!item) return;
+
+        if (activeItem === item) {
+          // Collapse current
+          sections[item]?.classList.remove('df-open');
+          btn.classList.remove('df-active');
+          activeItem = null;
+        } else {
+          // Collapse previous
+          if (activeItem) {
+            sections[activeItem]?.classList.remove('df-open');
+          }
+          btns.forEach(b => b.classList.remove('df-active'));
+          // Expand new
+          sections[item]?.classList.add('df-open');
+          btn.classList.add('df-active');
+          activeItem = item;
+        }
+      });
+    });
+  }
+
+  initDotfiles();
+</script>
+
+<style>
+  .df-showcase {
+    margin-bottom: 2rem;
+  }
+
+  .df-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.06), rgba(249, 115, 22, 0.03));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    overflow: hidden;
+    color: white;
+  }
+
+  .df-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .df-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .df-name {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(168, 85, 247, 0.9);
+  }
+
+  .df-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .df-tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.35rem;
+  }
+
+  .df-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  /* Item selector buttons */
+  .df-items {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .df-item-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: inherit;
+    color: inherit;
+  }
+
+  .df-item-btn:hover {
+    background: rgba(168, 85, 247, 0.08);
+    border-color: rgba(168, 85, 247, 0.2);
+  }
+
+  .df-item-btn.df-active {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.35);
+  }
+
+  .df-item-icon {
+    font-size: 1rem;
+    line-height: 1;
+    color: rgba(168, 85, 247, 0.7);
+    font-family: var(--font-mono);
+  }
+
+  .df-item-info {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .df-item-name {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .df-item-sub {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  /* Expandable sections */
+  .df-section {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  }
+
+  .df-section.df-open {
+    max-height: 2000px;
+    opacity: 1;
+  }
+
+  /* Override nested showcase margins when embedded */
+  .df-section :global(.showcase) {
+    margin-top: 0.75rem;
+  }
+  .df-section :global(.skills-showcase) {
+    margin-top: 0.75rem;
+  }
+  /* Hide the nested headers since DotfilesShowcase provides context */
+  .df-section :global(.showcase-header),
+  .df-section :global(.skills-header) {
+    display: none;
+  }
+
+  /* Tech stack */
+  .df-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .df-tech {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  .df-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .df-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(168, 85, 247, 0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .df-link:hover {
+    color: var(--purple);
+  }
+</style>
