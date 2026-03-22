@@ -178,8 +178,15 @@
     }
 
     // Hover/tap for detail
+    let isTouch = false;
+
     rows.forEach(row => {
+      row.addEventListener('pointerdown', (e) => {
+        isTouch = e.pointerType === 'touch';
+      });
+
       row.addEventListener('mouseenter', () => {
+        if (isTouch) return;
         const detail = row.dataset.detail || '';
         detailText.textContent = detail;
         detailBar.classList.add('visible');
@@ -187,11 +194,11 @@
       });
 
       row.addEventListener('mouseleave', () => {
+        if (isTouch) return;
         detailBar.classList.remove('visible');
         row.classList.remove('active');
       });
 
-      // Touch support
       row.addEventListener('click', () => {
         const wasActive = row.classList.contains('active');
         rows.forEach(r => r.classList.remove('active'));

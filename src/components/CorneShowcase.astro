@@ -207,18 +207,31 @@
       }
 
       if (key.detail) {
+        let keyIsTouch = false;
+
+        el.addEventListener('pointerdown', (e) => {
+          keyIsTouch = e.pointerType === 'touch';
+        });
+
         el.addEventListener('mouseenter', () => {
+          if (keyIsTouch) return;
           detail.textContent = key.detail!;
           detail.classList.add('visible');
         });
         el.addEventListener('mouseleave', () => {
+          if (keyIsTouch) return;
           detail.classList.remove('visible');
         });
         el.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
+          const wasVisible = detail.classList.contains('visible') && detail.textContent === key.detail;
           detail.textContent = key.detail!;
-          detail.classList.toggle('visible');
+          if (wasVisible) {
+            detail.classList.remove('visible');
+          } else {
+            detail.classList.add('visible');
+          }
         });
       }
 
