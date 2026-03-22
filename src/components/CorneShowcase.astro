@@ -170,24 +170,37 @@
       sys: { left: [{ label: '' }, { label: '' }, { label: '' }], right: [{ label: '\u2593', mod: 'active' }, { label: '' }, { label: '' }] },
     };
 
-    // Combo definitions: [side, row, col] pairs + output + optional detail
-    interface Combo { keys: [string, string][]; output: string; detail?: string; }
-    const combos: Combo[] = [
-      { keys: [['L',0,0],['L',0,1]], output: ':', detail: 'Q + W → colon' },
-      { keys: [['L',0,1],['L',0,2]], output: '=', detail: 'W + E → equals' },
-      { keys: [['L',1,1],['L',1,2]], output: 'bspc', detail: 'S + D → backspace | Hold: Alt+Gui' },
-      { keys: [['L',1,2],['L',1,3]], output: 'ret', detail: 'D + F → return | Hold: Shift+Gui' },
-      { keys: [['L',1,3],['L',1,1]], output: '⌘A', detail: 'F + S → select all' },
-      { keys: [['L',2,1],['L',2,2]], output: 'copy', detail: 'X + C → copy | 2x: select all + copy' },
-      { keys: [['L',2,2],['L',2,3]], output: 'paste', detail: 'C + V → paste | 2x: select all + paste' },
-      { keys: [['L',2,1],['L',2,3]], output: 'cut', detail: 'X + V → cut' },
-      { keys: [['R',0,1],['R',0,2]], output: '_', detail: 'U + I → underscore' },
-      { keys: [['R',0,2],['R',0,3]], output: '-', detail: 'I + O → minus' },
-      { keys: [['R',1,1],['R',1,2]], output: '(', detail: 'J + K → ( | Shift: <' },
-      { keys: [['R',1,2],['R',1,3]], output: ')', detail: 'K + L → )' },
-      { keys: [['R',2,1],['R',2,2]], output: '[', detail: 'M + , → [ | NAV: {' },
-      { keys: [['R',2,2],['R',2,3]], output: ']', detail: ', + . → ] | NAV: }' },
+    // Combo definitions: between columns c1 and c2 at row r, on side L/R
+    // Adjacent combos go between the two columns; non-adjacent span across
+    interface ComboData { side: string; row: number; c1: number; c2: number; output: string; detail: string; }
+    const comboData: ComboData[] = [
+      { side: 'L', row: 0, c1: 0, c2: 1, output: ':', detail: 'Q + W → colon' },
+      { side: 'L', row: 0, c1: 1, c2: 2, output: '=', detail: 'W + E → equals' },
+      { side: 'L', row: 1, c1: 1, c2: 2, output: 'bspc', detail: 'S + D → backspace | Hold: Alt+Gui' },
+      { side: 'L', row: 1, c1: 2, c2: 3, output: 'ret', detail: 'D + F → return | Hold: Shift+Gui' },
+      { side: 'L', row: 2, c1: 1, c2: 2, output: 'copy', detail: 'X + C → copy | 2x: all + copy' },
+      { side: 'L', row: 2, c1: 2, c2: 3, output: 'paste', detail: 'C + V → paste | 2x: all + paste' },
+      { side: 'L', row: 2, c1: 1, c2: 3, output: 'cut', detail: 'X + V → cut (skips C)' },
+      { side: 'L', row: 1, c1: 1, c2: 3, output: '⌘A', detail: 'F + S → select all (skips D)' },
+      { side: 'R', row: 0, c1: 1, c2: 2, output: '_', detail: 'U + I → underscore' },
+      { side: 'R', row: 0, c1: 2, c2: 3, output: '-', detail: 'I + O → minus' },
+      { side: 'R', row: 1, c1: 1, c2: 2, output: '(', detail: 'J + K → ( | Shift: <' },
+      { side: 'R', row: 1, c1: 2, c2: 3, output: ')', detail: 'K + L → )' },
+      { side: 'R', row: 2, c1: 1, c2: 2, output: '[', detail: 'M + , → [ | NAV: {' },
+      { side: 'R', row: 2, c1: 2, c2: 3, output: ']', detail: ', + . → ] | NAV: }' },
     ];
+
+    // Group combos by side and column gap for inline rendering
+    function getCombosForGap(side: string, afterCol: number): { row: number; output: string; detail: string; span: boolean }[] {
+      return comboData
+        .filter(c => c.side === side && c.c1 === afterCol && c.c2 === afterCol + 1)
+        .map(c => ({ row: c.row, output: c.output, detail: c.detail, span: false }));
+    }
+
+    // Non-adjacent combos (span across columns)
+    function getSpanCombos(side: string): ComboData[] {
+      return comboData.filter(c => c.side === side && c.c2 - c.c1 > 1);
+    }
 
     let currentLayer = 'base';
 
@@ -200,7 +213,6 @@
 
       const container = document.createElement('div');
       container.className = 'crn-halves';
-      if (isComboView) container.classList.add('crn-combo-view');
 
       function renderHalf(rows: Key[][], thumbKeys: Key[], isRight: boolean): HTMLElement {
         const half = document.createElement('div');
@@ -220,12 +232,66 @@
 
           for (let r = 0; r < rows.length; r++) {
             const keyEl = makeKey(rows[r][c], false, isComboView);
-            keyEl.dataset.pos = `${side}-${r}-${c}`;
             colEl.appendChild(keyEl);
           }
           colContainer.appendChild(colEl);
+
+          // Insert combo column between key columns
+          if (isComboView && c < cols - 1) {
+            const gapCombos = getCombosForGap(side, c);
+            if (gapCombos.length > 0) {
+              const comboCol = document.createElement('div');
+              comboCol.className = 'crn-combo-col';
+              // Average the stagger of adjacent columns
+              const sIdx1 = isRight ? (cols - 1 - c) : c;
+              const sIdx2 = isRight ? (cols - 1 - (c + 1)) : (c + 1);
+              comboCol.style.marginTop = ((stagger[sIdx1] + stagger[sIdx2]) / 2) + 'px';
+
+              for (let r = 0; r < 3; r++) {
+                const combo = gapCombos.find(g => g.row === r);
+                const cell = document.createElement('div');
+                cell.className = 'crn-combo-cell';
+                if (combo) {
+                  const pill = document.createElement('span');
+                  pill.className = 'crn-combo-pill';
+                  pill.textContent = combo.output;
+                  addComboInteraction(pill, combo.detail);
+                  cell.appendChild(pill);
+                }
+                comboCol.appendChild(cell);
+              }
+              colContainer.appendChild(comboCol);
+            }
+          }
         }
         half.appendChild(colContainer);
+
+        // Non-adjacent (spanning) combos rendered below the keys
+        if (isComboView) {
+          const spanCombos = getSpanCombos(side);
+          if (spanCombos.length > 0) {
+            const spanRow = document.createElement('div');
+            spanRow.className = 'crn-span-combos';
+            spanCombos.forEach(sc => {
+              const pill = document.createElement('span');
+              pill.className = 'crn-combo-pill crn-combo-span';
+              pill.textContent = sc.output;
+              const label = document.createElement('span');
+              label.className = 'crn-combo-span-label';
+              const keyNames = side === 'L'
+                ? [['Q','W','E','R','T'],['A','S','D','F','G'],['Z','X','C','V','B']]
+                : [['Y','U','I','O','P'],['H','J','K','L',"'"],['N','M',',','.','/']];
+              label.textContent = `${keyNames[sc.row][sc.c1]}+${keyNames[sc.row][sc.c2]}`;
+              const wrap = document.createElement('div');
+              wrap.className = 'crn-combo-span-wrap';
+              wrap.appendChild(label);
+              wrap.appendChild(pill);
+              addComboInteraction(wrap, sc.detail);
+              spanRow.appendChild(wrap);
+            });
+            half.appendChild(spanRow);
+          }
+        }
 
         const thumbRow = document.createElement('div');
         thumbRow.className = 'crn-row crn-thumbs';
@@ -238,57 +304,27 @@
       container.appendChild(renderHalf(layer.left, thumb.left, false));
       container.appendChild(renderHalf(layer.right, thumb.right, true));
       board.appendChild(container);
-
-      // Overlay combos after layout
-      if (isComboView) {
-        requestAnimationFrame(() => renderComboOverlays());
-      }
     }
 
-    function renderComboOverlays() {
-      const boardRect = board.getBoundingClientRect();
-
-      combos.forEach(combo => {
-        const [k1, k2] = combo.keys;
-        const el1 = board.querySelector(`[data-pos="${k1[0]}-${k1[1]}-${k1[2]}"]`) as HTMLElement;
-        const el2 = board.querySelector(`[data-pos="${k2[0]}-${k2[1]}-${k2[2]}"]`) as HTMLElement;
-        if (!el1 || !el2) return;
-
-        const r1 = el1.getBoundingClientRect();
-        const r2 = el2.getBoundingClientRect();
-
-        const cx = ((r1.left + r1.right) / 2 + (r2.left + r2.right) / 2) / 2 - boardRect.left;
-        const cy = ((r1.top + r1.bottom) / 2 + (r2.top + r2.bottom) / 2) / 2 - boardRect.top;
-
-        const pill = document.createElement('div');
-        pill.className = 'crn-combo-pill';
-        pill.textContent = combo.output;
-        pill.style.left = cx + 'px';
-        pill.style.top = cy + 'px';
-
-        if (combo.detail) {
-          let pillIsTouch = false;
-          pill.addEventListener('pointerdown', (e) => { pillIsTouch = e.pointerType === 'touch'; });
-          pill.addEventListener('mouseenter', () => {
-            if (pillIsTouch) return;
-            detail.textContent = combo.detail!;
-            detail.classList.add('visible');
-          });
-          pill.addEventListener('mouseleave', () => {
-            if (pillIsTouch) return;
-            detail.classList.remove('visible');
-          });
-          pill.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const wasVisible = detail.classList.contains('visible') && detail.textContent === combo.detail;
-            detail.textContent = combo.detail!;
-            if (wasVisible) detail.classList.remove('visible');
-            else detail.classList.add('visible');
-          });
-        }
-
-        board.appendChild(pill);
+    function addComboInteraction(el: HTMLElement, comboDetail: string) {
+      let isTouch = false;
+      el.addEventListener('pointerdown', (e) => { isTouch = e.pointerType === 'touch'; });
+      el.addEventListener('mouseenter', () => {
+        if (isTouch) return;
+        detail.textContent = comboDetail;
+        detail.classList.add('visible');
+      });
+      el.addEventListener('mouseleave', () => {
+        if (isTouch) return;
+        detail.classList.remove('visible');
+      });
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const wasVisible = detail.classList.contains('visible') && detail.textContent === comboDetail;
+        detail.textContent = comboDetail;
+        if (wasVisible) detail.classList.remove('visible');
+        else detail.classList.add('visible');
       });
     }
 
@@ -611,34 +647,63 @@
     border-top-color: var(--border);
   }
 
-  /* Combo overlay pills */
-  .crn-board {
-    position: relative;
+  /* Combo view */
+  :global(.crn-dimmed) {
+    opacity: 0.4;
+  }
+
+  :global(.crn-combo-col) {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  :global(.crn-combo-cell) {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4px;
   }
 
   :global(.crn-combo-pill) {
-    position: absolute;
-    transform: translate(-50%, -50%);
     font-family: var(--font-mono);
-    font-size: 0.5rem;
+    font-size: 0.45rem;
     font-weight: 600;
-    padding: 0.1rem 0.3rem;
+    padding: 0.08rem 0.2rem;
     background: rgba(6, 182, 212, 0.2);
-    border: 1px solid rgba(6, 182, 212, 0.5);
+    border: 1px solid rgba(6, 182, 212, 0.45);
     border-radius: 3px;
     color: rgba(6, 182, 212, 0.95);
-    z-index: 2;
     cursor: default;
     white-space: nowrap;
-    pointer-events: auto;
+    line-height: 1.2;
   }
 
-  :global(.crn-dimmed) {
-    opacity: 0.35;
+  :global(.crn-span-combos) {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    padding-top: 4px;
   }
 
-  :global(.crn-combo-view .crn-key:not(.crn-dimmed)) {
-    opacity: 0.35;
+  :global(.crn-combo-span-wrap) {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    cursor: default;
+  }
+
+  :global(.crn-combo-span-label) {
+    font-family: var(--font-mono);
+    font-size: 0.4rem;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  :global(.crn-combo-span) {
+    font-size: 0.45rem;
   }
 
   /* Features */
