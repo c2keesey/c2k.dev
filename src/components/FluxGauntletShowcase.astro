@@ -242,13 +242,7 @@
     function draw() {
       ctx.clearRect(0, 0, w, h);
 
-      // Draw faint arm silhouette
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, armLen / 2, armRadiusY + 6, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.015)';
-      ctx.fill();
-      ctx.restore();
+      // (arm silhouette removed — blends with background)
 
       // Tick effect
       effects[effect]?.();
