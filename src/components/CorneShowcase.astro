@@ -190,17 +190,17 @@
       { side: 'R', row: 2, c1: 2, c2: 3, output: ']', detail: ', + . → ] | NAV: }' },
     ];
 
-    // Group combos by side and column gap for inline rendering
-    function getCombosForGap(side: string, afterCol: number): { row: number; output: string; detail: string; span: boolean }[] {
-      return comboData
-        .filter(c => c.side === side && c.c1 === afterCol && c.c2 === afterCol + 1)
-        .map(c => ({ row: c.row, output: c.output, detail: c.detail, span: false }));
-    }
+    // Build set of keys involved in combos for highlighting
+    const comboKeySet = new Set<string>();
+    comboData.forEach(c => {
+      comboKeySet.add(`${c.side}-${c.row}-${c.c1}`);
+      comboKeySet.add(`${c.side}-${c.row}-${c.c2}`);
+    });
 
-    // Non-adjacent combos (span across columns)
-    function getSpanCombos(side: string): ComboData[] {
-      return comboData.filter(c => c.side === side && c.c2 - c.c1 > 1);
-    }
+    const keyNames: Record<string, string[][]> = {
+      L: [['Q','W','E','R','T'],['A','S','D','F','G'],['Z','X','C','V','B']],
+      R: [['Y','U','I','O','P'],['H','J','K','L',"'"],['N','M',',','.','/']],
+    };
 
     let currentLayer = 'base';
 
@@ -231,72 +231,41 @@
           colEl.style.marginTop = (stagger[sIdx] || 0) + 'px';
 
           for (let r = 0; r < rows.length; r++) {
-            const keyEl = makeKey(rows[r][c], false, isComboView);
+            const keyEl = makeKey(rows[r][c], false, false);
+            // Highlight combo keys
+            if (isComboView && comboKeySet.has(`${side}-${r}-${c}`)) {
+              keyEl.classList.add('crn-combo-key');
+            } else if (isComboView) {
+              keyEl.classList.add('crn-dimmed');
+            }
             colEl.appendChild(keyEl);
           }
           colContainer.appendChild(colEl);
-
-          // Insert combo column between key columns
-          if (isComboView && c < cols - 1) {
-            const gapCombos = getCombosForGap(side, c);
-            if (gapCombos.length > 0) {
-              const comboCol = document.createElement('div');
-              comboCol.className = 'crn-combo-col';
-              // Average the stagger of adjacent columns
-              const sIdx1 = isRight ? (cols - 1 - c) : c;
-              const sIdx2 = isRight ? (cols - 1 - (c + 1)) : (c + 1);
-              comboCol.style.marginTop = ((stagger[sIdx1] + stagger[sIdx2]) / 2) + 'px';
-
-              for (let r = 0; r < 3; r++) {
-                const combo = gapCombos.find(g => g.row === r);
-                const cell = document.createElement('div');
-                cell.className = 'crn-combo-cell';
-                if (combo) {
-                  const pill = document.createElement('span');
-                  pill.className = 'crn-combo-pill';
-                  pill.textContent = combo.output;
-                  addComboInteraction(pill, combo.detail);
-                  cell.appendChild(pill);
-                }
-                comboCol.appendChild(cell);
-              }
-              colContainer.appendChild(comboCol);
-            }
-          }
         }
         half.appendChild(colContainer);
 
-        // Non-adjacent (spanning) combos rendered below the keys
-        if (isComboView) {
-          const spanCombos = getSpanCombos(side);
-          if (spanCombos.length > 0) {
-            const spanRow = document.createElement('div');
-            spanRow.className = 'crn-span-combos';
-            spanCombos.forEach(sc => {
-              const pill = document.createElement('span');
-              pill.className = 'crn-combo-pill crn-combo-span';
-              pill.textContent = sc.output;
-              const label = document.createElement('span');
-              label.className = 'crn-combo-span-label';
-              const keyNames = side === 'L'
-                ? [['Q','W','E','R','T'],['A','S','D','F','G'],['Z','X','C','V','B']]
-                : [['Y','U','I','O','P'],['H','J','K','L',"'"],['N','M',',','.','/']];
-              label.textContent = `${keyNames[sc.row][sc.c1]}+${keyNames[sc.row][sc.c2]}`;
-              const wrap = document.createElement('div');
-              wrap.className = 'crn-combo-span-wrap';
-              wrap.appendChild(label);
-              wrap.appendChild(pill);
-              addComboInteraction(wrap, sc.detail);
-              spanRow.appendChild(wrap);
-            });
-            half.appendChild(spanRow);
-          }
-        }
-
         const thumbRow = document.createElement('div');
         thumbRow.className = 'crn-row crn-thumbs';
-        thumbKeys.forEach(key => thumbRow.appendChild(makeKey(key, true, isComboView)));
-        half.appendChild(thumbRow);
+        thumbKeys.forEach(key => {
+          const keyEl = makeKey(key, true, false);
+          if (isComboView) keyEl.classList.add('crn-dimmed');
+          half.appendChild(keyEl); // temp
+        });
+        // Clear and redo thumbs properly
+        const realThumbRow = document.createElement('div');
+        realThumbRow.className = 'crn-row crn-thumbs';
+        thumbKeys.forEach(key => {
+          const keyEl = makeKey(key, true, false);
+          if (isComboView) keyEl.classList.add('crn-dimmed');
+          realThumbRow.appendChild(keyEl);
+        });
+        // Remove the wrongly appended ones
+        while (half.childNodes.length > 1) {
+          const last = half.lastChild;
+          if (last && last !== colContainer) half.removeChild(last);
+          else break;
+        }
+        half.appendChild(realThumbRow);
 
         return half;
       }
@@ -304,6 +273,38 @@
       container.appendChild(renderHalf(layer.left, thumb.left, false));
       container.appendChild(renderHalf(layer.right, thumb.right, true));
       board.appendChild(container);
+
+      // Render combo legend below keyboard
+      if (isComboView) {
+        const legend = document.createElement('div');
+        legend.className = 'crn-combo-legend';
+
+        comboData.forEach(c => {
+          const row = document.createElement('div');
+          row.className = 'crn-combo-row';
+
+          const keys = document.createElement('span');
+          keys.className = 'crn-combo-keys';
+          keys.textContent = `${keyNames[c.side][c.row][c.c1]} + ${keyNames[c.side][c.row][c.c2]}`;
+
+          const arrow = document.createElement('span');
+          arrow.className = 'crn-combo-arrow';
+          arrow.textContent = '→';
+
+          const output = document.createElement('span');
+          output.className = 'crn-combo-output';
+          output.textContent = c.output;
+
+          row.appendChild(keys);
+          row.appendChild(arrow);
+          row.appendChild(output);
+
+          addComboInteraction(row, c.detail);
+          legend.appendChild(row);
+        });
+
+        board.appendChild(legend);
+      }
     }
 
     function addComboInteraction(el: HTMLElement, comboDetail: string) {
@@ -649,61 +650,63 @@
 
   /* Combo view */
   :global(.crn-dimmed) {
-    opacity: 0.4;
+    opacity: 0.25;
   }
 
-  :global(.crn-combo-col) {
+  :global(.crn-combo-key) {
+    border-color: rgba(6, 182, 212, 0.5) !important;
+    background: rgba(6, 182, 212, 0.12) !important;
+  }
+
+  :global(.crn-combo-legend) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  :global(.crn-combo-row) {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
     align-items: center;
-    justify-content: flex-start;
-  }
-
-  :global(.crn-combo-cell) {
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 4px;
-  }
-
-  :global(.crn-combo-pill) {
+    gap: 0.4rem;
+    padding: 0.25rem 0.5rem;
     font-family: var(--font-mono);
-    font-size: 0.45rem;
-    font-weight: 600;
-    padding: 0.08rem 0.2rem;
-    background: rgba(6, 182, 212, 0.2);
-    border: 1px solid rgba(6, 182, 212, 0.45);
+    font-size: 0.65rem;
+    cursor: default;
     border-radius: 3px;
-    color: rgba(6, 182, 212, 0.95);
-    cursor: default;
-    white-space: nowrap;
-    line-height: 1.2;
+    transition: background 0.15s;
   }
 
-  :global(.crn-span-combos) {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    padding-top: 4px;
+  :global(.crn-combo-row:hover) {
+    background: rgba(6, 182, 212, 0.08);
   }
 
-  :global(.crn-combo-span-wrap) {
-    display: flex;
-    align-items: center;
-    gap: 0.2rem;
-    cursor: default;
+  :global(.crn-combo-keys) {
+    color: rgba(6, 182, 212, 0.8);
+    font-weight: 500;
+    min-width: 42px;
   }
 
-  :global(.crn-combo-span-label) {
-    font-family: var(--font-mono);
-    font-size: 0.4rem;
-    color: rgba(255, 255, 255, 0.3);
+  :global(.crn-combo-arrow) {
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 0.55rem;
   }
 
-  :global(.crn-combo-span) {
-    font-size: 0.45rem;
+  :global(.crn-combo-output) {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+  }
+
+  @media (max-width: 500px) {
+    :global(.crn-combo-legend) {
+      grid-template-columns: 1fr;
+    }
+    :global(.crn-combo-row) {
+      font-size: 0.6rem;
+      padding: 0.2rem 0.4rem;
+    }
   }
 
   /* Features */
