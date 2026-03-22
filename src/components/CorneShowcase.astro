@@ -25,33 +25,10 @@
           <button class="crn-layer-btn" data-layer="num">num</button>
           <button class="crn-layer-btn" data-layer="sym">sym</button>
           <button class="crn-layer-btn" data-layer="sys">sys</button>
+          <button class="crn-layer-btn" data-layer="combos">combos</button>
         </div>
         <div class="crn-board" id="crn-board"></div>
         <div class="crn-detail" id="crn-detail"></div>
-      </div>
-
-      <div class="crn-combos" id="crn-combos">
-        <button class="crn-combos-toggle" id="crn-combos-toggle">
-          <span>combos</span>
-          <span class="crn-combos-arrow" id="crn-combos-arrow">+</span>
-        </button>
-        <div class="crn-combos-list" id="crn-combos-list">
-          <div class="crn-combo"><span class="crn-combo-keys">S + D</span><span class="crn-combo-out">bspc</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">D + F</span><span class="crn-combo-out">return</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">W + E</span><span class="crn-combo-out">=</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">U + I</span><span class="crn-combo-out">_</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">I + O</span><span class="crn-combo-out">-</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">Q + W</span><span class="crn-combo-out">:</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">J + K</span><span class="crn-combo-out">( )</span><span class="crn-combo-note">shift: &lt; &gt;</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">K + L</span><span class="crn-combo-out">)</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">M + ,</span><span class="crn-combo-out">[ ]</span><span class="crn-combo-note">nav: { }</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">, + .</span><span class="crn-combo-out">]</span><span class="crn-combo-note">nav: }</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">X + C</span><span class="crn-combo-out">copy</span><span class="crn-combo-note">2x: select all + copy</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">C + V</span><span class="crn-combo-out">paste</span><span class="crn-combo-note">2x: select all + paste</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">X + V</span><span class="crn-combo-out">cut</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">F + S</span><span class="crn-combo-out">⌘A</span><span class="crn-combo-note">select all</span></div>
-          <div class="crn-combo"><span class="crn-combo-keys">S + D + F</span><span class="crn-combo-out">⇧bspc</span><span class="crn-combo-note">delete line</span></div>
-        </div>
       </div>
 
       <div class="crn-features">
@@ -193,24 +170,44 @@
       sys: { left: [{ label: '' }, { label: '' }, { label: '' }], right: [{ label: '\u2593', mod: 'active' }, { label: '' }, { label: '' }] },
     };
 
+    // Combo definitions: [side, row, col] pairs + output + optional detail
+    interface Combo { keys: [string, string][]; output: string; detail?: string; }
+    const combos: Combo[] = [
+      { keys: [['L',0,0],['L',0,1]], output: ':', detail: 'Q + W → colon' },
+      { keys: [['L',0,1],['L',0,2]], output: '=', detail: 'W + E → equals' },
+      { keys: [['L',1,1],['L',1,2]], output: 'bspc', detail: 'S + D → backspace | Hold: Alt+Gui' },
+      { keys: [['L',1,2],['L',1,3]], output: 'ret', detail: 'D + F → return | Hold: Shift+Gui' },
+      { keys: [['L',1,3],['L',1,1]], output: '⌘A', detail: 'F + S → select all' },
+      { keys: [['L',2,1],['L',2,2]], output: 'copy', detail: 'X + C → copy | 2x: select all + copy' },
+      { keys: [['L',2,2],['L',2,3]], output: 'paste', detail: 'C + V → paste | 2x: select all + paste' },
+      { keys: [['L',2,1],['L',2,3]], output: 'cut', detail: 'X + V → cut' },
+      { keys: [['R',0,1],['R',0,2]], output: '_', detail: 'U + I → underscore' },
+      { keys: [['R',0,2],['R',0,3]], output: '-', detail: 'I + O → minus' },
+      { keys: [['R',1,1],['R',1,2]], output: '(', detail: 'J + K → ( | Shift: <' },
+      { keys: [['R',1,2],['R',1,3]], output: ')', detail: 'K + L → )' },
+      { keys: [['R',2,1],['R',2,2]], output: '[', detail: 'M + , → [ | NAV: {' },
+      { keys: [['R',2,2],['R',2,3]], output: ']', detail: ', + . → ] | NAV: }' },
+    ];
+
     let currentLayer = 'base';
 
     function renderBoard() {
-      const layer = layers[currentLayer];
-      const thumb = thumbs[currentLayer];
+      const isComboView = currentLayer === 'combos';
+      const layerName = isComboView ? 'base' : currentLayer;
+      const layer = layers[layerName];
+      const thumb = thumbs[layerName];
       while (board.firstChild) board.removeChild(board.firstChild);
 
       const container = document.createElement('div');
       container.className = 'crn-halves';
+      if (isComboView) container.classList.add('crn-combo-view');
 
       function renderHalf(rows: Key[][], thumbKeys: Key[], isRight: boolean): HTMLElement {
         const half = document.createElement('div');
         half.className = 'crn-half' + (isRight ? ' crn-right' : ' crn-left');
+        const side = isRight ? 'R' : 'L';
 
-        // Column stagger: margin-top per column (px). Pinky low, middle high.
         const stagger = [8, 3, 0, 3, 6];
-
-        // Build columns instead of rows so stagger applies to the whole column
         const cols = rows[0].length;
         const colContainer = document.createElement('div');
         colContainer.className = 'crn-cols';
@@ -222,16 +219,17 @@
           colEl.style.marginTop = (stagger[sIdx] || 0) + 'px';
 
           for (let r = 0; r < rows.length; r++) {
-            colEl.appendChild(makeKey(rows[r][c]));
+            const keyEl = makeKey(rows[r][c], false, isComboView);
+            keyEl.dataset.pos = `${side}-${r}-${c}`;
+            colEl.appendChild(keyEl);
           }
           colContainer.appendChild(colEl);
         }
         half.appendChild(colContainer);
 
-        // Thumb row
         const thumbRow = document.createElement('div');
         thumbRow.className = 'crn-row crn-thumbs';
-        thumbKeys.forEach(key => thumbRow.appendChild(makeKey(key, true)));
+        thumbKeys.forEach(key => thumbRow.appendChild(makeKey(key, true, isComboView)));
         half.appendChild(thumbRow);
 
         return half;
@@ -240,25 +238,77 @@
       container.appendChild(renderHalf(layer.left, thumb.left, false));
       container.appendChild(renderHalf(layer.right, thumb.right, true));
       board.appendChild(container);
+
+      // Overlay combos after layout
+      if (isComboView) {
+        requestAnimationFrame(() => renderComboOverlays());
+      }
     }
 
-    function makeKey(key: Key, isThumb = false): HTMLElement {
+    function renderComboOverlays() {
+      const boardRect = board.getBoundingClientRect();
+
+      combos.forEach(combo => {
+        const [k1, k2] = combo.keys;
+        const el1 = board.querySelector(`[data-pos="${k1[0]}-${k1[1]}-${k1[2]}"]`) as HTMLElement;
+        const el2 = board.querySelector(`[data-pos="${k2[0]}-${k2[1]}-${k2[2]}"]`) as HTMLElement;
+        if (!el1 || !el2) return;
+
+        const r1 = el1.getBoundingClientRect();
+        const r2 = el2.getBoundingClientRect();
+
+        const cx = ((r1.left + r1.right) / 2 + (r2.left + r2.right) / 2) / 2 - boardRect.left;
+        const cy = ((r1.top + r1.bottom) / 2 + (r2.top + r2.bottom) / 2) / 2 - boardRect.top;
+
+        const pill = document.createElement('div');
+        pill.className = 'crn-combo-pill';
+        pill.textContent = combo.output;
+        pill.style.left = cx + 'px';
+        pill.style.top = cy + 'px';
+
+        if (combo.detail) {
+          let pillIsTouch = false;
+          pill.addEventListener('pointerdown', (e) => { pillIsTouch = e.pointerType === 'touch'; });
+          pill.addEventListener('mouseenter', () => {
+            if (pillIsTouch) return;
+            detail.textContent = combo.detail!;
+            detail.classList.add('visible');
+          });
+          pill.addEventListener('mouseleave', () => {
+            if (pillIsTouch) return;
+            detail.classList.remove('visible');
+          });
+          pill.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const wasVisible = detail.classList.contains('visible') && detail.textContent === combo.detail;
+            detail.textContent = combo.detail!;
+            if (wasVisible) detail.classList.remove('visible');
+            else detail.classList.add('visible');
+          });
+        }
+
+        board.appendChild(pill);
+      });
+    }
+
+    function makeKey(key: Key, isThumb = false, dimmed = false): HTMLElement {
       const el = document.createElement('div');
-      el.className = 'crn-key' + (isThumb ? ' crn-thumb' : '') + (key.mod ? ` crn-${key.mod}` : '') + (!key.label ? ' crn-empty' : '');
+      el.className = 'crn-key' + (isThumb ? ' crn-thumb' : '') + (key.mod ? ` crn-${key.mod}` : '') + (!key.label ? ' crn-empty' : '') + (dimmed ? ' crn-dimmed' : '');
 
       const label = document.createElement('span');
       label.className = 'crn-key-label';
       label.textContent = key.label;
       el.appendChild(label);
 
-      if (key.sub) {
+      if (key.sub && !dimmed) {
         const sub = document.createElement('span');
         sub.className = 'crn-key-sub';
         sub.textContent = key.sub;
         el.appendChild(sub);
       }
 
-      if (key.detail) {
+      if (key.detail && !dimmed) {
         let keyIsTouch = false;
 
         el.addEventListener('pointerdown', (e) => {
@@ -310,17 +360,6 @@
   }
 
   initCorne();
-
-  // Combos toggle
-  const combosToggle = document.getElementById('crn-combos-toggle');
-  const combosList = document.getElementById('crn-combos-list');
-  const combosArrow = document.getElementById('crn-combos-arrow');
-  if (combosToggle && combosList && combosArrow) {
-    combosToggle.addEventListener('click', () => {
-      const isOpen = combosList.classList.toggle('crn-combos-open');
-      combosArrow.textContent = isOpen ? '−' : '+';
-    });
-  }
 </script>
 
 <style>
@@ -572,74 +611,34 @@
     border-top-color: var(--border);
   }
 
-  /* Combos */
-  .crn-combos {
-    margin-bottom: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
+  /* Combo overlay pills */
+  .crn-board {
+    position: relative;
   }
 
-  .crn-combos-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    background: rgba(0, 0, 0, 0.2);
-    border: none;
-    color: rgba(6, 182, 212, 0.6);
+  :global(.crn-combo-pill) {
+    position: absolute;
+    transform: translate(-50%, -50%);
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    cursor: pointer;
-    transition: background 0.15s;
+    font-size: 0.5rem;
+    font-weight: 600;
+    padding: 0.1rem 0.3rem;
+    background: rgba(6, 182, 212, 0.2);
+    border: 1px solid rgba(6, 182, 212, 0.5);
+    border-radius: 3px;
+    color: rgba(6, 182, 212, 0.95);
+    z-index: 2;
+    cursor: default;
+    white-space: nowrap;
+    pointer-events: auto;
   }
 
-  .crn-combos-toggle:hover {
-    background: rgba(6, 182, 212, 0.06);
+  :global(.crn-dimmed) {
+    opacity: 0.35;
   }
 
-  .crn-combos-arrow {
-    color: rgba(255, 255, 255, 0.3);
-  }
-
-  .crn-combos-list {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
-  }
-
-  .crn-combos-list.crn-combos-open {
-    max-height: 600px;
-    opacity: 1;
-  }
-
-  .crn-combo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.3rem 0.75rem;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-  }
-
-  .crn-combo-keys {
-    color: rgba(6, 182, 212, 0.7);
-    min-width: 65px;
-    flex-shrink: 0;
-    font-weight: 500;
-  }
-
-  .crn-combo-out {
-    color: rgba(255, 255, 255, 0.6);
-    min-width: 50px;
-  }
-
-  .crn-combo-note {
-    color: rgba(255, 255, 255, 0.25);
-    font-size: 0.6rem;
+  :global(.crn-combo-view .crn-key:not(.crn-dimmed)) {
+    opacity: 0.35;
   }
 
   /* Features */
