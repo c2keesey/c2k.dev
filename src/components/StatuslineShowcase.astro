@@ -170,8 +170,15 @@
     });
 
     // Tooltip on hover/tap for segments
+    let isTouch = false;
+
     segments.forEach(seg => {
+      seg.addEventListener('pointerdown', (e) => {
+        isTouch = e.pointerType === 'touch';
+      });
+
       seg.addEventListener('mouseenter', () => {
+        if (isTouch) return;
         const label = seg.dataset.label || '';
         const desc = seg.dataset.desc || '';
         tooltip.textContent = `${label}: ${desc}`;
@@ -180,8 +187,23 @@
       });
 
       seg.addEventListener('mouseleave', () => {
+        if (isTouch) return;
         tooltip.classList.remove('visible');
         seg.classList.remove('highlighted');
+      });
+
+      seg.addEventListener('click', () => {
+        const wasHighlighted = seg.classList.contains('highlighted');
+        segments.forEach(s => s.classList.remove('highlighted'));
+        tooltip.classList.remove('visible');
+
+        if (!wasHighlighted) {
+          const label = seg.dataset.label || '';
+          const desc = seg.dataset.desc || '';
+          tooltip.textContent = `${label}: ${desc}`;
+          tooltip.classList.add('visible');
+          seg.classList.add('highlighted');
+        }
       });
     });
 
