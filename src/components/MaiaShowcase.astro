@@ -4,7 +4,7 @@
 ---
 
 <div class="maia-showcase" id="maia-showcase">
-  <a class="maia-card" id="maia-card" href="https://maia-analytics.com" target="_blank" rel="noopener">
+  <div class="maia-card" id="maia-card">
     <div class="maia-content">
       <div class="maia-header">
         <img src="/MAIA-logo-white.svg" alt="MAIA" class="maia-logo" />
@@ -29,10 +29,10 @@
       </div>
 
       <div class="maia-footer">
-        <span class="maia-link">maia-analytics.com ↗</span>
+        <a class="maia-link" href="https://maia-analytics.com" target="_blank" rel="noopener">maia-analytics.com ↗</a>
       </div>
     </div>
-  </a>
+  </div>
 </div>
 
 <script>
@@ -184,13 +184,7 @@
     border-radius: 12px;
     padding: 1.75rem;
     overflow: hidden;
-    text-decoration: none;
     color: white;
-    transition: border-color 0.3s;
-  }
-
-  .maia-card:hover {
-    border-color: rgba(0, 120, 140, 0.6);
   }
 
   .maia-content {
@@ -283,12 +277,18 @@
 
   .maia-link {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: rgba(0, 220, 255, 0.5);
-    transition: color 0.2s;
+    font-size: 0.7rem;
+    color: rgba(0, 220, 255, 0.6);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(0, 220, 255, 0.2);
+    border-radius: 6px;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
 
-  .maia-card:hover .maia-link {
-    color: rgba(0, 220, 255, 0.9);
+  .maia-link:hover {
+    color: rgba(0, 220, 255, 1);
+    border-color: rgba(0, 220, 255, 0.5);
+    background: rgba(0, 220, 255, 0.08);
   }
 </style>

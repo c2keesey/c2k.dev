@@ -4,7 +4,7 @@
 ---
 
 <div class="crn-showcase">
-  <a class="crn-card" href="https://github.com/c2keesey/urob-zmk-config-corne" target="_blank" rel="noopener">
+  <div class="crn-card">
     <div class="crn-content">
       <div class="crn-header">
         <span class="crn-name text-scramble" data-text="C2K-Corne" data-delay="100" data-always="false">C2K-Corne</span>
@@ -47,10 +47,10 @@
 
       <div class="crn-footer">
         <span class="crn-pre-llm">hand-configured · 2024</span>
-        <span class="crn-link">github.com/c2keesey/urob-zmk-config-corne ↗</span>
+        <a class="crn-link" href="https://github.com/c2keesey/urob-zmk-config-corne" target="_blank" rel="noopener">github.com/c2keesey/urob-zmk-config-corne ↗</a>
       </div>
     </div>
-  </a>
+  </div>
 </div>
 
 <script>
@@ -241,13 +241,7 @@
     border-radius: 12px;
     padding: 1.75rem;
     overflow: hidden;
-    text-decoration: none;
     color: white;
-    transition: border-color 0.3s;
-  }
-
-  .crn-card:hover {
-    border-color: rgba(34, 197, 94, 0.4);
   }
 
   .crn-content {
@@ -540,13 +534,19 @@
 
   .crn-link {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: rgba(34, 197, 94, 0.5);
-    transition: color 0.2s;
+    font-size: 0.7rem;
+    color: rgba(34, 197, 94, 0.6);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 6px;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
 
-  .crn-card:hover .crn-link {
-    color: rgba(34, 197, 94, 0.9);
+  .crn-link:hover {
+    color: rgba(34, 197, 94, 1);
+    border-color: rgba(34, 197, 94, 0.5);
+    background: rgba(34, 197, 94, 0.08);
   }
 
   /* Mobile */

@@ -586,13 +586,18 @@
 
   .sm-link {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: rgba(30, 215, 96, 0.5);
+    font-size: 0.7rem;
+    color: rgba(30, 215, 96, 0.6);
     text-decoration: none;
-    transition: color 0.2s;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(30, 215, 96, 0.2);
+    border-radius: 6px;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
 
   .sm-link:hover {
-    color: rgba(30, 215, 96, 0.9);
+    color: rgba(30, 215, 96, 1);
+    border-color: rgba(30, 215, 96, 0.5);
+    background: rgba(30, 215, 96, 0.08);
   }
 </style>

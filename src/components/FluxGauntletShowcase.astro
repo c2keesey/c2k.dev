@@ -4,7 +4,7 @@
 ---
 
 <div class="fg-showcase">
-  <a class="fg-card" href="https://github.com/c2keesey/Flux-Gauntlet" target="_blank" rel="noopener">
+  <div class="fg-card">
     <div class="fg-glow"></div>
     <div class="fg-content">
       <div class="fg-header">
@@ -64,10 +64,10 @@
 
       <div class="fg-footer">
         <span class="fg-pre-llm">hand-written · 2024 · pre-LLM</span>
-        <span class="fg-link">github.com/c2keesey/Flux-Gauntlet ↗</span>
+        <a class="fg-link" href="https://github.com/c2keesey/Flux-Gauntlet" target="_blank" rel="noopener">github.com/c2keesey/Flux-Gauntlet ↗</a>
       </div>
     </div>
-  </a>
+  </div>
 </div>
 
 <script>
@@ -492,14 +492,7 @@
     border-radius: 12px;
     padding: 1.75rem;
     overflow: hidden;
-    text-decoration: none;
     color: white;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-
-  .fg-card:hover {
-    border-color: rgba(255, 100, 50, 0.5);
-    box-shadow: 0 0 30px rgba(255, 60, 20, 0.08), 0 0 60px rgba(180, 40, 255, 0.04);
   }
 
   .fg-glow {
@@ -601,21 +594,27 @@
     display: flex;
     gap: 0;
     border-top: 1px solid rgba(255, 100, 50, 0.1);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
 
+  .fg-controls::-webkit-scrollbar { display: none; }
+
   .fg-btn {
-    flex: 1;
-    padding: 0.4rem;
+    flex: 1 0 auto;
+    padding: 0.4rem 0.5rem;
     background: none;
     border: none;
     border-right: 1px solid rgba(255, 100, 50, 0.1);
     color: rgba(255, 255, 255, 0.3);
     font-family: var(--font-mono);
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
   }
 
   .fg-btn:last-child {
@@ -712,12 +711,18 @@
 
   .fg-link {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: rgba(255, 130, 70, 0.5);
-    transition: color 0.2s;
+    font-size: 0.7rem;
+    color: rgba(255, 130, 70, 0.6);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(255, 100, 50, 0.2);
+    border-radius: 6px;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
 
-  .fg-card:hover .fg-link {
-    color: rgba(255, 130, 70, 0.9);
+  .fg-link:hover {
+    color: rgba(255, 130, 70, 1);
+    border-color: rgba(255, 100, 50, 0.5);
+    background: rgba(255, 100, 50, 0.08);
   }
 </style>

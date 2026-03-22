@@ -4,7 +4,7 @@
 ---
 
 <div class="lc-showcase">
-  <a class="lc-card" href="https://github.com/c2keesey/LightningCloud" target="_blank" rel="noopener">
+  <div class="lc-card">
     <div class="lc-content">
       <div class="lc-header">
         <span class="lc-name text-scramble" data-text="LightningCloud" data-delay="100" data-always="false">LightningCloud</span>
@@ -31,10 +31,10 @@
 
       <div class="lc-footer">
         <span class="lc-pre-llm">hand-written · 2021 · pre-LLM</span>
-        <span class="lc-link">github.com/c2keesey/LightningCloud ↗</span>
+        <a class="lc-link" href="https://github.com/c2keesey/LightningCloud" target="_blank" rel="noopener">github.com/c2keesey/LightningCloud ↗</a>
       </div>
     </div>
-  </a>
+  </div>
 </div>
 
 <script>
@@ -201,13 +201,7 @@
     border-radius: 12px;
     padding: 1.75rem;
     overflow: hidden;
-    text-decoration: none;
     color: white;
-    transition: border-color 0.3s;
-  }
-
-  .lc-card:hover {
-    border-color: rgba(165, 180, 255, 0.4);
   }
 
   .lc-content {
@@ -323,12 +317,18 @@
 
   .lc-link {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: rgba(165, 180, 255, 0.5);
-    transition: color 0.2s;
+    font-size: 0.7rem;
+    color: rgba(165, 180, 255, 0.6);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(165, 180, 255, 0.2);
+    border-radius: 6px;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
 
-  .lc-card:hover .lc-link {
-    color: rgba(165, 180, 255, 0.9);
+  .lc-link:hover {
+    color: rgba(165, 180, 255, 1);
+    border-color: rgba(165, 180, 255, 0.5);
+    background: rgba(165, 180, 255, 0.08);
   }
 </style>
