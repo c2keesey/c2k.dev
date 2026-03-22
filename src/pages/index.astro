@@ -8,6 +8,7 @@ import LightningCloudShowcase from '../components/LightningCloudShowcase.astro';
 import FluxGauntletShowcase from '../components/FluxGauntletShowcase.astro';
 import CorneShowcase from '../components/CorneShowcase.astro';
 import SpotifyMacroShowcase from '../components/SpotifyMacroShowcase.astro';
+import MusicPage from '../components/MusicPage.astro';
 import '../styles/global.css';
 ---
 
@@ -74,6 +75,17 @@ import '../styles/global.css';
           <CorneShowcase />
           <LightningCloudShowcase />
           <DotfilesShowcase />
+        </div>
+      </section>
+
+      <!-- Panel: Music -->
+      <section class="swipe-panel" data-page="/music">
+        <div class="panel-content">
+          <section class="page-header">
+            <TextScramble text="Music" tag="h1" class="page-title" always />
+            <TextScramble text="How I organize 5000+ songs across 80+ playlists." tag="p" class="page-desc" delay={100} />
+          </section>
+          <MusicPage />
         </div>
       </section>
 
@@ -221,7 +233,7 @@ import '../styles/global.css';
 
 <script>
   const container = document.getElementById('swipe-container')!;
-  const pages = ['/', '/projects', '/about'];
+  const pages = ['/', '/projects', '/music', '/about'];
 
   // Scroll to correct panel on load based on URL
   function scrollToCurrentPage() {

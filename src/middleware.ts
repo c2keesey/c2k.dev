@@ -2,7 +2,7 @@ import { defineMiddleware } from 'astro:middleware';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const panelRoutes = new Set(['/projects', '/about']);
+const panelRoutes = new Set(['/projects', '/music', '/about']);
 let indexHtml: string | null = null;
 
 function getIndexHtml(): string {

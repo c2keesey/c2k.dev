@@ -1,0 +1,1136 @@
+---
+// Music — Full Spotify organizational system showcase
+// Philosophy, flow system, genre worlds, automation pipeline
+---
+
+<!-- Philosophy -->
+<section class="music-section">
+  <div class="music-philosophy">
+    <p class="music-philosophy-text">Songs flow downhill into specific playlists, then cascade uphill through the hierarchy automatically. Curate the leaves — the tree takes care of itself.</p>
+  </div>
+</section>
+
+<!-- Song Lifecycle -->
+<section class="music-section">
+  <h2 class="music-section-title text-scramble" data-text="The Pipeline" data-delay="150" data-always="false">The Pipeline</h2>
+  <p class="music-section-desc">Every song follows the same path from discovery to its permanent home.</p>
+
+  <div class="pipeline" id="pipeline">
+    <div class="pipeline-stage" data-stage="hear">
+      <div class="pipeline-icon">🎵</div>
+      <div class="pipeline-info">
+        <span class="pipeline-name">Hear a song</span>
+        <span class="pipeline-detail">Discover something worth keeping</span>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓</div>
+
+    <div class="pipeline-stage" data-stage="save">
+      <div class="pipeline-icon">⌨</div>
+      <div class="pipeline-info">
+        <span class="pipeline-name">⌘ + Shift + S</span>
+        <span class="pipeline-detail">Hotkey saves current track to Liked Songs instantly</span>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓</div>
+
+    <div class="pipeline-stage" data-stage="daily">
+      <div class="pipeline-icon">♡</div>
+      <div class="pipeline-info">
+        <span class="pipeline-name">Daily Likes</span>
+        <span class="pipeline-detail">Cron job at 11:30pm sweeps new liked songs into staging</span>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓</div>
+
+    <div class="pipeline-stage" data-stage="staging">
+      <div class="pipeline-icon">📥</div>
+      <div class="pipeline-info">
+        <span class="pipeline-name">"New" playlist</span>
+        <span class="pipeline-detail">Universal inbox — every automation reads from here</span>
+      </div>
+    </div>
+    <div class="pipeline-arrow pipeline-branch-arrow">↓</div>
+
+    <div class="pipeline-branch">
+      <div class="pipeline-stage pipeline-small" data-stage="artist">
+        <div class="pipeline-info">
+          <span class="pipeline-name">Artist Match</span>
+          <span class="pipeline-detail">100% confidence — artist only appears in one playlist</span>
+        </div>
+      </div>
+      <div class="pipeline-stage pipeline-small" data-stage="genre">
+        <div class="pipeline-info">
+          <span class="pipeline-name">Genre Classifier</span>
+          <span class="pipeline-detail">Spotify genres + audio features → folder match</span>
+        </div>
+      </div>
+      <div class="pipeline-stage pipeline-small" data-stage="unclassified">
+        <div class="pipeline-info">
+          <span class="pipeline-name">Manual</span>
+          <span class="pipeline-detail">Unclassified → I sort it myself</span>
+        </div>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓</div>
+
+    <div class="pipeline-stage" data-stage="flow">
+      <div class="pipeline-icon">⬆</div>
+      <div class="pipeline-info">
+        <span class="pipeline-name">Flow Characters</span>
+        <span class="pipeline-detail">Songs cascade upward through the hierarchy via symbols in playlist names</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The Flow System -->
+<section class="music-section">
+  <h2 class="music-section-title text-scramble" data-text="The Flow Alphabet" data-delay="200" data-always="false">The Flow Alphabet</h2>
+  <p class="music-section-desc">Alchemical symbols embedded in playlist names encode parent-child relationships. No database, no config — the hierarchy lives in the names themselves.</p>
+
+  <div class="flow-explainer">
+    <div class="flow-rule">
+      <span class="flow-rule-symbol">🜍 Name</span>
+      <span class="flow-rule-arrow">→</span>
+      <span class="flow-rule-meaning">Parent — receives songs</span>
+    </div>
+    <div class="flow-rule">
+      <span class="flow-rule-symbol">Name 🜍</span>
+      <span class="flow-rule-arrow">→</span>
+      <span class="flow-rule-meaning">Child — sends songs up</span>
+    </div>
+    <div class="flow-rule">
+      <span class="flow-rule-symbol">🜍 Name 🜁</span>
+      <span class="flow-rule-arrow">→</span>
+      <span class="flow-rule-meaning">Receives 🜍, sends to 🜁</span>
+    </div>
+  </div>
+
+  <div class="flow-example">
+    <div class="flow-example-chain">
+      <span class="flow-node flow-child">Funk up my Soul 🜻</span>
+      <span class="flow-cascade">→</span>
+      <span class="flow-node flow-parent">🜻 Chef Up</span>
+    </div>
+    <p class="flow-example-desc">Songs added to "Funk up my Soul" automatically appear in "Chef Up"</p>
+  </div>
+
+  <div class="alphabet-grid" id="alphabet-grid">
+    <div class="alphabet-card" data-symbol="🜍" style="--accent: #f59e0b;">
+      <span class="alphabet-symbol">🜍</span>
+      <span class="alphabet-genre">House</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜄" style="--accent: #06b6d4;">
+      <span class="alphabet-symbol">🜄</span>
+      <span class="alphabet-genre">Electronic</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜁" style="--accent: #8b5cf6;">
+      <span class="alphabet-symbol">🜁</span>
+      <span class="alphabet-genre">Bass</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜂" style="--accent: #ef4444;">
+      <span class="alphabet-symbol">🜂</span>
+      <span class="alphabet-genre">Rave</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜶" style="--accent: #22c55e;">
+      <span class="alphabet-symbol">🜶</span>
+      <span class="alphabet-genre">Alive</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜃" style="--accent: #6366f1;">
+      <span class="alphabet-symbol">🜃</span>
+      <span class="alphabet-genre">DnB / Sub</span>
+    </div>
+    <div class="alphabet-card" data-symbol="⏣" style="--accent: #a855f7;">
+      <span class="alphabet-symbol">⏣</span>
+      <span class="alphabet-genre">Cross-genre</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜔" style="--accent: #64748b;">
+      <span class="alphabet-symbol">🜔</span>
+      <span class="alphabet-genre">Chill</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜻" style="--accent: #eab308;">
+      <span class="alphabet-symbol">🜻</span>
+      <span class="alphabet-genre">Funk Soul</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜩" style="--accent: #f97316;">
+      <span class="alphabet-symbol">🜩</span>
+      <span class="alphabet-genre">Ride</span>
+    </div>
+    <div class="alphabet-card" data-symbol="☉" style="--accent: #14b8a6;">
+      <span class="alphabet-symbol">☉</span>
+      <span class="alphabet-genre">Vibes</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜚" style="--accent: #ec4899;">
+      <span class="alphabet-symbol">🜚</span>
+      <span class="alphabet-genre">Soft</span>
+    </div>
+    <div class="alphabet-card" data-symbol="☿" style="--accent: #c4b5fd;">
+      <span class="alphabet-symbol">☿</span>
+      <span class="alphabet-genre">Spiritual</span>
+    </div>
+    <div class="alphabet-card" data-symbol="🜊" style="--accent: #fb923c;">
+      <span class="alphabet-symbol">🜊</span>
+      <span class="alphabet-genre">Bounce</span>
+    </div>
+  </div>
+</section>
+
+<!-- Genre Worlds -->
+<section class="music-section">
+  <h2 class="music-section-title text-scramble" data-text="Genre Worlds" data-delay="250" data-always="false">Genre Worlds</h2>
+  <p class="music-section-desc">14 genre folders, 80+ playlists. Tap a genre to explore.</p>
+
+  <div class="genre-grid" id="genre-grid">
+    <button class="genre-card" data-genre="house" style="--accent: #f59e0b;">
+      <span class="genre-symbol">🜍</span>
+      <span class="genre-name">House</span>
+      <span class="genre-count">7 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-house">
+      <div class="genre-playlists">
+        <span class="genre-pl"><span class="pl-flow">🜍</span> H</span>
+        <span class="genre-pl">CRANK <span class="pl-flow">🜍🜂</span></span>
+        <span class="genre-pl">Bump Beats <span class="pl-flow">🜍</span></span>
+        <span class="genre-pl">All night <span class="pl-flow">🜍</span></span>
+        <span class="genre-pl">Poolside <span class="pl-flow">🜍</span></span>
+        <span class="genre-pl">Summer Sound <span class="pl-flow">🜍</span></span>
+        <span class="genre-pl genre-agg">「House」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="electronic" style="--accent: #06b6d4;">
+      <span class="genre-symbol">🜄</span>
+      <span class="genre-name">Electronic</span>
+      <span class="genre-count">6 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-electronic">
+      <div class="genre-playlists">
+        <span class="genre-pl">Horizon <span class="pl-flow">⏣ ⌬</span></span>
+        <span class="genre-pl">Ibiza to Mykonos <span class="pl-flow">🜄</span></span>
+        <span class="genre-pl">Odyssey <span class="pl-flow">🜄</span></span>
+        <span class="genre-pl">Old School <span class="pl-flow">🜄</span></span>
+        <span class="genre-pl">Synthwave</span>
+        <span class="genre-pl genre-agg">「Electronic」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="bass" style="--accent: #8b5cf6;">
+      <span class="genre-symbol">🜁</span>
+      <span class="genre-name">Bass</span>
+      <span class="genre-count">7 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-bass">
+      <div class="genre-playlists">
+        <span class="genre-pl"><span class="pl-flow">🜁</span> Supernova</span>
+        <span class="genre-pl">Glitch Mind <span class="pl-flow">🜂🜁</span></span>
+        <span class="genre-pl">Dimension Rip <span class="pl-flow">🜂🜁</span></span>
+        <span class="genre-pl"><span class="pl-flow">🜃</span> SubsInstance</span>
+        <span class="genre-pl">Critical Path <span class="pl-flow">🜃</span></span>
+        <span class="genre-pl">Wobbly Bits <span class="pl-flow">🜁</span></span>
+        <span class="genre-pl genre-agg">「Bass」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="alive" style="--accent: #22c55e;">
+      <span class="genre-symbol">🜶</span>
+      <span class="genre-name">Alive</span>
+      <span class="genre-count">5 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-alive">
+      <div class="genre-playlists">
+        <span class="genre-pl"><span class="pl-flow">🜶</span> Awaken</span>
+        <span class="genre-pl">Emergence <span class="pl-flow">🜶</span></span>
+        <span class="genre-pl">Awake <span class="pl-flow">⏣ ⌬</span></span>
+        <span class="genre-pl">Dream Away <span class="pl-flow">⏣ 🜔 ⌬</span></span>
+        <span class="genre-pl genre-agg">「Alive」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="rave" style="--accent: #ef4444;">
+      <span class="genre-symbol">🜂</span>
+      <span class="genre-name">Rave</span>
+      <span class="genre-count">5 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-rave">
+      <div class="genre-playlists">
+        <span class="genre-pl">DEMON</span>
+        <span class="genre-pl">WALK UP LIKE <span class="pl-flow">🜂</span></span>
+        <span class="genre-pl">Evolution <span class="pl-flow">🜄</span></span>
+        <span class="genre-pl">Abyss</span>
+        <span class="genre-pl genre-agg">「Rave」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="rock" style="--accent: #f97316;">
+      <span class="genre-symbol">🎸</span>
+      <span class="genre-name">Rock</span>
+      <span class="genre-count">5 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-rock">
+      <div class="genre-playlists">
+        <span class="genre-pl">Ain't Noise Pollution</span>
+        <span class="genre-pl">Alt n shit</span>
+        <span class="genre-pl">Metal</span>
+        <span class="genre-pl">RHCP</span>
+        <span class="genre-pl genre-agg">「Rock」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="vibes" style="--accent: #14b8a6;">
+      <span class="genre-symbol">☉</span>
+      <span class="genre-name">Vibes</span>
+      <span class="genre-count">5 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-vibes">
+      <div class="genre-playlists">
+        <span class="genre-pl">Indie</span>
+        <span class="genre-pl"><span class="pl-flow">☉</span> Pacific</span>
+        <span class="genre-pl">Psych Groove</span>
+        <span class="genre-pl">Groovy</span>
+        <span class="genre-pl genre-agg">「Vibes」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="sierra" style="--accent: #a3e635;">
+      <span class="genre-symbol">🌲</span>
+      <span class="genre-name">Sierra</span>
+      <span class="genre-count">5 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-sierra">
+      <div class="genre-playlists">
+        <span class="genre-pl">Creekwalk</span>
+        <span class="genre-pl">Dancing In The Woods</span>
+        <span class="genre-pl">Round the fire</span>
+        <span class="genre-pl">Still Lake</span>
+        <span class="genre-pl genre-agg">「Sierra」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="ride" style="--accent: #fb923c;">
+      <span class="genre-symbol">🜩</span>
+      <span class="genre-name">Ride</span>
+      <span class="genre-count">6 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-ride">
+      <div class="genre-playlists">
+        <span class="genre-pl">Chillax</span>
+        <span class="genre-pl">Keep it smooth <span class="pl-flow">🜩</span></span>
+        <span class="genre-pl"><span class="pl-flow">🜊</span> Hoppin</span>
+        <span class="genre-pl">STANK</span>
+        <span class="genre-pl">R&B</span>
+        <span class="genre-pl genre-agg">「Ride」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="funksoul" style="--accent: #eab308;">
+      <span class="genre-symbol">🜻</span>
+      <span class="genre-name">Funk Soul</span>
+      <span class="genre-count">4 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-funksoul">
+      <div class="genre-playlists">
+        <span class="genre-pl"><span class="pl-flow">🜻</span> Chef Up</span>
+        <span class="genre-pl">Funk up my Soul <span class="pl-flow">🜻</span></span>
+        <span class="genre-pl">Jazz <span class="pl-flow">🜻</span></span>
+        <span class="genre-pl genre-agg">「Funk Soul」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="reggae" style="--accent: #22c55e;">
+      <span class="genre-symbol">🟢</span>
+      <span class="genre-name">Reggae</span>
+      <span class="genre-count">3 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-reggae">
+      <div class="genre-playlists">
+        <span class="genre-pl">Reggae</span>
+        <span class="genre-pl">W</span>
+        <span class="genre-pl genre-agg">「Reggae」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="soft" style="--accent: #ec4899;">
+      <span class="genre-symbol">🜚</span>
+      <span class="genre-name">Soft</span>
+      <span class="genre-count">5 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-soft">
+      <div class="genre-playlists">
+        <span class="genre-pl">I want to play you a song</span>
+        <span class="genre-pl"><span class="pl-flow">☉</span> It's Real <span class="pl-flow">☉</span></span>
+        <span class="genre-pl">Honey</span>
+        <span class="genre-pl"><span class="pl-flow">🜚</span> Slow stuff <span class="pl-flow">🜚</span></span>
+        <span class="genre-pl genre-agg">「Soft」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="chill" style="--accent: #64748b;">
+      <span class="genre-symbol">🜔</span>
+      <span class="genre-name">Chill</span>
+      <span class="genre-count">5 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-chill">
+      <div class="genre-playlists">
+        <span class="genre-pl">LoFi <span class="pl-flow">⏣ 🜔</span></span>
+        <span class="genre-pl">Solo Piano</span>
+        <span class="genre-pl">Chillout</span>
+        <span class="genre-pl">Sad Chill</span>
+        <span class="genre-pl genre-agg">「Chill」</span>
+      </div>
+    </div>
+
+    <button class="genre-card" data-genre="spiritual" style="--accent: #c4b5fd;">
+      <span class="genre-symbol">☿</span>
+      <span class="genre-name">Spiritual</span>
+      <span class="genre-count">4 playlists</span>
+      <span class="genre-expand-icon">+</span>
+    </button>
+    <div class="genre-detail" id="genre-spiritual">
+      <div class="genre-playlists">
+        <span class="genre-pl"><span class="pl-flow">☿</span>gone beyond going<span class="pl-flow">☿</span></span>
+        <span class="genre-pl">Wind Down</span>
+        <span class="genre-pl">Yoga</span>
+        <span class="genre-pl genre-agg">「Spiritual」</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Flow Visualization -->
+<section class="music-section">
+  <h2 class="music-section-title text-scramble" data-text="Live Flow" data-delay="300" data-always="false">Live Flow</h2>
+  <p class="music-section-desc">How songs cascade through the hierarchy. Watch a track flow from leaf playlist to parent.</p>
+
+  <div class="flow-viz" id="flow-viz">
+    <canvas id="flow-canvas"></canvas>
+  </div>
+</section>
+
+<!-- The Automation -->
+<section class="music-section">
+  <h2 class="music-section-title text-scramble" data-text="The Stack" data-delay="350" data-always="false">The Stack</h2>
+  <p class="music-section-desc">Python automations running on cron, keeping everything in sync.</p>
+
+  <div class="auto-grid">
+    <div class="auto-card">
+      <div class="auto-header">
+        <span class="auto-name">save_current</span>
+        <span class="auto-trigger">hotkey</span>
+      </div>
+      <p class="auto-desc">⌘+Shift+S saves the currently playing track to Liked Songs. Instant macOS notification.</p>
+    </div>
+    <div class="auto-card">
+      <div class="auto-header">
+        <span class="auto-name">daily_likes</span>
+        <span class="auto-trigger">cron · 11:30pm</span>
+      </div>
+      <p class="auto-desc">Sweeps new liked songs into the "New" staging playlist. Tracks timestamps to never miss a song.</p>
+    </div>
+    <div class="auto-card">
+      <div class="auto-header">
+        <span class="auto-name">staging_classification</span>
+        <span class="auto-trigger">on demand</span>
+      </div>
+      <p class="auto-desc">Processes "New" with a waterfall classifier: artist uniqueness match → genre classification → unclassified bucket.</p>
+    </div>
+    <div class="auto-card">
+      <div class="auto-header">
+        <span class="auto-name">playlist_flow</span>
+        <span class="auto-trigger">cron · 9am</span>
+      </div>
+      <p class="auto-desc">Parses flow characters from playlist names, cascades songs upward through the hierarchy. Handles cycles, multi-hop chains.</p>
+    </div>
+    <div class="auto-card">
+      <div class="auto-header">
+        <span class="auto-name">folder_sorter</span>
+        <span class="auto-trigger">on demand</span>
+      </div>
+      <p class="auto-desc">Routes songs into 「folder」 aggregator playlists based on artist history across the genre folder.</p>
+    </div>
+    <div class="auto-card">
+      <div class="auto-header">
+        <span class="auto-name">playlist_sync</span>
+        <span class="auto-trigger">manual</span>
+      </div>
+      <p class="auto-desc">Mirrors Spotify playlists to local ~/Music for DJ sets. Bidirectional metadata sync.</p>
+    </div>
+  </div>
+
+  <div class="auto-stack">
+    <span class="auto-tech">Python</span>
+    <span class="auto-tech">Spotipy</span>
+    <span class="auto-tech">cron</span>
+    <span class="auto-tech">LaunchAgents</span>
+    <span class="auto-tech">Telegram</span>
+  </div>
+
+  <div class="auto-footer">
+    <span class="auto-pre-llm">hand-written · 2024 · pre-LLM</span>
+    <a class="auto-link" href="https://github.com/c2keesey/spotify-macro" target="_blank" rel="noopener">github.com/c2keesey/spotify-macro ↗</a>
+  </div>
+</section>
+
+<script>
+  // Genre grid accordion
+  function initGenreGrid() {
+    const cards = document.querySelectorAll<HTMLElement>('.genre-card');
+    let activeGenre: string | null = null;
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const genre = card.dataset.genre;
+        if (!genre) return;
+
+        const detail = document.getElementById(`genre-${genre}`);
+        if (!detail) return;
+
+        if (activeGenre === genre) {
+          detail.classList.remove('genre-open');
+          card.classList.remove('genre-active');
+          card.querySelector('.genre-expand-icon')!.textContent = '+';
+          activeGenre = null;
+        } else {
+          // Close previous
+          if (activeGenre) {
+            const prev = document.getElementById(`genre-${activeGenre}`);
+            prev?.classList.remove('genre-open');
+            cards.forEach(c => {
+              c.classList.remove('genre-active');
+              const icon = c.querySelector('.genre-expand-icon');
+              if (icon) icon.textContent = '+';
+            });
+          }
+          detail.classList.add('genre-open');
+          card.classList.add('genre-active');
+          card.querySelector('.genre-expand-icon')!.textContent = '−';
+          activeGenre = genre;
+        }
+      });
+    });
+  }
+
+  // Flow visualization canvas
+  function initFlowViz() {
+    const canvas = document.getElementById('flow-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+
+    // Flow tree: parent at top, children at bottom
+    interface FlowNode {
+      x: number; y: number; label: string; symbol: string; color: string; isParent: boolean;
+    }
+
+    interface FlowParticle {
+      fromIdx: number; toIdx: number; progress: number; speed: number; color: string;
+    }
+
+    const nodes: FlowNode[] = [
+      // Parent (top center)
+      { x: w * 0.5, y: 28, label: '🜍 H', symbol: '🜍', color: '#f59e0b', isParent: true },
+      // Children (bottom row)
+      { x: w * 0.12, y: h - 20, label: 'CRANK 🜍🜂', symbol: '🜍', color: '#f59e0b', isParent: false },
+      { x: w * 0.32, y: h - 20, label: 'Bump Beats 🜍', symbol: '🜍', color: '#f59e0b', isParent: false },
+      { x: w * 0.52, y: h - 20, label: 'All night 🜍', symbol: '🜍', color: '#f59e0b', isParent: false },
+      { x: w * 0.72, y: h - 20, label: 'Poolside 🜍', symbol: '🜍', color: '#f59e0b', isParent: false },
+      { x: w * 0.92, y: h - 20, label: 'Summer 🜍', symbol: '🜍', color: '#f59e0b', isParent: false },
+    ];
+
+    let particles: FlowParticle[] = [];
+    let lastSpawn = 0;
+
+    function draw(time: number) {
+      ctx.clearRect(0, 0, w, h);
+
+      // Draw connection lines (children to parent)
+      for (let i = 1; i < nodes.length; i++) {
+        const child = nodes[i];
+        const parent = nodes[0];
+        ctx.beginPath();
+        ctx.moveTo(child.x, child.y);
+        // Bezier curve upward
+        const cpY = (child.y + parent.y) / 2;
+        ctx.quadraticCurveTo(child.x, cpY, parent.x, parent.y);
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.1)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Spawn particles
+      if (time - lastSpawn > 800) {
+        const fromIdx = 1 + Math.floor(Math.random() * (nodes.length - 1));
+        particles.push({
+          fromIdx,
+          toIdx: 0,
+          progress: 0,
+          speed: 0.006 + Math.random() * 0.004,
+          color: nodes[fromIdx].color,
+        });
+        lastSpawn = time;
+      }
+
+      // Draw and update particles
+      particles = particles.filter(p => {
+        p.progress += p.speed;
+        if (p.progress >= 1) return false;
+
+        const from = nodes[p.fromIdx];
+        const to = nodes[p.toIdx];
+        const t = p.progress;
+        const cpY = (from.y + to.y) / 2;
+
+        // Quadratic bezier point
+        const mt = 1 - t;
+        const px = mt * mt * from.x + 2 * mt * t * from.x + t * t * to.x;
+        const py = mt * mt * from.y + 2 * mt * t * cpY + t * t * to.y;
+        const alpha = Math.sin(t * Math.PI);
+
+        // Glow
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 158, 11, ${alpha * 0.15})`;
+        ctx.fill();
+
+        // Core
+        ctx.beginPath();
+        ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 158, 11, ${alpha * 0.9})`;
+        ctx.fill();
+
+        return true;
+      });
+
+      // Draw node labels
+      ctx.font = '9px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      nodes.forEach(node => {
+        ctx.fillStyle = node.isParent ? 'rgba(245, 158, 11, 0.9)' : 'rgba(255, 255, 255, 0.45)';
+        ctx.fillText(node.label, node.x, node.y + (node.isParent ? 4 : -2));
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    // Only run when visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          requestAnimationFrame(draw);
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+
+    const viz = document.getElementById('flow-viz');
+    if (viz) observer.observe(viz);
+  }
+
+  // Pipeline stage hover
+  function initPipeline() {
+    const stages = document.querySelectorAll<HTMLElement>('.pipeline-stage');
+    stages.forEach((stage, i) => {
+      stage.style.animationDelay = `${i * 100}ms`;
+    });
+  }
+
+  initGenreGrid();
+  initFlowViz();
+  initPipeline();
+</script>
+
+<style>
+  .music-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .music-section-title {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .music-section-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Philosophy */
+  .music-philosophy {
+    background: linear-gradient(135deg, rgba(30, 215, 96, 0.06), rgba(30, 60, 30, 0.03));
+    border: 1px solid rgba(30, 215, 96, 0.15);
+    border-left: 2px solid rgba(30, 215, 96, 0.5);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .music-philosophy-text {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  /* Pipeline */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .pipeline-stage {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 100%;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .pipeline-stage:hover {
+    background: rgba(30, 215, 96, 0.06);
+    border-color: rgba(30, 215, 96, 0.2);
+  }
+
+  .pipeline-icon {
+    font-size: 1.2rem;
+    width: 2rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .pipeline-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .pipeline-name {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .pipeline-detail {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .pipeline-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: rgba(30, 215, 96, 0.3);
+    padding: 0.15rem 0;
+  }
+
+  .pipeline-branch {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .pipeline-small {
+    flex: 1;
+    padding: 0.5rem 0.6rem;
+  }
+
+  .pipeline-small .pipeline-name {
+    font-size: 0.7rem;
+  }
+
+  .pipeline-small .pipeline-detail {
+    font-size: 0.6rem;
+  }
+
+  /* Flow explainer */
+  .flow-explainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 1rem 1.25rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .flow-rule {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .flow-rule-symbol {
+    color: rgba(30, 215, 96, 0.8);
+    min-width: 100px;
+  }
+
+  .flow-rule-arrow {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .flow-rule-meaning {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .flow-example {
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: rgba(30, 215, 96, 0.04);
+    border: 1px solid rgba(30, 215, 96, 0.12);
+    border-radius: 8px;
+  }
+
+  .flow-example-chain {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .flow-node {
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .flow-child {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .flow-parent {
+    background: rgba(30, 215, 96, 0.12);
+    color: rgba(30, 215, 96, 0.9);
+  }
+
+  .flow-cascade {
+    color: rgba(30, 215, 96, 0.4);
+    font-size: 1rem;
+  }
+
+  .flow-example-desc {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  /* Alphabet grid */
+  .alphabet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .alphabet-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.6rem 0.4rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .alphabet-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--accent);
+  }
+
+  .alphabet-symbol {
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  .alphabet-genre {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--accent);
+    text-align: center;
+  }
+
+  /* Genre grid */
+  .genre-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .genre-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+    width: 100%;
+  }
+
+  .genre-card:first-child {
+    border-radius: 8px 8px 0 0;
+  }
+
+  .genre-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .genre-card.genre-active {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
+  }
+
+  .genre-symbol {
+    font-size: 1.1rem;
+    width: 1.5rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .genre-name {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    flex: 1;
+  }
+
+  .genre-count {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .genre-expand-icon {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.2);
+    width: 1rem;
+    text-align: center;
+  }
+
+  /* Genre detail (expandable) */
+  .genre-detail {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .genre-detail.genre-open {
+    max-height: 400px;
+    opacity: 1;
+  }
+
+  .genre-playlists {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .genre-pl {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .pl-flow {
+    color: rgba(30, 215, 96, 0.7);
+  }
+
+  .genre-agg {
+    color: rgba(30, 215, 96, 0.6);
+    border-color: rgba(30, 215, 96, 0.15);
+    background: rgba(30, 215, 96, 0.06);
+  }
+
+  /* All genre cards and details need bottom border on the last child */
+  .genre-grid > :last-child {
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 8px 8px;
+  }
+
+  /* Flow visualization */
+  .flow-viz {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  #flow-canvas {
+    display: block;
+    width: 100%;
+    height: 140px;
+  }
+
+  /* Automation grid */
+  .auto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .auto-card {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .auto-card:hover {
+    background: rgba(30, 215, 96, 0.04);
+  }
+
+  .auto-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.35rem;
+  }
+
+  .auto-name {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(30, 215, 96, 0.8);
+  }
+
+  .auto-trigger {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    padding: 0.1rem 0.3rem;
+    background: rgba(30, 215, 96, 0.1);
+    color: rgba(30, 215, 96, 0.6);
+    border-radius: 3px;
+  }
+
+  .auto-desc {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+    line-height: 1.5;
+  }
+
+  .auto-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .auto-tech {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  .auto-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .auto-pre-llm {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(30, 215, 96, 0.08);
+    border: 1px solid rgba(30, 215, 96, 0.15);
+    border-radius: 4px;
+    color: rgba(30, 215, 96, 0.5);
+    letter-spacing: 0.03em;
+  }
+
+  .auto-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(30, 215, 96, 0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .auto-link:hover {
+    color: rgba(30, 215, 96, 0.9);
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .pipeline-branch {
+      flex-direction: column;
+    }
+
+    .auto-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .flow-rule-symbol {
+      min-width: 80px;
+      font-size: 0.7rem;
+    }
+
+    .flow-rule-meaning {
+      font-size: 0.65rem;
+    }
+
+    .flow-example-chain {
+      font-size: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .alphabet-grid {
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    }
+  }
+</style>
