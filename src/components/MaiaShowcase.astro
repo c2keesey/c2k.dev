@@ -55,7 +55,7 @@
     // Generate "map" points
     interface MapPoint {
       x: number; y: number; r: number; born: number; color: string;
-      pulseCount: number; maxPulses: number; collapsing: boolean; collapseStart: number;
+      lifespan: number; // total ms this dot lives
     }
     const points: MapPoint[] = [];
     const colors = ['rgba(0, 220, 255, 0.6)', 'rgba(132, 204, 22, 0.5)', 'rgba(0, 180, 210, 0.4)'];
@@ -67,10 +67,7 @@
         r: 2 + Math.random() * 4,
         born: time,
         color: colors[Math.floor(Math.random() * colors.length)],
-        pulseCount: 0,
-        maxPulses: 3 + Math.floor(Math.random() * 4), // 3-6 pulses
-        collapsing: false,
-        collapseStart: 0,
+        lifespan: 5000 + Math.random() * 4000, // 5-9 seconds
       });
       if (points.length > 30) points.shift();
     }
@@ -131,61 +128,34 @@
         lastSpawn = time;
       }
 
-      // Draw points with pulse
-      const pulseDuration = 1400; // ms per pulse cycle
+      // Draw points
       for (let i = points.length - 1; i >= 0; i--) {
         const p = points[i];
         const age = time - p.born;
-        const fadeIn = Math.min(age / 400, 1);
 
-        // Track pulse count based on age
-        const currentPulse = Math.floor(age / pulseDuration);
+        if (age > p.lifespan) { points.splice(i, 1); continue; }
 
-        if (!p.collapsing && currentPulse >= p.maxPulses) {
-          p.collapsing = true;
-          p.collapseStart = time;
-        }
+        // Smooth fade in (first 800ms) and fade out (last 1500ms)
+        const fadeIn = Math.min(age / 800, 1);
+        const fadeOut = age > p.lifespan - 1500 ? (p.lifespan - age) / 1500 : 1;
+        const alpha = fadeIn * fadeOut;
 
-        if (p.collapsing) {
-          const collapseAge = time - p.collapseStart;
-          const collapseDuration = 300;
-          const t = Math.min(collapseAge / collapseDuration, 1);
-          const ease = 1 - (1 - t) * (1 - t); // ease-in quad
-          const scale = 1 - ease;
+        // Outer ring: gentle breathing pulse, fixed inner dot
+        const pulsePhase = (age % 2000) / 2000;
+        const outerPulse = 1 + Math.sin(pulsePhase * Math.PI * 2) * 0.3;
+        const outerR = p.r * 3 * outerPulse;
 
-          if (t >= 1) { points.splice(i, 1); continue; }
+        // Outer glow
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, outerR, 0, Math.PI * 2);
+        ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${alpha * 0.12})`);
+        ctx.fill();
 
-          // Outer collapses into inner then both shrink
-          const outerR = p.r * 3 * scale;
-          const innerR = p.r * scale;
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, Math.max(outerR, 0.5), 0, Math.PI * 2);
-          ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${0.15 * scale})`);
-          ctx.fill();
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, Math.max(innerR, 0.3), 0, Math.PI * 2);
-          ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${scale})`);
-          ctx.fill();
-        } else {
-          // Outer circle pulses, inner stays fixed
-          const pulsePhase = (age % pulseDuration) / pulseDuration;
-          const outerPulse = 1 + Math.sin(pulsePhase * Math.PI * 2) * 0.4;
-          const outerR = p.r * 3 * outerPulse;
-
-          // Outer glow
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, outerR, 0, Math.PI * 2);
-          ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${fadeIn * 0.15})`);
-          ctx.fill();
-
-          // Inner dot — fixed size
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${fadeIn})`);
-          ctx.fill();
-        }
+        // Inner dot — fixed size
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${alpha * 0.8})`);
+        ctx.fill();
       }
 
       // Query ticker
