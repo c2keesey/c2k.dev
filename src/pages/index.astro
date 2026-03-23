@@ -35,7 +35,9 @@ import '../styles/global.css';
       <section class="swipe-panel" data-page="/">
         <div class="panel-content">
           <section class="hero">
-            <TextScramble text="C2K" tag="h1" class="hero-title" always />
+            <div class="hero-title-wrapper">
+              <h1 class="hero-title" id="hero-title">–––</h1>
+            </div>
             <div class="bio">
               <p class="bio-role">
                 <TextScramble text="CTO, context engineer " tag="span" delay={150} />
@@ -111,7 +113,7 @@ import '../styles/global.css';
             <div class="fetch-block">
               <div class="fetch-row">
                 <span class="fetch-key">name</span>
-                <span class="fetch-val text-scramble" data-text="Cooper Keesey" data-delay="100" data-always="false">Cooper Keesey</span>
+                <span class="fetch-val text-scramble" data-text="Christopher Keesey" data-delay="100" data-always="false">Christopher Keesey</span>
               </div>
               <div class="fetch-row">
                 <span class="fetch-key">handle</span>
@@ -211,8 +213,8 @@ import '../styles/global.css';
           </div>
 
           <div class="about-blurb">
-            <p>Building the interface between people and their data at MAIA. Before that, aerospace engineering and CFD simulation. Traded rocketry for startups but kept the obsession with systems.</p>
-            <p>Everything I use is version-controlled, self-hosted where it matters, and accessible from anywhere. This site is the public layer of that system.</p>
+            <p>I'm Christopher Keesey — c2k. I'm building MAIA Analytics, an AI-native geospatial platform where you ask questions and get maps. Day to day that means LLM orchestration, agentic workflows, and a lot of property data pipelines — TypeScript, Python, FastAPI, Postgres, Claude Code. I care about simple code, minimal abstraction, and shipping.</p>
+            <p>When I'm not building, I'm surfing the Outer Sunset, skiing backcountry, or mixing dubstep and drum & bass. I solder things that don't need to exist — LED gauntlets, lightning clouds, split keyboards. Everything I use is version-controlled, self-hosted where it matters, and accessible from anywhere. This site is the public layer of that system.</p>
           </div>
 
           <div class="about-links">
@@ -242,7 +244,61 @@ import '../styles/global.css';
 </html>
 
 <script>
-  const container = document.getElementById('swipe-container')!;
+  // Hero scramble: decode "CHRISTOPHER CARSON KEESEY"
+  (function heroScramble() {
+    const el = document.getElementById('hero-title');
+    if (!el) return;
+
+    const chars = '0123456789ABCDEF~!@#$%^&*()+=_';
+    const name = 'CHRISTOPHER CARSON KEESEY';
+    const duration = 900;
+
+    el.textContent = name.replace(/[^ ]/g, '–');
+
+    const birth: number[] = [];
+    const resolve: number[] = [];
+    const bw = duration * 0.3;
+    const rw = duration * 0.7;
+    for (let i = 0; i < name.length; i++) {
+      const bias = (i / name.length) * bw * 0.5;
+      birth[i] = bias + Math.random() * bw * 0.5;
+      resolve[i] = bw + bias + Math.random() * rw * 0.4;
+    }
+
+    let start: number | null = null;
+    function step(ts: number) {
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      if (elapsed < duration) {
+        el.textContent = '';
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < name.length; i++) {
+          if (name[i] === ' ') {
+            frag.appendChild(document.createTextNode(' '));
+          } else if (elapsed >= resolve[i]) {
+            frag.appendChild(document.createTextNode(name[i]));
+          } else if (elapsed >= birth[i]) {
+            const span = document.createElement('span');
+            span.className = 'scramble-glyph';
+            span.textContent = chars[Math.floor(Math.random() * chars.length)];
+            frag.appendChild(span);
+          } else {
+            const span = document.createElement('span');
+            span.className = 'scramble-idle';
+            span.textContent = '–';
+            frag.appendChild(span);
+          }
+        }
+        el.appendChild(frag);
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = name;
+      }
+    }
+    requestAnimationFrame(step);
+  })();
+
+  const container = document.getElementById('swipe-container')!
   const pages = ['/', '/projects', '/about'];
 
   // Scroll to correct panel on load based on URL
@@ -543,16 +599,25 @@ import '../styles/global.css';
     padding: 4rem 0 3rem;
   }
 
+  .hero-title-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: default;
+  }
+
   .hero-title {
     font-family: var(--font-heading);
-    font-size: 3.5rem;
-    font-weight: 800;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
     background: var(--gradient-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 0.75rem;
+    white-space: nowrap;
   }
+
 
   .bio {
     margin-top: 0.25rem;

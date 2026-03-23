@@ -135,6 +135,9 @@ const Tag = tag;
         el.addEventListener('scramble:trigger', () => scramble(el));
       }
 
+      // Skip deferred elements (they get triggered manually)
+      if (el.dataset.defer === 'true') return;
+
       // Only scramble elements on the active panel; idle the rest
       const parentPanel = el.closest('.swipe-panel');
       if (panels && parentPanel === panels[activeIndex]) {
