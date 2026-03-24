@@ -9,6 +9,7 @@ import FluxGauntletShowcase from '../components/FluxGauntletShowcase.astro';
 import CorneShowcase from '../components/CorneShowcase.astro';
 import SpotifyMacroShowcase from '../components/SpotifyMacroShowcase.astro';
 import MiniProjectCard from '../components/MiniProjectCard.astro';
+import RotatingQuote from '../components/RotatingQuote.astro';
 import '../styles/global.css';
 ---
 
@@ -51,6 +52,8 @@ import '../styles/global.css';
               </div>
             </div>
           </section>
+
+          <RotatingQuote />
 
           <div class="building-section" id="building-section">
             <div class="building-header">
@@ -164,6 +167,10 @@ import '../styles/global.css';
                 <span class="fetch-key">network</span>
                 <span class="fetch-val">Tailscale + Cloudflare Tunnel</span>
               </div>
+              <div class="fetch-row">
+                <span class="fetch-key">whip</span>
+                <span class="fetch-val">Maroon Honda Odyssey</span>
+              </div>
             </div>
 
             <div class="fetch-divider"></div>
@@ -171,11 +178,11 @@ import '../styles/global.css';
             <div class="fetch-block">
               <div class="fetch-row">
                 <span class="fetch-key">languages</span>
-                <span class="fetch-val">TypeScript · Python · Bash</span>
+                <span class="fetch-val">Natural Language · TypeScript · Python · Go</span>
               </div>
               <div class="fetch-row">
                 <span class="fetch-key">frontend</span>
-                <span class="fetch-val">React · Astro</span>
+                <span class="fetch-val">React · Astro · Tailwind</span>
               </div>
               <div class="fetch-row">
                 <span class="fetch-key">backend</span>
@@ -183,30 +190,14 @@ import '../styles/global.css';
               </div>
               <div class="fetch-row">
                 <span class="fetch-key">infra</span>
-                <span class="fetch-val">GCP · Docker · systemd</span>
+                <span class="fetch-val">GCP · Docker · systemd · Cloudflare</span>
               </div>
               <div class="fetch-row">
                 <span class="fetch-key">ai</span>
-                <span class="fetch-val">Claude · Pydantic AI · DuckDB</span>
+                <span class="fetch-val">Claude Code · MCP · Pydantic AI</span>
               </div>
             </div>
 
-            <div class="fetch-divider"></div>
-
-            <div class="fetch-block">
-              <div class="fetch-row fetch-philosophy">
-                <span class="fetch-key">uptime</span>
-                <span class="fetch-val fetch-accent">ridiculous output</span>
-              </div>
-              <div class="fetch-row fetch-philosophy">
-                <span class="fetch-key">ethos</span>
-                <span class="fetch-val fetch-accent">living in agreement with nature</span>
-              </div>
-              <div class="fetch-row fetch-philosophy">
-                <span class="fetch-key">approach</span>
-                <span class="fetch-val fetch-accent">simple code · minimal abstraction · ship it</span>
-              </div>
-            </div>
 
             <div class="fetch-colors" id="fetch-colors">
               <span class="fetch-swatch" style="background: #a855f7;"></span>
