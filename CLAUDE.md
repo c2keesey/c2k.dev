@@ -84,7 +84,8 @@ expansion — maintaining the feeling of being integrated into the page, not nav
 ## Workflow
 
 - **Only deploy to production from main** — never build/deploy to `c2k-website` from feature branches. Use the preview service for testing feature branches.
-- **Build, commit, and push after each unit of work** — after making a change on main, always build (`bun run build`), deploy (`systemctl --user restart c2k-website`), commit, and push before moving on.
+- **Build, commit, and push after each unit of work** — after making a change on main, always deploy with `c2k-deploy`, commit, and push before moving on.
+- **Deploy shortcut**: `c2k-deploy` — builds and restarts the site service in one command.
 
 ### External links
 - Dotfiles repo: https://github.com/c2keesey/dotfiles (currently private)

@@ -78,6 +78,14 @@ import '../styles/global.css';
           <LightningCloudShowcase />
           <DotfilesShowcase />
           <MiniProjectCard
+            name="morning-digest"
+            tagline="LLM-powered personal news briefing"
+            description="Fetches RSS from 9 sources across world news, SF local, and tech. Claude Haiku generates two-tier summaries — quick scans on fetch, deep dives on tap. Self-hosted Next.js PWA served over Tailscale."
+            badge="daily driver"
+            tech={['Next.js', 'TypeScript', 'Claude Haiku', 'SQLite', 'Tailwind', 'RSS']}
+            accentColor="56, 189, 248"
+          />
+          <MiniProjectCard
             name="secret-gate"
             tagline="Human-in-the-loop approval gate"
             description="Routes AI agent requests for secrets (1Password) and sudo commands through Telegram for explicit approval. Ships as a Claude Code plugin with PreToolUse hooks."
@@ -117,7 +125,7 @@ import '../styles/global.css';
               </div>
               <div class="fetch-row">
                 <span class="fetch-key">handle</span>
-                <span class="fetch-val text-scramble" data-text="c2k" data-delay="150" data-always="false">c2k</span>
+                <span class="fetch-val text-scramble" data-text="C2K" data-delay="150" data-always="false">C2K</span>
               </div>
               <div class="fetch-row">
                 <span class="fetch-key">role</span>
@@ -213,7 +221,7 @@ import '../styles/global.css';
           </div>
 
           <div class="about-blurb">
-            <p>I'm Christopher Keesey — c2k. I'm building MAIA Analytics, an AI-native geospatial platform where you ask questions and get maps. Day to day that means LLM orchestration, agentic workflows, and a lot of property data pipelines — TypeScript, Python, FastAPI, Postgres, Claude Code. I care about simple code, minimal abstraction, and shipping.</p>
+            <p>I'm Christopher Keesey — C2K. I'm building MAIA Analytics, an AI-native geospatial platform where you ask questions and get maps. Day to day that means LLM orchestration, agentic workflows, and a lot of property data pipelines — TypeScript, Python, FastAPI, Postgres, Claude Code. I care about simple code, minimal abstraction, and shipping.</p>
             <p>When I'm not building, I'm surfing the Outer Sunset, skiing backcountry, or mixing dubstep and drum & bass. I solder things that don't need to exist — LED gauntlets, lightning clouds, split keyboards. Everything I use is version-controlled, self-hosted where it matters, and accessible from anywhere. This site is the public layer of that system.</p>
           </div>
 
@@ -553,7 +561,7 @@ import '../styles/global.css';
   }
 </script>
 
-<style>
+<style is:global>
   body {
     overflow: hidden;
     height: 100dvh;
@@ -596,7 +604,7 @@ import '../styles/global.css';
 
   /* Home */
   .hero {
-    padding: 4rem 0 3rem;
+    padding: 2rem 0 2.5rem;
   }
 
   .hero-title-wrapper {
@@ -607,9 +615,9 @@ import '../styles/global.css';
 
   .hero-title {
     font-family: var(--font-heading);
-    font-size: 1.1rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
+    font-size: clamp(1.15rem, 3.8vw, 1.5rem);
+    font-weight: 600;
+    letter-spacing: 0.03em;
     background: var(--gradient-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -721,7 +729,7 @@ import '../styles/global.css';
     padding: 0.5rem 0;
   }
 
-  :global(.building-row) {
+  .building-row {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -731,7 +739,7 @@ import '../styles/global.css';
     animation: building-fade-in 0.4s ease-out both;
   }
 
-  :global(.building-row:hover) {
+  .building-row:hover {
     background: rgba(168, 85, 247, 0.06);
   }
 
@@ -740,7 +748,7 @@ import '../styles/global.css';
     to { opacity: 1; transform: translateX(0); }
   }
 
-  :global(.building-dot) {
+  .building-dot {
     width: 5px;
     height: 5px;
     border-radius: 50%;
@@ -749,12 +757,12 @@ import '../styles/global.css';
     flex-shrink: 0;
   }
 
-  :global(.building-row:hover .building-dot) {
+  .building-row:hover .building-dot {
     opacity: 1;
     box-shadow: 0 0 6px rgba(168, 85, 247, 0.5);
   }
 
-  :global(.building-info) {
+  .building-info {
     display: flex;
     flex-direction: column;
     gap: 0.1rem;
@@ -762,14 +770,14 @@ import '../styles/global.css';
     min-width: 0;
   }
 
-  :global(.building-name) {
+  .building-name {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     font-weight: 500;
     color: #a855f7;
   }
 
-  :global(.building-commit) {
+  .building-commit {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.68rem;
     color: rgba(255, 255, 255, 0.25);
@@ -778,7 +786,7 @@ import '../styles/global.css';
     text-overflow: ellipsis;
   }
 
-  :global(.building-time) {
+  .building-time {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
     color: rgba(255, 255, 255, 0.2);
@@ -786,7 +794,7 @@ import '../styles/global.css';
     white-space: nowrap;
   }
 
-  :global(.building-row:hover .building-time) {
+  .building-row:hover .building-time {
     color: rgba(255, 255, 255, 0.4);
   }
 
@@ -843,8 +851,11 @@ import '../styles/global.css';
 
   .page-title {
     font-family: var(--font-heading);
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: clamp(1.15rem, 3.8vw, 1.5rem);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
     margin-bottom: 0.5rem;
   }
 
