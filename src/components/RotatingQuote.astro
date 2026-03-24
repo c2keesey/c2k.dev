@@ -1,0 +1,156 @@
+---
+const quotes = [
+  {
+    text: "The supreme learning is to realize the meaning of selflessness.",
+    author: "Atisha",
+  },
+  {
+    text: "Ignorance is the not knowing who we really are — thinking we are a self.",
+    author: "Buddha Dharma",
+  },
+  {
+    text: "Every sentient being is I. I is simply the universe aware of itself at a particular place and time.",
+    author: "Alan Watts",
+  },
+  {
+    text: "The mind is not a vessel to be filled, but a fire to be kindled.",
+    author: "Plutarch",
+  },
+  {
+    text: "I shall pass this way but once; any good that I can do or any kindness I can show to any human being; let me do it now. Let me not defer nor neglect it, for I shall not pass this way again.",
+    author: "Etienne de Grellet",
+  },
+  {
+    text: "When we seek to discover the best in others, we somehow bring out the best in ourselves.",
+    author: "William Arthur Ward",
+  },
+  {
+    text: "Days of prosperity make us forget adversity. Good times seem out of reach during the bad ones. Both can seem like final destinations, the summation of our days. Then the cosmic joker plays with our ways. Yesterday's condition no longer remains. All commas, no periods, all stops, no stays, the pleasure's for rent, but so is the pain.",
+    author: "Matthew McConaughey",
+  },
+  {
+    text: "To fill the hour — that is happiness; to fill the hour, and leave no crevice for a repentance or an approval.",
+    author: "Ralph Waldo Emerson",
+  },
+  {
+    text: "We must be aware of the real problems of the world, then with mindfulness we will know what to do or what not to do to help.",
+    author: "Thich Nhat Hanh",
+  },
+];
+---
+
+<div class="rotating-quote" id="rotating-quote">
+  <div class="quote-text" id="quote-text">{quotes[0].text}</div>
+  <div class="quote-author" id="quote-author">— {quotes[0].author}</div>
+</div>
+
+<script define:vars={{ quotes }}>
+  window.__quotes = quotes;
+</script>
+
+<script>
+  const chars = '0123456789abcdefABCDEF~!@#$%^&*()+=_';
+  const IDLE_CHAR = '–';
+
+  function scrambleText(el: HTMLElement, newText: string, onDone?: () => void) {
+    const totalDuration = 1200;
+    const birthOffsets: number[] = [];
+    const resolveOffsets: number[] = [];
+    const birthWindow = totalDuration * 0.3;
+    const resolveWindow = totalDuration * 0.7;
+
+    for (let i = 0; i < newText.length; i++) {
+      const bias = (i / newText.length) * birthWindow * 0.5;
+      birthOffsets[i] = bias + Math.random() * birthWindow * 0.5;
+      resolveOffsets[i] = birthWindow + bias + Math.random() * resolveWindow * 0.4;
+    }
+
+    // Start with idle dashes
+    el.textContent = Array.from(newText).map(c => c === ' ' ? ' ' : IDLE_CHAR).join('');
+
+    let start: number | null = null;
+    const step = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const elapsed = timestamp - start;
+
+      el.textContent = '';
+      const frag = document.createDocumentFragment();
+
+      for (let i = 0; i < newText.length; i++) {
+        if (newText[i] === ' ') {
+          frag.appendChild(document.createTextNode(' '));
+        } else if (elapsed >= resolveOffsets[i]) {
+          frag.appendChild(document.createTextNode(newText[i]));
+        } else if (elapsed >= birthOffsets[i]) {
+          const span = document.createElement('span');
+          span.className = 'scramble-glyph';
+          span.textContent = chars[Math.floor(Math.random() * chars.length)];
+          frag.appendChild(span);
+        } else {
+          const span = document.createElement('span');
+          span.className = 'scramble-idle';
+          span.textContent = IDLE_CHAR;
+          frag.appendChild(span);
+        }
+      }
+      el.appendChild(frag);
+
+      if (elapsed < totalDuration) {
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = newText;
+        onDone?.();
+      }
+    };
+    requestAnimationFrame(step);
+  }
+
+  function initRotatingQuote() {
+    const quotes = (window as any).__quotes as { text: string; author: string }[];
+    const textEl = document.getElementById('quote-text');
+    const authorEl = document.getElementById('quote-author');
+    if (!textEl || !authorEl || !quotes?.length) return;
+
+    let index = 0;
+    const INTERVAL = 12000;
+
+    // Initial scramble on load
+    scrambleText(textEl, quotes[0].text);
+    scrambleText(authorEl, `— ${quotes[0].author}`);
+
+    setInterval(() => {
+      index = (index + 1) % quotes.length;
+      scrambleText(textEl, quotes[index].text);
+      scrambleText(authorEl, `— ${quotes[index].author}`);
+    }, INTERVAL);
+  }
+
+  initRotatingQuote();
+  document.addEventListener('astro:page-load', initRotatingQuote);
+</script>
+
+<style>
+  .rotating-quote {
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 0 0 1.5rem;
+  }
+
+  .quote-text {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    font-style: italic;
+    min-height: 3em;
+  }
+
+  .quote-author {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+    opacity: 0.7;
+  }
+</style>
