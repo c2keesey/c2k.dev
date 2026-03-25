@@ -10,6 +10,7 @@ import CorneShowcase from '../components/CorneShowcase.astro';
 import SpotifyMacroShowcase from '../components/SpotifyMacroShowcase.astro';
 import MiniProjectCard from '../components/MiniProjectCard.astro';
 import RotatingQuote from '../components/RotatingQuote.astro';
+import DesktopDashboard from '../components/DesktopDashboard.astro';
 import '../styles/global.css';
 ---
 
@@ -69,7 +70,10 @@ import '../styles/global.css';
 
       <!-- Panel: Projects -->
       <section class="swipe-panel" data-page="/projects">
-        <div class="panel-content">
+        <!-- Desktop: dashboard layout -->
+        <DesktopDashboard />
+        <!-- Mobile: stacked showcases -->
+        <div class="panel-content projects-mobile">
           <section class="page-header">
             <TextScramble text="Projects" tag="h1" class="page-title" always />
             <TextScramble text="Things I'm building." tag="p" class="page-desc" delay={100} />
@@ -570,6 +574,12 @@ import '../styles/global.css';
     }
   }
 
+  @media (min-width: 1024px) {
+    .projects-mobile {
+      display: none;
+    }
+  }
+
   .swipe-panel {
     min-width: 100%;
     scroll-snap-align: start;
@@ -800,6 +810,12 @@ import '../styles/global.css';
     gap: 0.5rem;
     max-width: 720px;
     margin: 0 auto;
+  }
+
+  @media (min-width: 1024px) {
+    .status-row {
+      max-width: 92%;
+    }
   }
 
   .status-dot {

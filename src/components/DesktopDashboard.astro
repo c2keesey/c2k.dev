@@ -1,0 +1,587 @@
+---
+// Desktop dashboard: futuristic metro-map layout for projects
+// Only visible at >=1024px; mobile keeps the stacked showcase view
+
+const projects = [
+  {
+    id: 'maia', name: 'MAIA', tagline: 'AI geospatial platform',
+    description: 'Full-stack AI-native geospatial platform. Ask questions, get maps. LLM orchestration, agentic workflows, property data pipelines.',
+    badge: 'startup',
+    tech: ['TypeScript', 'Python', 'FastAPI', 'Postgres', 'GCP'],
+    link: 'https://maia-analytics.com', linkText: 'maia-analytics.com',
+    color: '6, 182, 212', x: 18, y: 20,
+  },
+  {
+    id: 'c2k', name: 'c2k.page', tagline: 'This website',
+    description: 'Personal site as system monitor. Self-hosted Astro SSR on an OptiPlex micro, exposed via Cloudflare Tunnel. Hand-crafted interactive showcases.',
+    badge: 'web',
+    tech: ['Astro', 'TypeScript', 'Canvas', 'Cloudflare'],
+    link: 'https://c2k.page', linkText: 'c2k.page',
+    color: '168, 85, 247', x: 44, y: 20,
+  },
+  {
+    id: 'dotfiles', name: 'Dotfiles', tagline: 'Dev environment system',
+    description: 'Version-controlled dev environment. Shell, editor, keybindings, Claude Code skills and hooks — all symlinked and synced across machines.',
+    badge: 'tooling',
+    tech: ['Bash', 'Zsh', 'Claude Code', 'Tmux', 'Ghostty'],
+    link: 'https://github.com/c2keesey/dotfiles', linkText: 'github/dotfiles',
+    color: '168, 85, 247', x: 72, y: 20,
+  },
+  {
+    id: 'spotify', name: 'Spotify Macro', tagline: 'Stream Deck automations',
+    description: 'Five Spotify automations for Stream Deck. Playlist sorting, genre classification, heart sync, hotkey control, queue management.',
+    badge: 'automation',
+    tech: ['Python', 'Spotify API', 'Stream Deck SDK'],
+    link: 'https://github.com/c2keesey/spotify-macro-pad', linkText: 'github/spotify-macro',
+    color: '34, 197, 94', x: 38, y: 48,
+  },
+  {
+    id: 'secretgate', name: 'Secret Gate', tagline: 'Human-in-the-loop gate',
+    description: 'Routes AI agent requests for secrets (1Password) and sudo commands through Telegram for explicit approval. Claude Code plugin with PreToolUse hooks.',
+    badge: 'security', wip: true,
+    tech: ['Python', '1Password CLI', 'Telegram', 'Claude Code'],
+    link: 'https://github.com/c2keesey/secret-gate', linkText: 'github/secret-gate',
+    color: '239, 68, 68', x: 72, y: 48,
+  },
+  {
+    id: 'flux', name: 'Flux Gauntlet', tagline: 'LED wearable',
+    description: '300-LED arm gauntlet with 16 rings on a 3D cylindrical mesh. 7 procedural effects: blast, lightning, fire, firework, casimir, twinkle, pew.',
+    badge: 'hardware',
+    tech: ['C++', 'FastLED', 'ESP32'],
+    color: '249, 115, 22', x: 14, y: 76,
+  },
+  {
+    id: 'corne', name: 'Corne', tagline: '42-key split keyboard',
+    description: 'Custom split ergonomic keyboard. 7 layers with combos, home row mods, and vim-style navigation. Fully programmable firmware.',
+    badge: 'hardware',
+    tech: ['QMK', 'C', 'KiCad'],
+    color: '139, 92, 246', x: 38, y: 76,
+  },
+  {
+    id: 'lightning', name: 'Lightning Cloud', tagline: 'Procedural lightning',
+    description: 'LED cloud lamp with procedural lightning bolt generation. Branching algorithms, flashing, fading — all code-driven on an ESP32.',
+    badge: 'hardware',
+    tech: ['C++', 'FastLED', 'ESP32'],
+    color: '59, 130, 246', x: 60, y: 76,
+  },
+  {
+    id: 'propeller', name: 'Propeller Scrape', tagline: 'Concert ticket monitor',
+    description: 'Scrapes Propeller rewards for new concert tickets in LA, SF, and Boulder. Sends Telegram notifications. Runs on cron.',
+    badge: 'utility',
+    tech: ['Python', 'BeautifulSoup', 'Telegram', 'cron'],
+    link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape',
+    color: '249, 115, 22', x: 86, y: 48,
+  },
+];
+
+// Metro routes connecting related projects
+const routes = [
+  { color: '#a855f7', nodes: ['maia', 'c2k', 'dotfiles'] },
+  { color: '#f97316', nodes: ['flux', 'corne', 'lightning'] },
+  { color: '#22c55e', nodes: ['c2k', 'spotify'] },
+  { color: '#ef4444', nodes: ['dotfiles', 'secretgate'] },
+  { color: '#8b5cf6', nodes: ['spotify', 'corne'] },
+  { color: '#06b6d4', nodes: ['secretgate', 'propeller'] },
+];
+
+function getNode(id: string) {
+  return projects.find(p => p.id === id)!;
+}
+
+function metroSegment(x1: number, y1: number, x2: number, y2: number): string {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const r = 2.5;
+
+  if (Math.abs(dx) < 2) return `L ${x2} ${y2}`;
+  if (Math.abs(dy) < 2) return `L ${x2} ${y2}`;
+
+  const sx = Math.sign(dx);
+  const sy = Math.sign(dy);
+
+  // Vertical first, then horizontal
+  return `L ${x1} ${y2 - sy * r} Q ${x1} ${y2} ${x1 + sx * r} ${y2} L ${x2} ${y2}`;
+}
+
+function buildRoutePath(nodeIds: string[]): string {
+  const points = nodeIds.map(id => getNode(id));
+  if (points.length < 2) return '';
+  let d = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    d += ' ' + metroSegment(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+  }
+  return d;
+}
+---
+
+<div class="dashboard" data-projects={JSON.stringify(projects)}>
+  <!-- Grid background -->
+  <div class="dashboard-grid"></div>
+
+  <!-- Dashboard title -->
+  <div class="dashboard-title">
+    <span class="dashboard-label">PROJECT NETWORK</span>
+    <span class="dashboard-count">{projects.length} nodes</span>
+  </div>
+
+  <!-- SVG route layer -->
+  <svg class="dashboard-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+    {routes.map((route, i) => (
+      <path
+        d={buildRoutePath(route.nodes)}
+        stroke={route.color}
+        stroke-width="2"
+        fill="none"
+        opacity="0.3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        vector-effect="non-scaling-stroke"
+        class="route-line"
+        style={`animation-delay: ${i * -0.7}s;`}
+      />
+    ))}
+  </svg>
+
+  <!-- Route junction dots (HTML so they don't distort) -->
+  {projects.map(p => (
+    <div
+      class="route-junction"
+      style={`left: ${p.x}%; top: ${p.y}%; background: rgb(${p.color});`}
+    />
+  ))}
+
+  <!-- Project nodes -->
+  {projects.map((p, i) => (
+    <button
+      class="dashboard-node"
+      style={`left: ${p.x}%; top: ${p.y}%; --node-color: ${p.color}; --node-delay: ${i * 80}ms;`}
+      data-project={p.id}
+    >
+      <span class="node-pulse"></span>
+      <span class="node-name text-scramble" data-text={p.name} data-delay={String(200 + i * 60)} data-always="false">{p.name}</span>
+      <span class="node-tagline">{p.tagline}</span>
+      {p.wip && <span class="node-wip">WIP</span>}
+    </button>
+  ))}
+
+  <!-- Expand modal -->
+  <div class="dashboard-modal" id="dashboard-modal">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-card" id="modal-card">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div class="modal-header">
+        <span class="modal-name" id="modal-name"></span>
+        <div class="modal-badges" id="modal-badges"></div>
+      </div>
+      <p class="modal-tagline" id="modal-tagline"></p>
+      <p class="modal-desc" id="modal-desc"></p>
+      <div class="modal-tech" id="modal-tech"></div>
+      <div class="modal-footer" id="modal-footer">
+        <a class="modal-link" id="modal-link" target="_blank" rel="noopener"></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const dashboard = document.querySelector('.dashboard');
+  if (!dashboard) throw new Error('Dashboard not found');
+
+  const projects: Array<{
+    id: string; name: string; tagline: string; description: string;
+    badge: string; wip?: boolean; tech: string[];
+    link?: string; linkText?: string; color: string;
+  }> = JSON.parse(dashboard.getAttribute('data-projects') || '[]');
+
+  const projectMap = new Map(projects.map(p => [p.id, p]));
+
+  const modal = document.getElementById('dashboard-modal')!;
+  const modalName = document.getElementById('modal-name')!;
+  const modalBadges = document.getElementById('modal-badges')!;
+  const modalTagline = document.getElementById('modal-tagline')!;
+  const modalDesc = document.getElementById('modal-desc')!;
+  const modalTech = document.getElementById('modal-tech')!;
+  const modalLink = document.getElementById('modal-link') as HTMLAnchorElement;
+  const modalFooter = document.getElementById('modal-footer')!;
+  const modalCard = document.getElementById('modal-card')!;
+
+  function openModal(id: string) {
+    const p = projectMap.get(id);
+    if (!p) return;
+
+    modalName.textContent = p.name;
+    modalName.style.color = `rgba(${p.color}, 0.9)`;
+    modalCard.style.setProperty('--modal-color', p.color);
+
+    modalBadges.innerHTML = '';
+    const badge = document.createElement('span');
+    badge.className = 'modal-badge';
+    badge.textContent = p.badge;
+    badge.style.background = `rgba(${p.color}, 0.12)`;
+    badge.style.color = `rgba(${p.color}, 0.7)`;
+    modalBadges.appendChild(badge);
+
+    if (p.wip) {
+      const wip = document.createElement('span');
+      wip.className = 'modal-badge modal-badge-wip';
+      wip.textContent = 'WIP';
+      modalBadges.appendChild(wip);
+    }
+
+    modalTagline.textContent = p.tagline;
+    modalDesc.textContent = p.description;
+
+    modalTech.innerHTML = '';
+    p.tech.forEach(t => {
+      const span = document.createElement('span');
+      span.className = 'modal-tech-pill';
+      span.textContent = t;
+      modalTech.appendChild(span);
+    });
+
+    if (p.link) {
+      modalLink.href = p.link;
+      modalLink.textContent = (p.linkText || p.link.replace('https://', '')) + ' ↗';
+      modalLink.style.color = `rgba(${p.color}, 0.5)`;
+      modalFooter.style.display = 'flex';
+    } else {
+      modalFooter.style.display = 'none';
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.dashboard-node').forEach(node => {
+    node.addEventListener('click', () => {
+      const id = (node as HTMLElement).dataset.project;
+      if (id) openModal(id);
+    });
+  });
+
+  document.getElementById('modal-backdrop')?.addEventListener('click', closeModal);
+  document.getElementById('modal-close')?.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+
+<style>
+  .dashboard {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .dashboard {
+      display: block;
+    }
+  }
+
+  /* Subtle dot grid background */
+  .dashboard-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* SVG route lines */
+  .dashboard-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Dashboard title */
+  .dashboard-title {
+    position: absolute;
+    top: 1.5rem;
+    left: 2rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .dashboard-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .dashboard-count {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(168, 85, 247, 0.35);
+    padding: 0.1rem 0.4rem;
+    border: 1px solid rgba(168, 85, 247, 0.15);
+    border-radius: 3px;
+  }
+
+  .route-line {
+    stroke-dasharray: 6 10;
+    animation: route-flow 4s linear infinite;
+    transition: opacity 0.3s;
+  }
+
+  @keyframes route-flow {
+    to { stroke-dashoffset: -16; }
+  }
+
+  /* Junction dots where routes meet nodes */
+  .route-junction {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+    z-index: 1;
+    pointer-events: none;
+    box-shadow: 0 0 8px currentColor;
+  }
+
+  /* Project nodes */
+  .dashboard-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    background: rgba(20, 20, 22, 0.85);
+    border: 1px solid rgba(var(--node-color), 0.2);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+    min-width: 130px;
+    backdrop-filter: blur(8px);
+    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    font-family: inherit;
+    text-align: left;
+    color: inherit;
+    animation: node-enter 0.5s ease-out both;
+    animation-delay: var(--node-delay, 0ms);
+  }
+
+  @keyframes node-enter {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .dashboard-node:hover {
+    border-color: rgba(var(--node-color), 0.5);
+    transform: translate(-50%, -50%) scale(1.04);
+    box-shadow:
+      0 0 20px rgba(var(--node-color), 0.1),
+      0 0 40px rgba(var(--node-color), 0.05);
+    z-index: 3;
+  }
+
+  .node-pulse {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgb(var(--node-color));
+    opacity: 0.6;
+    animation: node-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes node-glow {
+    0%, 100% { opacity: 0.6; box-shadow: 0 0 4px rgba(var(--node-color), 0.4); }
+    50% { opacity: 0.3; box-shadow: 0 0 2px rgba(var(--node-color), 0.2); }
+  }
+
+  .node-name {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(var(--node-color), 0.85);
+    letter-spacing: 0.01em;
+  }
+
+  .node-tagline {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .node-wip {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    padding: 0.08rem 0.3rem;
+    background: rgba(234, 179, 8, 0.2);
+    color: rgba(234, 179, 8, 0.8);
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  /* Modal */
+  .dashboard-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .dashboard-modal.active {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-card {
+    position: relative;
+    background: #0d0d0f;
+    border: 1px solid rgba(var(--modal-color, 168, 85, 247), 0.25);
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    max-width: 480px;
+    width: 90%;
+    transform: scale(0.95);
+    transition: transform 0.25s;
+    box-shadow: 0 0 40px rgba(var(--modal-color, 168, 85, 247), 0.08);
+  }
+
+  .dashboard-modal.active .modal-card {
+    transform: scale(1);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color 0.2s;
+    font-family: inherit;
+  }
+
+  .modal-close:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .modal-name {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .modal-badges {
+    display: flex;
+    gap: 0.3rem;
+  }
+
+  .modal-badge {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .modal-badge-wip {
+    background: rgba(234, 179, 8, 0.15) !important;
+    color: rgba(234, 179, 8, 0.8) !important;
+  }
+
+  .modal-tagline {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-desc {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.38);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .modal-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .modal-tech-pill {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .modal-link {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-link:hover {
+    opacity: 0.8;
+  }
+</style>
