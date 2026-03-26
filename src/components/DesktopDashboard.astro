@@ -274,15 +274,15 @@ const edgeMidpoints = edges.map(edge => {
     const focusContent = document.getElementById('dashboard-focus-content')!;
     const focusCloseBtn = document.getElementById('focus-close')!;
 
-    // Map project IDs to their showcase component selectors in .projects-mobile
+    // Map project IDs to their showcase component selectors in .showcases-source
     const showcaseSelectors: Record<string, string> = {
-      maia: '.maia-showcase',
-      c2k: '.c2k-showcase',
-      dotfiles: '.df-showcase',
-      spotify: '.sm-showcase',
-      flux: '.fg-showcase',
-      corne: '.crn-showcase',
-      lightning: '.lc-showcase',
+      maia: '.showcases-source .maia-showcase',
+      c2k: '.showcases-source .c2k-showcase',
+      dotfiles: '.showcases-source .df-showcase',
+      spotify: '.showcases-source .sm-showcase',
+      flux: '.showcases-source .fg-showcase',
+      corne: '.showcases-source .crn-showcase',
+      lightning: '.showcases-source .lc-showcase',
     };
 
     let expandedNode: HTMLElement | null = null;

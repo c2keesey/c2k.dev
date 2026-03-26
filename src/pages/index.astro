@@ -8,9 +8,9 @@ import LightningCloudShowcase from '../components/LightningCloudShowcase.astro';
 import FluxGauntletShowcase from '../components/FluxGauntletShowcase.astro';
 import CorneShowcase from '../components/CorneShowcase.astro';
 import SpotifyMacroShowcase from '../components/SpotifyMacroShowcase.astro';
-import MiniProjectCard from '../components/MiniProjectCard.astro';
 import RotatingQuote from '../components/RotatingQuote.astro';
 import DesktopDashboard from '../components/DesktopDashboard.astro';
+import MobileNetworkView from '../components/MobileNetworkView.astro';
 import '../styles/global.css';
 ---
 
@@ -70,49 +70,19 @@ import '../styles/global.css';
 
       <!-- Panel: Projects -->
       <section class="swipe-panel" data-page="/projects">
-        <!-- Desktop: dashboard layout -->
+        <!-- Desktop: spatial dashboard layout -->
         <DesktopDashboard />
-        <!-- Mobile: stacked showcases -->
-        <div class="panel-content projects-mobile">
-          <section class="page-header">
-            <TextScramble text="Projects" tag="h1" class="page-title" always />
-            <TextScramble text="Things I'm building." tag="p" class="page-desc" delay={100} />
-          </section>
+        <!-- Mobile: network card stack -->
+        <MobileNetworkView />
+        <!-- Showcase components (hidden, moved into focus overlays on demand) -->
+        <div class="showcases-source">
+          <MaiaShowcase />
           <C2kShowcase />
+          <DotfilesShowcase />
           <SpotifyMacroShowcase />
           <FluxGauntletShowcase />
           <CorneShowcase />
           <LightningCloudShowcase />
-          <DotfilesShowcase />
-          <MiniProjectCard
-            name="morning-digest"
-            tagline="LLM-powered personal news briefing"
-            description="Fetches RSS from 9 sources across world news, SF local, and tech. Claude Haiku generates two-tier summaries — quick scans on fetch, deep dives on tap. Self-hosted Next.js PWA served over Tailscale."
-            badge="daily driver"
-            tech={['Next.js', 'TypeScript', 'Claude Haiku', 'SQLite', 'Tailwind', 'RSS']}
-            accentColor="56, 189, 248"
-          />
-          <MiniProjectCard
-            name="secret-gate"
-            tagline="Human-in-the-loop approval gate"
-            description="Routes AI agent requests for secrets (1Password) and sudo commands through Telegram for explicit approval. Ships as a Claude Code plugin with PreToolUse hooks."
-            badge="security"
-            wip={true}
-            tech={['Python', '1Password CLI', 'Telegram', 'Claude Code Plugin']}
-            link="https://github.com/c2keesey/secret-gate"
-            linkText="github.com/c2keesey/secret-gate"
-            accentColor="239, 68, 68"
-          />
-          <MiniProjectCard
-            name="propeller-scrape"
-            tagline="Concert ticket monitor"
-            description="Scrapes Propeller rewards for new concert tickets in LA, SF, and Boulder. Sends Telegram notifications when shows appear. Runs on cron."
-            badge="utility"
-            tech={['Python', 'BeautifulSoup', 'Telegram', 'cron']}
-            link="https://github.com/c2keesey/propeller-scrape"
-            linkText="github.com/c2keesey/propeller-scrape"
-            accentColor="249, 115, 22"
-          />
         </div>
       </section>
 
@@ -582,14 +552,13 @@ import '../styles/global.css';
     }
   }
 
-  @media (min-width: 1024px) {
-    .projects-mobile {
-      position: absolute;
-      left: -9999px;
-      visibility: hidden;
-      pointer-events: none;
-      width: 640px;
-    }
+  /* Showcases: hidden off-screen but preserving dimensions for canvas init */
+  .showcases-source {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+    pointer-events: none;
+    width: 640px;
   }
 
   .swipe-panel {
