@@ -171,15 +171,15 @@ projects.forEach((p, i) => { projectIndex[p.id] = i; });
         class="mn-edge"
         data-from={edge.from}
         data-to={edge.to}
-        data-edge-idx={String(i)}
         stroke={edge.color}
         stroke-width="1"
-        opacity="0.12"
+        opacity="0.18"
         stroke-dasharray="4 3"
         stroke-linecap="round"
       />
     ))}
   </svg>
+
 
   <!-- Project cards -->
   <div class="mn-cards" id="mn-cards">
@@ -197,15 +197,17 @@ projects.forEach((p, i) => { projectIndex[p.id] = i; });
             <span class="mn-name text-scramble" data-text={p.name} data-delay={String(150 + i * 50)} data-always="false">{p.name}</span>
             <span class={`mn-status-label ${p.status.toLowerCase()}`}>{p.status}</span>
           </div>
-          <span class="mn-tagline">{p.tagline}</span>
+          <div class="mn-compact-sub">
+            <span class="mn-tagline">{p.tagline}</span>
+            <div class="mn-badges">
+              <span class="mn-badge" style={`background: rgba(${p.color}, 0.1); color: rgba(${p.color}, 0.7);`}>{p.badge}</span>
+              {p.wip && <span class="mn-badge mn-badge-wip">WIP</span>}
+            </div>
+          </div>
         </div>
 
         {/* Expanded detail */}
         <div class="mn-card-detail">
-          <div class="mn-badges">
-            <span class="mn-badge" style={`background: rgba(${p.color}, 0.1); color: rgba(${p.color}, 0.7);`}>{p.badge}</span>
-            {p.wip && <span class="mn-badge mn-badge-wip">WIP</span>}
-          </div>
           <p class="mn-desc">{p.description}</p>
           <div class="mn-tech">
             {p.tech.map(t => <span class="mn-tech-pill">{t}</span>)}
@@ -234,17 +236,15 @@ projects.forEach((p, i) => { projectIndex[p.id] = i; });
             </div>
           )}
         </div>
+
+        {/* Inline showcase container (state 3) */}
+        {p.showcaseSelector && (
+          <div class="mn-card-showcase"></div>
+        )}
       </div>
     ))}
   </div>
 
-  {/* Focus overlay for full showcase */}
-  <div class="mn-focus-overlay" id="mn-focus-overlay">
-    <div class="mn-focus-backdrop" id="mn-focus-backdrop"></div>
-    <div class="mn-focus-content" id="mn-focus-content">
-      <button class="mn-focus-close" id="mn-focus-close" aria-label="Close">✕</button>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -256,12 +256,8 @@ function initMobileNetwork() {
   const svg = document.getElementById('mn-connections') as SVGElement | null;
   const edgeLines = svg?.querySelectorAll<SVGLineElement>('.mn-edge') || [];
 
-  const overlay = document.getElementById('mn-focus-overlay')!;
-  const backdrop = document.getElementById('mn-focus-backdrop')!;
-  const focusContent = document.getElementById('mn-focus-content')!;
-  const focusCloseBtn = document.getElementById('mn-focus-close')!;
-
   let expandedCard: HTMLElement | null = null;
+  let focusedCard: HTMLElement | null = null;
   let focusedShowcase: HTMLElement | null = null;
   let focusedShowcaseParent: HTMLElement | null = null;
 
@@ -269,35 +265,54 @@ function initMobileNetwork() {
   function updateConnections() {
     if (!svg) return;
     const containerRect = container!.getBoundingClientRect();
+    // Use scrollHeight so SVG covers full content even when scrolled
+    const totalHeight = container!.scrollHeight;
     svg.style.width = containerRect.width + 'px';
-    svg.style.height = container!.scrollHeight + 'px';
-    svg.setAttribute('viewBox', `0 0 ${containerRect.width} ${container!.scrollHeight}`);
+    svg.style.height = totalHeight + 'px';
+    svg.setAttribute('viewBox', `0 0 ${containerRect.width} ${totalHeight}`);
 
-    // Build card center positions
-    const cardCenters: Record<string, { x: number; y: number }> = {};
+    // Use offsetTop chain for positions relative to container (scroll-stable)
+    const cardsEl = document.getElementById('mn-cards');
+    const cardsOffsetTop = cardsEl ? cardsEl.offsetTop : 0;
+    const cardCenters: Record<string, { x: number; y: number; top: number; bottom: number }> = {};
     cards.forEach(card => {
       const id = card.dataset.project || '';
+      const top = cardsOffsetTop + card.offsetTop;
+      const h = card.offsetHeight;
       const rect = card.getBoundingClientRect();
       cardCenters[id] = {
         x: rect.left - containerRect.left + rect.width / 2,
-        y: rect.top - containerRect.top + container!.scrollTop + rect.height / 2,
+        y: top + h / 2,
+        top: top,
+        bottom: top + h,
       };
     });
 
-    edgeLines.forEach(line => {
+    // Assign each edge a horizontal lane spread across the card width
+    const cardsRect = cardsEl ? cardsEl.getBoundingClientRect() : containerRect;
+    const cardsLeft = cardsRect.left - containerRect.left;
+    const cardsWidth = cardsRect.width;
+    const edgeCount = edgeLines.length;
+    const laneMargin = 20;
+    const laneWidth = (cardsWidth - laneMargin * 2) / Math.max(edgeCount - 1, 1);
+
+    edgeLines.forEach((line, i) => {
       const fromId = line.dataset.from || '';
       const toId = line.dataset.to || '';
       const from = cardCenters[fromId];
       const to = cardCenters[toId];
       if (!from || !to) return;
 
-      // Draw lines offset to the left edge of cards
-      const leftX = 20;
-      line.setAttribute('x1', String(leftX));
-      line.setAttribute('y1', String(from.y));
-      line.setAttribute('x2', String(leftX));
-      line.setAttribute('y2', String(to.y));
+      const laneX = cardsLeft + laneMargin + i * laneWidth;
+      // Connect from bottom of source card to top of target card
+      const topCard = from.y < to.y ? from : to;
+      const botCard = from.y < to.y ? to : from;
+      line.setAttribute('x1', String(laneX));
+      line.setAttribute('y1', String(topCard.bottom));
+      line.setAttribute('x2', String(laneX));
+      line.setAttribute('y2', String(botCard.top));
     });
+
   }
 
   // ── Canvas: subtle star field ──
@@ -360,14 +375,15 @@ function initMobileNetwork() {
   cards.forEach(card => {
     card.addEventListener('click', (e) => {
       if ((e.target as HTMLElement).closest('.mn-link')) return;
+      if (focusedCard) return; // In state 3, ignore card clicks (use backdrop to close)
 
       const projectId = card.dataset.project || '';
       const showcaseSelector = card.dataset.showcase || '';
 
       if (expandedCard === card) {
-        // State 2 → State 3 (showcase)
+        // State 2 → State 3 (inline showcase with dimmed backdrop)
         if (showcaseSelector) {
-          openFocus(showcaseSelector);
+          openInlineShowcase(card, showcaseSelector);
         }
         return;
       }
@@ -389,18 +405,22 @@ function initMobileNetwork() {
       }, 100);
 
       // Update connection lines after expansion animation
-      setTimeout(updateConnections, 350);
+      animateConnections();
     });
   });
 
   function highlightConnections(projectId: string) {
-    // Highlight connected edges
-    edgeLines.forEach(line => {
+    const connectedIds = new Set<string>([projectId]);
+
+    // Highlight connected edges and show their labels
+    edgeLines.forEach((line, i) => {
       const from = line.dataset.from || '';
       const to = line.dataset.to || '';
       if (from === projectId || to === projectId) {
         line.classList.add('highlighted');
         line.classList.remove('dimmed');
+        if (from === projectId) connectedIds.add(to);
+        if (to === projectId) connectedIds.add(from);
       } else {
         line.classList.add('dimmed');
         line.classList.remove('highlighted');
@@ -408,14 +428,6 @@ function initMobileNetwork() {
     });
 
     // Dim unrelated cards
-    const connectedIds = new Set<string>([projectId]);
-    edgeLines.forEach(line => {
-      const from = line.dataset.from || '';
-      const to = line.dataset.to || '';
-      if (from === projectId) connectedIds.add(to);
-      if (to === projectId) connectedIds.add(from);
-    });
-
     cards.forEach(card => {
       const id = card.dataset.project || '';
       if (connectedIds.has(id)) {
@@ -431,61 +443,101 @@ function initMobileNetwork() {
     cards.forEach(c => { c.classList.remove('dimmed'); });
   }
 
-  // ── Focus overlay ──
+  // ── Inline showcase (state 3) ──
 
-  function openFocus(selector: string) {
+  function openInlineShowcase(card: HTMLElement, selector: string) {
     const showcase = document.querySelector(selector) as HTMLElement;
     if (!showcase) return;
 
+    const showcaseContainer = card.querySelector('.mn-card-showcase') as HTMLElement;
+    if (!showcaseContainer) return;
+
+    focusedCard = card;
     focusedShowcaseParent = showcase.parentElement;
     focusedShowcase = showcase;
 
-    focusContent.appendChild(showcase);
-    overlay.classList.add('visible');
-    document.body.style.overflow = 'hidden';
+    // Move showcase into the card
+    showcaseContainer.appendChild(showcase);
+    card.classList.add('focused');
+    container!.classList.add('has-focus');
+
+    // Scroll card into view
+    setTimeout(() => {
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+
+    animateConnections();
   }
 
-  function closeFocus() {
-    if (!focusedShowcase || !focusedShowcaseParent) return;
+  // Smoothly update connections during CSS transitions
+  function animateConnections(duration = 350) {
+    const start = performance.now();
+    function tick(now: number) {
+      updateConnections();
+      if (now - start < duration) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
 
-    focusedShowcaseParent.appendChild(focusedShowcase);
-    overlay.classList.remove('visible');
-    document.body.style.overflow = '';
+  function closeInlineShowcase() {
+    if (!focusedCard || !focusedShowcase || !focusedShowcaseParent) return;
 
-    focusedShowcase = null;
-    focusedShowcaseParent = null;
+    const card = focusedCard;
+    const showcase = focusedShowcase;
+    const parent = focusedShowcaseParent;
+
+    // Remove focused state — CSS transitions animate the collapse
+    card.classList.remove('focused');
+    container!.classList.remove('has-focus');
 
     if (expandedCard) {
       expandedCard.classList.remove('expanded');
       expandedCard = null;
     }
     clearHighlights();
-    setTimeout(updateConnections, 50);
+    animateConnections(400);
+
+    focusedCard = null;
+    focusedShowcase = null;
+    focusedShowcaseParent = null;
+
+    // Wait for the collapse transition to finish, then move showcase back
+    setTimeout(() => {
+      parent.appendChild(showcase);
+    }, 400);
   }
 
-  backdrop.addEventListener('click', closeFocus);
-  focusCloseBtn.addEventListener('click', closeFocus);
+  // Tap outside to collapse/close (listen on document to catch taps anywhere)
+  document.addEventListener('click', (e) => {
+    const clickedCard = (e.target as HTMLElement).closest('.mn-card') as HTMLElement | null;
 
-  // Tap outside cards to collapse
-  container!.addEventListener('click', (e) => {
-    if (expandedCard && !(e.target as HTMLElement).closest('.mn-card')) {
+    // State 3: close if tapping anything other than the focused card
+    if (focusedCard) {
+      if (clickedCard !== focusedCard) {
+        closeInlineShowcase();
+      }
+      return;
+    }
+
+    // State 2: close if tapping outside any card
+    if (expandedCard && !clickedCard) {
       expandedCard.classList.remove('expanded');
       expandedCard = null;
       clearHighlights();
-      setTimeout(updateConnections, 350);
+      animateConnections();
     }
   });
 
   // Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (overlay.classList.contains('visible')) {
-        closeFocus();
+      if (focusedCard) {
+        closeInlineShowcase();
       } else if (expandedCard) {
         expandedCard.classList.remove('expanded');
         expandedCard = null;
         clearHighlights();
-        setTimeout(updateConnections, 350);
+        animateConnections();
       }
     }
   });
@@ -511,6 +563,7 @@ initMobileNetwork();
     padding: 0 1rem 2rem;
     max-width: 720px;
     margin: 0 auto;
+    overflow-x: hidden;
   }
 
   @media (min-width: 1024px) {
@@ -574,13 +627,14 @@ initMobileNetwork();
   }
 
   .mn-edge.highlighted {
-    opacity: 0.4 !important;
+    opacity: 0.5 !important;
     stroke-width: 1.5 !important;
   }
 
   .mn-edge.dimmed {
-    opacity: 0.03 !important;
+    opacity: 0.04 !important;
   }
+
 
   /* ── Cards ── */
   .mn-cards {
@@ -588,8 +642,7 @@ initMobileNetwork();
     z-index: 3;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding-left: 28px; /* room for connection lines on the left */
+    gap: 0.75rem;
   }
 
   .mn-card {
@@ -604,7 +657,7 @@ initMobileNetwork();
     transition:
       border-color 0.2s ease-out,
       box-shadow 0.2s ease-out,
-      opacity 0.15s ease-out;
+      opacity 0.3s ease-out;
     animation: mn-card-enter 0.35s cubic-bezier(.2, .8, .2, 1) both;
     animation-delay: var(--card-delay, 0ms);
   }
@@ -704,10 +757,32 @@ initMobileNetwork();
   .mn-status-label.deploying { color: rgba(234, 179, 8, 0.45); }
   .mn-status-label.standby { color: rgba(255, 255, 255, 0.12); }
 
+  .mn-compact-sub {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
   .mn-tagline {
     font-family: var(--font-mono);
     font-size: 0.65rem;
     color: rgba(255, 255, 255, 0.22);
+  }
+
+  /* Badges hidden in compact, shown when expanded */
+  .mn-badges {
+    display: flex;
+    gap: 0.25rem;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 0.3s ease-out, opacity 0.25s ease-out;
+  }
+
+  .expanded .mn-badges,
+  .focused .mn-badges {
+    max-width: 120px;
+    opacity: 1;
   }
 
   /* ── Detail (expanded) ── */
@@ -728,12 +803,23 @@ initMobileNetwork();
     padding: 0 0.85rem 0.75rem;
   }
 
-  .mn-badges {
-    display: flex;
-    gap: 0.25rem;
-    margin-bottom: 0.4rem;
-    padding-top: 0.3rem;
-    border-top: 1px solid rgba(var(--card-color), 0.08);
+  /* Hide detail when showcase is shown (state 3) */
+  .focused .mn-card-detail {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* Hide showcase's own header when embedded in a card (outer card header stays) */
+  .mn-card-showcase :global(.maia-header),
+  .mn-card-showcase :global(.c2k-header),
+  .mn-card-showcase :global(.df-header),
+  .mn-card-showcase :global(.sm-header),
+  .mn-card-showcase :global(.fg-header),
+  .mn-card-showcase :global(.crn-header),
+  .mn-card-showcase :global(.lc-header) {
+    display: none;
   }
 
   .mn-badge {
@@ -848,65 +934,41 @@ initMobileNetwork();
     50% { transform: translateX(3px); opacity: 1; }
   }
 
-  /* ── Focus overlay ── */
-  .mn-focus-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
+  /* ── Focus mode: dim everything except the focused card ── */
+  .has-focus .mn-header,
+  .has-focus .mn-connections,
+  .has-focus .mobile-canvas {
+    opacity: 0.15;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .has-focus .mn-card:not(.focused) {
+    opacity: 0.1;
+    transition: opacity 0.3s ease-out;
+  }
+
+  /* ── Focused card (state 3: inline showcase) ── */
+  .mn-card.focused {
+    border-color: rgba(var(--card-color), 0.4);
+    box-shadow:
+      0 0 30px rgba(var(--card-color), 0.1),
+      0 0 60px rgba(var(--card-color), 0.05);
+  }
+
+  .mn-card-showcase {
+    max-height: 0;
+    overflow: hidden;
     opacity: 0;
-    transition: opacity 0.3s cubic-bezier(.2, .8, .2, 1);
+    padding: 0 0.5rem;
+    transition:
+      max-height 0.35s cubic-bezier(.2, .8, .2, 1),
+      opacity 0.3s ease-out,
+      padding 0.3s ease-out;
   }
 
-  .mn-focus-overlay.visible {
-    pointer-events: auto;
+  .focused .mn-card-showcase {
+    max-height: 600px;
     opacity: 1;
-  }
-
-  .mn-focus-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-  }
-
-  .mn-focus-content {
-    position: relative;
-    z-index: 1;
-    width: 95%;
-    max-width: 640px;
-    max-height: 85vh;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-  }
-
-  .mn-focus-close {
-    position: sticky;
-    top: 0;
-    float: right;
-    z-index: 10;
-    background: rgba(20, 20, 22, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.4);
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.15s, border-color 0.15s;
-    margin: 0.5rem;
-  }
-
-  .mn-focus-close:hover {
-    color: rgba(255, 255, 255, 0.7);
-    border-color: rgba(255, 255, 255, 0.15);
+    padding: 0.4rem 0.5rem 0;
   }
 </style>
