@@ -576,7 +576,11 @@ import '../styles/global.css';
 
   @media (min-width: 1024px) {
     .projects-mobile {
-      display: none;
+      position: absolute;
+      left: -9999px;
+      visibility: hidden;
+      pointer-events: none;
+      width: 640px;
     }
   }
 

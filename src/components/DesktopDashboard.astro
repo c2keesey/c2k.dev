@@ -15,6 +15,7 @@ interface Project {
   link?: string;
   linkText?: string;
   color: string;
+  hero?: 'maia' | 'flux' | 'c2k';
   x: number;
   y: number;
 }
@@ -33,7 +34,7 @@ const projects: Project[] = [
     badge: 'startup', status: 'ONLINE', pulseRate: 2,
     tech: ['TypeScript', 'Python', 'FastAPI', 'Postgres', 'GCP'],
     link: 'https://maia-analytics.com', linkText: 'maia-analytics.com',
-    color: '6, 182, 212', x: 14, y: 16,
+    color: '6, 182, 212', hero: 'maia', x: 14, y: 16,
   },
   {
     id: 'c2k', name: 'c2k.page', tagline: 'This website',
@@ -41,7 +42,7 @@ const projects: Project[] = [
     badge: 'web', status: 'ONLINE', pulseRate: 2.5,
     tech: ['Astro', 'TypeScript', 'Canvas', 'Cloudflare'],
     link: 'https://c2k.page', linkText: 'c2k.page',
-    color: '168, 85, 247', x: 22, y: 42,
+    color: '168, 85, 247', hero: 'c2k', x: 22, y: 42,
   },
   {
     id: 'dotfiles', name: 'Dotfiles', tagline: 'Dev environment system',
@@ -72,7 +73,7 @@ const projects: Project[] = [
     description: '300-LED arm gauntlet with 16 rings on a 3D cylindrical mesh. 7 procedural effects: blast, lightning, fire, firework, casimir, twinkle, pew.',
     badge: 'hardware', status: 'STANDBY', pulseRate: 7,
     tech: ['C++', 'FastLED', 'ESP32'],
-    color: '249, 115, 22', x: 38, y: 80,
+    color: '249, 115, 22', hero: 'flux', x: 38, y: 80,
   },
   {
     id: 'corne', name: 'Corne', tagline: '42-key split keyboard',
@@ -137,6 +138,9 @@ edges.forEach((edge, i) => {
   nodeEdgeMap[edge.to]?.push(i);
 });
 
+// Projects with full interactive showcases (state 3 available)
+const showcaseIds = new Set(['maia', 'c2k', 'dotfiles', 'spotify', 'flux', 'corne', 'lightning']);
+
 // Compute edge midpoints for labels (as percentages)
 const edgeMidpoints = edges.map(edge => {
   const a = getNode(edge.from);
@@ -145,14 +149,12 @@ const edgeMidpoints = edges.map(edge => {
 });
 ---
 
-<div class="dashboard" data-node-edges={JSON.stringify(nodeEdgeMap)}>
+<div class="dashboard" data-node-edges={JSON.stringify(nodeEdgeMap)} data-edge-endpoints={JSON.stringify(edges.map(e => ({ ax: getNode(e.from).x, ay: getNode(e.from).y, bx: getNode(e.to).x, by: getNode(e.to).y, color: e.color, fromId: e.from, toId: e.to })))}>
   <!-- Vignette -->
   <div class="dashboard-vignette"></div>
 
-  <!-- Grid with breathing -->
-  <div class="dashboard-grid">
-    <div class="grid-breathe"></div>
-  </div>
+  <!-- Grid -->
+  <div class="dashboard-grid"></div>
 
   <!-- Header -->
   <div class="dashboard-header">
@@ -174,6 +176,7 @@ const edgeMidpoints = edges.map(edge => {
           opacity="0.15"
           vector-effect="non-scaling-stroke"
           stroke-linecap="round"
+          stroke-dasharray="6 4"
           class="edge-line"
           data-edge-index={String(i)}
         />
@@ -192,10 +195,13 @@ const edgeMidpoints = edges.map(edge => {
     </div>
   ))}
 
+  <!-- Mesh + particle canvas -->
+  <canvas class="mesh-canvas" id="mesh-canvas"></canvas>
+
   <!-- Project nodes -->
   {projects.map((p, i) => (
     <div
-      class="dashboard-node"
+      class={`dashboard-node${showcaseIds.has(p.id) ? ' has-showcase' : ''}${p.hero ? ` hero-${p.hero}` : ''}`}
       style={`left: ${p.x}%; top: ${p.y}%; --node-color: ${p.color}; --node-delay: ${i * 80}ms; --pulse-rate: ${p.pulseRate}s;`}
       data-project={p.id}
       data-edges={JSON.stringify(nodeEdgeMap[p.id])}
@@ -223,9 +229,23 @@ const edgeMidpoints = edges.map(edge => {
             {p.linkText || p.link.replace('https://', '')} ↗
           </a>
         )}
+        {showcaseIds.has(p.id) && (
+          <div class="node-explore-hint">
+            <span class="explore-hint-text">click to explore</span>
+            <span class="explore-hint-arrow">→</span>
+          </div>
+        )}
       </div>
     </div>
   ))}
+
+  <!-- Focus overlay for full showcase view (state 3) -->
+  <div class="dashboard-focus-overlay" id="dashboard-focus-overlay">
+    <div class="dashboard-focus-backdrop" id="dashboard-focus-backdrop"></div>
+    <div class="dashboard-focus-content" id="dashboard-focus-content">
+      <button class="focus-close" id="focus-close" aria-label="Close">✕</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -238,24 +258,35 @@ const edgeMidpoints = edges.map(edge => {
     const edgeLabels = dashboard.querySelectorAll<HTMLElement>('.edge-label');
     const nodeEdgeMap: Record<string, number[]> = JSON.parse(dashboard.dataset.nodeEdges || '{}');
 
+    const overlay = document.getElementById('dashboard-focus-overlay')!;
+    const backdrop = document.getElementById('dashboard-focus-backdrop')!;
+    const focusContent = document.getElementById('dashboard-focus-content')!;
+    const focusCloseBtn = document.getElementById('focus-close')!;
+
+    // Map project IDs to their showcase component selectors in .projects-mobile
+    const showcaseSelectors: Record<string, string> = {
+      maia: '.maia-showcase',
+      c2k: '.c2k-showcase',
+      dotfiles: '.df-showcase',
+      spotify: '.sm-showcase',
+      flux: '.fg-showcase',
+      corne: '.crn-showcase',
+      lightning: '.lc-showcase',
+    };
+
     let expandedNode: HTMLElement | null = null;
+    let focusedProjectId: string | null = null;
+    let focusedShowcase: HTMLElement | null = null;
+    let focusedShowcaseParent: HTMLElement | null = null;
 
     function highlightNode(node: HTMLElement) {
       const projectId = node.dataset.project || '';
       const connectedEdges = new Set(nodeEdgeMap[projectId] || []);
 
-      // Find all nodes connected to this one via edges
       const connectedNodes = new Set<string>();
       connectedNodes.add(projectId);
-      edgeLines.forEach((line, i) => {
-        if (connectedEdges.has(i)) {
-          // Find the other node in this edge
-          const edgeData = line.dataset.edgeIndex;
-          // We need to find connected node IDs from the edge map
-        }
-      });
 
-      // Build connected node set from edges
+      // Build connected node set from shared edges
       nodes.forEach(other => {
         const otherId = other.dataset.project || '';
         const otherEdges = new Set(nodeEdgeMap[otherId] || []);
@@ -263,7 +294,6 @@ const edgeMidpoints = edges.map(edge => {
         if (shares) connectedNodes.add(otherId);
       });
 
-      // Highlight connected edges, dim others
       edgeLines.forEach((line, i) => {
         if (connectedEdges.has(i)) {
           line.classList.add('highlighted');
@@ -274,7 +304,6 @@ const edgeMidpoints = edges.map(edge => {
         }
       });
 
-      // Show connected edge labels
       edgeLabels.forEach((label, i) => {
         if (connectedEdges.has(i)) {
           label.classList.add('visible');
@@ -283,7 +312,6 @@ const edgeMidpoints = edges.map(edge => {
         }
       });
 
-      // Dim unconnected nodes
       nodes.forEach(other => {
         const otherId = other.dataset.project || '';
         if (connectedNodes.has(otherId)) {
@@ -303,42 +331,102 @@ const edgeMidpoints = edges.map(edge => {
       nodes.forEach(n => { n.classList.remove('dimmed'); });
     }
 
-    // Hover: highlight connections
+    // ── Focus overlay (state 3) ──
+
+    function openFocus(projectId: string) {
+      const selector = showcaseSelectors[projectId];
+      if (!selector) return;
+
+      const showcase = document.querySelector(selector) as HTMLElement;
+      if (!showcase) return;
+
+      focusedProjectId = projectId;
+      focusedShowcaseParent = showcase.parentElement;
+      focusedShowcase = showcase;
+
+      // Move showcase into the overlay
+      focusContent.appendChild(showcase);
+      overlay.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+
+      // Showcases are pre-initialized (container uses visibility:hidden, not display:none)
+      // so canvases already have correct dimensions and running animation loops
+    }
+
+    function closeFocus() {
+      if (!focusedShowcase || !focusedShowcaseParent) return;
+
+      // Move showcase back to its original parent
+      focusedShowcaseParent.appendChild(focusedShowcase);
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+
+      focusedProjectId = null;
+      focusedShowcase = null;
+      focusedShowcaseParent = null;
+
+      // Also close expanded state
+      if (expandedNode) {
+        expandedNode.classList.remove('expanded');
+        expandedNode = null;
+      }
+      clearHighlights();
+    }
+
+    // ── Hover: highlight connections ──
+
     nodes.forEach(node => {
       node.addEventListener('mouseenter', () => {
-        if (expandedNode) return;
+        if (expandedNode || focusedProjectId) return;
         highlightNode(node);
       });
       node.addEventListener('mouseleave', () => {
-        if (expandedNode) return;
+        if (expandedNode || focusedProjectId) return;
         clearHighlights();
       });
     });
 
-    // Click: expand inline + lock highlights
+    // ── Click: three-state progression ──
+    // State 1 (compact) → click → State 2 (expanded inline)
+    // State 2 (expanded) → click → State 3 (focus overlay with full showcase)
+    // State 3 → click off / Escape → State 1
+
     nodes.forEach(node => {
       node.addEventListener('click', (e) => {
         if ((e.target as HTMLElement).closest('.node-link')) return;
+        if (focusedProjectId) return; // State 3 active, ignore node clicks
+
+        const projectId = node.dataset.project || '';
 
         if (expandedNode === node) {
-          expandedNode.classList.remove('expanded');
-          expandedNode = null;
-          clearHighlights();
+          // State 2 → State 3
+          const hasShowcase = !!showcaseSelectors[projectId];
+          if (hasShowcase) {
+            openFocus(projectId);
+          }
+          // If no showcase, clicking again does nothing (stay in state 2)
           return;
         }
 
+        // Collapse any other expanded node
         if (expandedNode) {
           expandedNode.classList.remove('expanded');
         }
 
+        // State 1 → State 2
         expandedNode = node;
         node.classList.add('expanded');
         highlightNode(node);
       });
     });
 
-    // Click outside to collapse
+    // Close focus overlay
+    backdrop.addEventListener('click', closeFocus);
+    focusCloseBtn.addEventListener('click', closeFocus);
+
+    // Click outside nodes to collapse state 2
     dashboard.addEventListener('click', (e) => {
+      if (focusedProjectId) return;
       if (expandedNode && !(e.target as HTMLElement).closest('.dashboard-node')) {
         expandedNode.classList.remove('expanded');
         expandedNode = null;
@@ -347,14 +435,476 @@ const edgeMidpoints = edges.map(edge => {
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && expandedNode) {
-        expandedNode.classList.remove('expanded');
-        expandedNode = null;
-        clearHighlights();
+      if (e.key === 'Escape') {
+        if (focusedProjectId) {
+          closeFocus();
+        } else if (expandedNode) {
+          expandedNode.classList.remove('expanded');
+          expandedNode = null;
+          clearHighlights();
+        }
       }
     });
 
-    // Live sync counter
+    // ── Triangulated mesh + flow particles (canvas) ──
+
+    const meshCanvas = document.getElementById('mesh-canvas') as HTMLCanvasElement;
+    if (meshCanvas) {
+      const mctx = meshCanvas.getContext('2d')!;
+      const dpr = window.devicePixelRatio || 1;
+      let mw = 0, mh = 0;
+      let mouseX = -1000, mouseY = -1000;
+
+      // ── Simplex noise (inlined, public domain) ──
+      const F2 = 0.5 * (Math.sqrt(3) - 1), G2 = (3 - Math.sqrt(3)) / 6;
+      const grad3 = [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+      const perm = new Uint8Array(512);
+      { const p = new Uint8Array(256); for (let i = 0; i < 256; i++) p[i] = i;
+        for (let i = 255; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [p[i], p[j]] = [p[j], p[i]]; }
+        for (let i = 0; i < 512; i++) perm[i] = p[i & 255]; }
+      function noise2D(xin: number, yin: number): number {
+        const s = (xin + yin) * F2; const i = Math.floor(xin + s), j = Math.floor(yin + s);
+        const t = (i + j) * G2; const x0 = xin - (i - t), y0 = yin - (j - t);
+        const i1 = x0 > y0 ? 1 : 0, j1 = x0 > y0 ? 0 : 1;
+        const x1 = x0 - i1 + G2, y1 = y0 - j1 + G2, x2 = x0 - 1 + 2 * G2, y2 = y0 - 1 + 2 * G2;
+        const ii = i & 255, jj = j & 255;
+        let n0 = 0, n1 = 0, n2 = 0;
+        let t0 = 0.5 - x0 * x0 - y0 * y0;
+        if (t0 > 0) { t0 *= t0; const g = grad3[perm[ii + perm[jj]] & 7]; n0 = t0 * t0 * (g[0] * x0 + g[1] * y0); }
+        let t1 = 0.5 - x1 * x1 - y1 * y1;
+        if (t1 > 0) { t1 *= t1; const g = grad3[perm[ii + i1 + perm[jj + j1]] & 7]; n1 = t1 * t1 * (g[0] * x1 + g[1] * y1); }
+        let t2 = 0.5 - x2 * x2 - y2 * y2;
+        if (t2 > 0) { t2 *= t2; const g = grad3[perm[ii + 1 + perm[jj + 1]] & 7]; n2 = t2 * t2 * (g[0] * x2 + g[1] * y2); }
+        return 70 * (n0 + n1 + n2);
+      }
+
+      // ── Edge data for particles ──
+      interface EdgeEnd { ax: number; ay: number; bx: number; by: number; color: string; }
+      const edgeEndpoints: EdgeEnd[] = JSON.parse(dashboard.dataset.edgeEndpoints || '[]');
+
+      // ── Node positions for energy pools (percentages → pixels computed in render) ──
+      interface NodePool { x: number; y: number; r: number; g: number; b: number; energy: number; }
+      const nodePools: NodePool[] = [];
+      nodes.forEach(n => {
+        const x = parseFloat(n.style.left) || 0;
+        const y = parseFloat(n.style.top) || 0;
+        const colorStr = n.style.getPropertyValue('--node-color').trim();
+        const parts = colorStr.split(',').map(Number);
+        nodePools.push({ x, y, r: parts[0] || 168, g: parts[1] || 85, b: parts[2] || 247, energy: 0 });
+      });
+
+      // ── Depth parallax stars ──
+      interface Star { x: number; y: number; size: number; alpha: number; twinkleSpeed: number; twinklePhase: number; }
+      let stars: Star[] = [];
+
+      // ── Mesh ──
+      interface MeshPt { homeX: number; homeY: number; }
+      interface MeshTri { a: number; b: number; c: number; }
+      let meshPts: MeshPt[] = [];
+      let meshTris: MeshTri[] = [];
+
+      function initMesh() {
+        const rect = dashboard.getBoundingClientRect();
+        mw = rect.width; mh = rect.height;
+        meshCanvas.width = mw * dpr; meshCanvas.height = mh * dpr;
+        meshCanvas.style.width = mw + 'px'; meshCanvas.style.height = mh + 'px';
+        mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        // Jittered grid — fine triangles
+        const cols = 28, rows = 18;
+        const cellW = mw / cols, cellH = mh / rows;
+        meshPts = [];
+        for (let r = 0; r <= rows; r++) {
+          for (let c = 0; c <= cols; c++) {
+            const edge = r === 0 || r === rows || c === 0 || c === cols;
+            meshPts.push({
+              homeX: c * cellW + (edge ? 0 : (Math.random() - 0.5) * cellW * 0.5),
+              homeY: r * cellH + (edge ? 0 : (Math.random() - 0.5) * cellH * 0.5),
+            });
+          }
+        }
+        meshTris = [];
+        const stride = cols + 1;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const tl = r * stride + c, tr = tl + 1, bl = tl + stride, br = bl + 1;
+            if ((r + c) % 2 === 0) { meshTris.push({ a: tl, b: tr, c: bl }); meshTris.push({ a: tr, b: br, c: bl }); }
+            else { meshTris.push({ a: tl, b: tr, c: br }); meshTris.push({ a: tl, b: br, c: bl }); }
+          }
+        }
+
+        // Generate parallax stars
+        stars = [];
+        for (let i = 0; i < 60; i++) {
+          stars.push({
+            x: Math.random() * mw, y: Math.random() * mh,
+            size: 0.5 + Math.random() * 1.5,
+            alpha: 0.015 + Math.random() * 0.03,
+            twinkleSpeed: 3 + Math.random() * 5,
+            twinklePhase: Math.random() * Math.PI * 2,
+          });
+        }
+
+        allocateDisplaced();
+        computeTriCentroids();
+      }
+
+      // ── Displaced vertex cache (pre-allocated, mutated in place) ──
+      let displacedX: Float32Array = new Float32Array(0);
+      let displacedY: Float32Array = new Float32Array(0);
+
+      function allocateDisplaced() {
+        displacedX = new Float32Array(meshPts.length);
+        displacedY = new Float32Array(meshPts.length);
+      }
+
+      function computeDisplaced(time: number) {
+        const timeOff = time * 0.00015;
+        const hasCursor = mouseX > -500;
+        for (let i = 0; i < meshPts.length; i++) {
+          const pt = meshPts[i];
+          const hx = pt.homeX * 0.003, hy = pt.homeY * 0.003;
+          let x = pt.homeX + noise2D(hx, hy + timeOff) * 4;
+          let y = pt.homeY + noise2D(hx + 100, hy + timeOff) * 4;
+
+          if (hasCursor) {
+            const dx = x - mouseX, dy = y - mouseY;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < 40000) { // 200^2
+              const dist = Math.sqrt(distSq);
+              const pull = (1 - dist / 200); // already guaranteed < 200
+              const pullSq = pull * pull * 0.18;
+              x -= dx * pullSq;
+              y -= dy * pullSq;
+            }
+          }
+
+          displacedX[i] = x;
+          displacedY[i] = y;
+        }
+      }
+
+      // ── Particles ──
+      interface Particle {
+        ei: number; t: number; speed: number; size: number;
+        reverse: boolean;
+        wobblePhase: number; wobbleAmp: number;
+        trail: { x: number; y: number }[];
+        trailLen: number;
+        r: number; g: number; b: number;
+        alive: boolean;
+        burst: { x: number; y: number; vx: number; vy: number; life: number }[];
+      }
+      let particles: Particle[] = [];
+      // Two spawn timers per edge: one for each direction
+      const spawnTimersF: number[] = edgeEndpoints.map(() => Math.random() * 2.5);
+      const spawnTimersR: number[] = edgeEndpoints.map(() => 1 + Math.random() * 2.5);
+
+      function parseColor(hex: string): [number, number, number] {
+        const v = parseInt(hex.replace('#', ''), 16);
+        return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+      }
+
+      // Reusable position output (avoids object allocation per call)
+      const _pos = { x: 0, y: 0 };
+
+      // Pre-parse node colors for particles (color = source node, not edge)
+      const nodeColorMap: Record<string, [number, number, number]> = {};
+      nodes.forEach(n => {
+        const id = n.dataset.project || '';
+        const parts = n.style.getPropertyValue('--node-color').trim().split(',').map(Number);
+        nodeColorMap[id] = [parts[0] || 168, parts[1] || 85, parts[2] || 247];
+      });
+
+      // Pre-allocate trail slots as flat arrays per particle
+      const TRAIL_LEN = 12;
+      const BURST_MAX = 6;
+
+      function spawnParticle(ei: number, reverse: boolean): Particle {
+        const e = edgeEndpoints[ei] as any;
+        const sourceId = reverse ? e.toId : e.fromId;
+        const [r, g, b] = nodeColorMap[sourceId] || [168, 85, 247];
+        // Pre-allocate trail with objects to reuse
+        const trail: { x: number; y: number }[] = [];
+        for (let i = 0; i < TRAIL_LEN; i++) trail.push({ x: 0, y: 0 });
+        return {
+          ei, t: 0, speed: 0.1 + Math.random() * 0.12, reverse,
+          size: 1.5 + Math.random() * 1.5,
+          wobblePhase: Math.random() * Math.PI * 2,
+          wobbleAmp: 2 + Math.random() * 4,
+          trail, r, g, b, alive: true, burst: [],
+          trailLen: 0, // how many trail slots are active
+        };
+      }
+
+      function computeParticlePos(p: Particle, tOverride: number, time: number) {
+        const e = edgeEndpoints[p.ei];
+        let ax = (e.ax / 100) * mw, ay = (e.ay / 100) * mh;
+        let bx = (e.bx / 100) * mw, by = (e.by / 100) * mh;
+        if (p.reverse) { const tx = ax, ty = ay; ax = bx; ay = by; bx = tx; by = ty; }
+        let x = ax + (bx - ax) * tOverride;
+        let y = ay + (by - ay) * tOverride;
+        const dx = bx - ax, dy = by - ay;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+        const nx = -dy / len, ny = dx / len;
+        const noiseWobble = noise2D(x * 0.005, y * 0.005 + time * 0.0002) * p.wobbleAmp;
+        const sineWobble = Math.sin(tOverride * Math.PI * 2.5 + p.wobblePhase) * p.wobbleAmp * 0.5;
+        const wobble = noiseWobble + sineWobble;
+        _pos.x = x + nx * wobble;
+        _pos.y = y + ny * wobble;
+      }
+
+      function updateParticles(dt: number, time: number) {
+        // Count only alive particles toward cap
+        let aliveCount = 0;
+        for (let i = 0; i < particles.length; i++) if (particles[i].alive) aliveCount++;
+        const MAX_ALIVE = 35;
+
+        // Spawn forward and reverse particles per edge
+        for (let i = 0; i < edgeEndpoints.length; i++) {
+          spawnTimersF[i] -= dt;
+          if (spawnTimersF[i] <= 0) {
+            if (aliveCount < MAX_ALIVE) { particles.push(spawnParticle(i, false)); aliveCount++; }
+            spawnTimersF[i] = 1.5 + Math.random() * 2;
+          }
+          spawnTimersR[i] -= dt;
+          if (spawnTimersR[i] <= 0) {
+            if (aliveCount < MAX_ALIVE) { particles.push(spawnParticle(i, true)); aliveCount++; }
+            spawnTimersR[i] = 1.8 + Math.random() * 2.5;
+          }
+        }
+
+        for (let pi = 0; pi < particles.length; pi++) {
+          const p = particles[pi];
+          p.t += p.speed * dt;
+
+          if (p.t >= 1 && p.alive) {
+            computeParticlePos(p, 1, time);
+            // Arrival burst — reuse burst array slots
+            for (let i = 0; i < BURST_MAX; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const spd = 18 + Math.random() * 30;
+              p.burst.push({ x: _pos.x, y: _pos.y, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd, life: 1 });
+            }
+            p.alive = false;
+          }
+
+          if (p.alive) {
+            computeParticlePos(p, p.t, time);
+            // Shift trail in-place (move slots down, write new at 0)
+            const len = Math.min(p.trailLen, TRAIL_LEN - 1);
+            for (let i = len; i > 0; i--) {
+              p.trail[i].x = p.trail[i - 1].x;
+              p.trail[i].y = p.trail[i - 1].y;
+            }
+            p.trail[0].x = _pos.x;
+            p.trail[0].y = _pos.y;
+            if (p.trailLen < TRAIL_LEN) p.trailLen++;
+          }
+
+          // Update burst sparks in-place, remove dead ones with swap-and-pop
+          let bi = 0;
+          while (bi < p.burst.length) {
+            const s = p.burst[bi];
+            s.x += s.vx * dt; s.y += s.vy * dt;
+            s.vx *= 0.9; s.vy *= 0.9; s.life -= dt * 2.2;
+            if (s.life <= 0) {
+              // Swap with last and pop
+              p.burst[bi] = p.burst[p.burst.length - 1];
+              p.burst.pop();
+            } else {
+              bi++;
+            }
+          }
+        }
+
+        // Remove dead particles with no bursts — swap-and-pop (no new array)
+        let wi = 0;
+        while (wi < particles.length) {
+          const p = particles[wi];
+          if (!p.alive && p.burst.length === 0) {
+            particles[wi] = particles[particles.length - 1];
+            particles.pop();
+          } else {
+            wi++;
+          }
+        }
+      }
+
+      // ── Render layers ──
+
+      function drawStars(time: number) {
+        const cx = mw / 2, cy = mh / 2;
+        const offX = (mouseX > -500 ? mouseX - cx : 0) * 0.02;
+        const offY = (mouseX > -500 ? mouseY - cy : 0) * 0.02;
+        for (const s of stars) {
+          const twinkle = 0.6 + 0.4 * Math.sin(time / 1000 * s.twinkleSpeed + s.twinklePhase);
+          const a = s.alpha * twinkle;
+          mctx.beginPath();
+          mctx.arc(s.x + offX, s.y + offY, s.size, 0, Math.PI * 2);
+          mctx.fillStyle = `rgba(180, 180, 210, ${a})`;
+          mctx.fill();
+        }
+      }
+
+      // Pre-compute tri centroids (home positions) for fast culling
+      let triHomeCX: Float32Array = new Float32Array(0);
+      let triHomeCY: Float32Array = new Float32Array(0);
+      let triHeat: Float32Array = new Float32Array(0); // per-triangle heat for trail effect
+
+      function computeTriCentroids() {
+        triHomeCX = new Float32Array(meshTris.length);
+        triHomeCY = new Float32Array(meshTris.length);
+        triHeat = new Float32Array(meshTris.length);
+        for (let i = 0; i < meshTris.length; i++) {
+          const t = meshTris[i];
+          triHomeCX[i] = (meshPts[t.a].homeX + meshPts[t.b].homeX + meshPts[t.c].homeX) / 3;
+          triHomeCY[i] = (meshPts[t.a].homeY + meshPts[t.b].homeY + meshPts[t.c].homeY) / 3;
+        }
+      }
+
+      function updateMeshHeat(dt: number) {
+        // Decay all heat
+        const decay = Math.pow(0.06, dt); // fast decay = ~0.4s fade
+        for (let i = 0; i < triHeat.length; i++) {
+          triHeat[i] *= decay;
+          if (triHeat[i] < 0.001) triHeat[i] = 0;
+        }
+
+        // Boost heat near cursor
+        if (mouseX < -500) return;
+        const radius = 180;
+        const radiusSq = radius * radius;
+        for (let i = 0; i < meshTris.length; i++) {
+          const hcx = triHomeCX[i] - mouseX, hcy = triHomeCY[i] - mouseY;
+          const dSq = hcx * hcx + hcy * hcy;
+          if (dSq > radiusSq) continue;
+          const proximity = 1 - Math.sqrt(dSq) / radius;
+          const target = proximity * proximity;
+          if (target > triHeat[i]) triHeat[i] = target;
+        }
+
+        // Cap: if too many triangles are hot, aggressively fade the coldest ones
+        const MAX_HOT = 120;
+        let hotCount = 0;
+        for (let i = 0; i < triHeat.length; i++) {
+          if (triHeat[i] > 0.003) hotCount++;
+        }
+        if (hotCount > MAX_HOT) {
+          // Extra decay on everything to shrink the trail
+          const extraDecay = 0.7;
+          for (let i = 0; i < triHeat.length; i++) {
+            triHeat[i] *= extraDecay;
+          }
+        }
+      }
+
+      function drawMesh() {
+        mctx.lineWidth = 0.5;
+
+        for (let i = 0; i < meshTris.length; i++) {
+          const heat = triHeat[i];
+          if (heat < 0.003) continue; // skip invisible triangles
+
+          const tri = meshTris[i];
+          const ax = displacedX[tri.a], ay = displacedY[tri.a];
+          const bx = displacedX[tri.b], by = displacedY[tri.b];
+          const cx = displacedX[tri.c], cy = displacedY[tri.c];
+
+          mctx.beginPath();
+          mctx.moveTo(ax, ay);
+          mctx.lineTo(bx, by);
+          mctx.lineTo(cx, cy);
+          mctx.closePath();
+          mctx.fillStyle = `rgba(168,85,247,${(heat * 0.09).toFixed(4)})`;
+          mctx.fill();
+          mctx.strokeStyle = `rgba(168,85,247,${(heat * 0.14).toFixed(4)})`;
+          mctx.stroke();
+        }
+      }
+
+      // Energy pools removed per user feedback
+
+      function drawParticles() {
+        for (const p of particles) {
+          const { r, g, b } = p;
+          // Comet trail
+          for (let i = p.trailLen - 1; i >= 0; i--) {
+            const pt = p.trail[i];
+            const ratio = 1 - i / p.trailLen;
+            const sz = p.size * ratio * 0.7;
+            if (sz < 0.3) continue;
+            mctx.beginPath();
+            mctx.arc(pt.x, pt.y, sz, 0, Math.PI * 2);
+            mctx.fillStyle = `rgba(${r},${g},${b},${(ratio * 0.35).toFixed(2)})`;
+            mctx.fill();
+          }
+          // Head — simple glow circle (no gradient, much cheaper)
+          if (p.alive && p.trailLen > 0) {
+            const head = p.trail[0];
+            // Outer soft glow
+            mctx.beginPath();
+            mctx.arc(head.x, head.y, p.size * 3, 0, Math.PI * 2);
+            mctx.fillStyle = `rgba(${r},${g},${b},0.06)`;
+            mctx.fill();
+            mctx.beginPath();
+            mctx.arc(head.x, head.y, p.size * 1.8, 0, Math.PI * 2);
+            mctx.fillStyle = `rgba(${r},${g},${b},0.15)`;
+            mctx.fill();
+            // Bright core
+            mctx.beginPath();
+            mctx.arc(head.x, head.y, p.size, 0, Math.PI * 2);
+            mctx.fillStyle = `rgba(${Math.min(255, r + 90)},${Math.min(255, g + 90)},${Math.min(255, b + 90)},0.75)`;
+            mctx.fill();
+            // White-hot center
+            mctx.beginPath();
+            mctx.arc(head.x, head.y, p.size * 0.4, 0, Math.PI * 2);
+            mctx.fillStyle = 'rgba(255,255,255,0.5)';
+            mctx.fill();
+          }
+          // Burst sparks
+          for (const s of p.burst) {
+            mctx.beginPath();
+            mctx.arc(s.x, s.y, 0.8 + s.life * 1.5, 0, Math.PI * 2);
+            mctx.fillStyle = `rgba(${Math.min(255, r + 70)},${Math.min(255, g + 70)},${Math.min(255, b + 70)},${(s.life * 0.65).toFixed(2)})`;
+            mctx.fill();
+          }
+        }
+      }
+
+      // ── Main loop ──
+      let lastTime = performance.now();
+
+      function render(now: number) {
+        const dt = Math.min((now - lastTime) / 1000, 0.1);
+        lastTime = now;
+
+        mctx.clearRect(0, 0, mw, mh);
+
+        computeDisplaced(now);
+        updateMeshHeat(dt);
+        drawStars(now);
+        drawMesh();
+        updateParticles(dt, now);
+        drawParticles();
+
+        requestAnimationFrame(render);
+      }
+
+      initMesh();
+      requestAnimationFrame(render);
+
+      dashboard.addEventListener('mousemove', (e) => {
+        const rect = dashboard.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      });
+      dashboard.addEventListener('mouseleave', () => { mouseX = -1000; mouseY = -1000; });
+      window.addEventListener('resize', () => { initMesh(); });
+    }
+
+    // ── Live sync counter ──
+
     const syncEl = document.getElementById('dashboard-sync');
     let lastSync = Date.now();
 
@@ -416,20 +966,6 @@ const edgeMidpoints = edges.map(edge => {
     pointer-events: none;
   }
 
-  .grid-breathe {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 250px, rgba(168, 85, 247, 0.02), transparent);
-    animation: grid-sweep 12s ease-in-out infinite;
-    pointer-events: none;
-  }
-
-  @keyframes grid-sweep {
-    0%   { transform: translate(-20%, -20%); }
-    33%  { transform: translate(20%, -10%); }
-    66%  { transform: translate(5%, 20%); }
-    100% { transform: translate(-20%, -20%); }
-  }
 
   /* ── Header ── */
   .dashboard-header {
@@ -478,6 +1014,11 @@ const edgeMidpoints = edges.map(edge => {
 
   .edge-line {
     transition: opacity 0.2s ease-out;
+    animation: edge-flow 4s linear infinite;
+  }
+
+  @keyframes edge-flow {
+    to { stroke-dashoffset: -20; }
   }
 
   .edge-line.highlighted {
@@ -511,6 +1052,16 @@ const edgeMidpoints = edges.map(edge => {
   .edge-label.visible {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* Particles are canvas-based now — no CSS needed */
+
+  /* ── Triangulated mesh canvas ── */
+  .mesh-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
   }
 
   /* ── Project nodes ── */
@@ -565,12 +1116,41 @@ const edgeMidpoints = edges.map(edge => {
       0 0 30px rgba(var(--node-color), 0.08),
       0 0 60px rgba(var(--node-color), 0.04);
     z-index: 10;
-    cursor: default;
+    cursor: pointer;
   }
 
   .dashboard-node.dimmed {
     opacity: 0.2;
     pointer-events: none;
+  }
+
+  /* ── Hero project flair ── */
+
+  /* MAIA: subtle green-tinted glass */
+  .dashboard-node.hero-maia {
+    background: rgba(6, 182, 140, 0.06);
+    border-color: rgba(6, 182, 160, 0.18);
+    box-shadow:
+      inset 0 1px 0 rgba(6, 182, 160, 0.04),
+      0 0 20px rgba(6, 182, 160, 0.04);
+  }
+
+  /* Flux Gauntlet: gradient name text */
+  .dashboard-node.hero-flux .node-name {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* c2k.page: thin gradient top border accent */
+  .dashboard-node.hero-c2k {
+    border-top: 1px solid transparent;
+    background-image:
+      linear-gradient(rgba(14, 14, 16, 0.72), rgba(14, 14, 16, 0.72)),
+      linear-gradient(90deg, rgba(168, 85, 247, 0.25), rgba(217, 70, 239, 0.15), rgba(249, 115, 22, 0.1));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
   }
 
   /* ── Compact ── */
@@ -714,4 +1294,117 @@ const edgeMidpoints = edges.map(edge => {
     display: block;
   }
   .node-link:hover { opacity: 0.8; }
+
+  /* ── Explore hint (visible on expanded showcase nodes) ── */
+  .node-explore-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    padding-top: 0.45rem;
+    border-top: 1px solid rgba(var(--node-color), 0.06);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease-out 0.15s, transform 0.25s ease-out 0.15s;
+  }
+
+  .expanded .node-explore-hint {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .explore-hint-text {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(var(--node-color), 0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .explore-hint-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(var(--node-color), 0.35);
+    animation: hint-nudge 1.5s ease-in-out infinite;
+  }
+
+  @keyframes hint-nudge {
+    0%, 100% { transform: translateX(0); opacity: 0.5; }
+    50% { transform: translateX(3px); opacity: 1; }
+  }
+
+  /* ── Expanded showcase node: glow on hover to invite second click ── */
+  .dashboard-node.expanded.has-showcase:hover {
+    border-color: rgba(var(--node-color), 0.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 0 20px rgba(var(--node-color), 0.12),
+      0 0 50px rgba(var(--node-color), 0.06);
+  }
+
+  /* ── Focus overlay (state 3) ── */
+  .dashboard-focus-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .dashboard-focus-overlay.visible {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .dashboard-focus-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .dashboard-focus-content {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    width: 92%;
+    max-height: 85vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  }
+
+  .dashboard-focus-content::-webkit-scrollbar {
+    width: 4px;
+  }
+  .dashboard-focus-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .dashboard-focus-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  .focus-close {
+    position: absolute;
+    top: -2rem;
+    right: 0;
+    z-index: 10;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.15s;
+  }
+  .focus-close:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
 </style>
