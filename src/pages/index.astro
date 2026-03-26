@@ -85,6 +85,16 @@ import '../styles/global.css';
           <LightningCloudShowcase />
           <DotfilesShowcase />
           <MiniProjectCard
+            name="tech-digest"
+            tagline="Daily tech release digest via Telegram"
+            description="Fetches release notes from GitHub repos and web changelogs (Claude Code, Cursor, Linear, etc.), parses them with Claude CLI, and sends formatted summaries via Telegram. Includes a Telegram bot for remote repo control through a headless Claude Code session."
+            badge="daily driver"
+            tech={['Python', 'Claude CLI', 'Telegram', 'GitHub API', 'cron']}
+            link="https://github.com/c2keesey/tech-digest"
+            linkText="github.com/c2keesey/tech-digest"
+            accentColor="139, 92, 246"
+          />
+          <MiniProjectCard
             name="morning-digest"
             tagline="LLM-powered personal news briefing"
             description="Fetches RSS from 9 sources across world news, SF local, and tech. Claude Haiku generates two-tier summaries — quick scans on fetch, deep dives on tap. Self-hosted Next.js PWA served over Tailscale."

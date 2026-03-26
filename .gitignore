@@ -29,5 +29,8 @@ pnpm-debug.log*
 # editor settings
 .vscode/
 
+# claude code
+.claude/
+
 # default readme
 README.md
