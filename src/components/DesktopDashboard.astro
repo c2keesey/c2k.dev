@@ -227,11 +227,11 @@ const edgeMidpoints = edges.map(edge => {
       data-project={p.id}
       data-edges={JSON.stringify(nodeEdgeMap[p.id])}
     >
+      <span class={`node-status-label ${p.status.toLowerCase()}`}>{p.status}</span>
       <div class="node-compact">
         <div class="node-top-row">
           <span class="node-status-dot" data-status={p.status}></span>
           <span class="node-name text-scramble" data-text={p.name} data-delay={String(200 + i * 60)} data-always="false">{p.name}</span>
-          <span class={`node-status-label ${p.status.toLowerCase()}`}>{p.status}</span>
         </div>
         <span class="node-tagline">{p.tagline}</span>
       </div>
@@ -373,9 +373,10 @@ const edgeMidpoints = edges.map(edge => {
       // Pin the top margin so the showcase starts centered but doesn't
       // re-center when content (like key detail bars) expands
       requestAnimationFrame(() => {
-        const contentH = focusContent.offsetHeight;
+        const zoom = 1.1;
+        const contentH = focusContent.offsetHeight * zoom;
         const viewH = window.innerHeight;
-        const topMargin = Math.max(0, (viewH - contentH) / 2);
+        const topMargin = Math.max(0, (viewH - contentH) / 2 / zoom);
         focusContent.style.marginTop = `${topMargin}px`;
       });
     }
@@ -1116,7 +1117,6 @@ const edgeMidpoints = edges.map(edge => {
     color: inherit;
     animation: node-enter 0.4s cubic-bezier(.2, .8, .2, 1) both;
     animation-delay: var(--node-delay, 0ms);
-    overflow: hidden;
   }
 
   @keyframes node-enter {
@@ -1193,7 +1193,6 @@ const edgeMidpoints = edges.map(edge => {
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    overflow: hidden;
   }
 
   .node-status-dot {
@@ -1231,12 +1230,14 @@ const edgeMidpoints = edges.map(edge => {
   }
 
   .node-status-label {
+    position: absolute;
+    top: -1.1rem;
+    right: 0;
     font-family: var(--font-mono);
     font-size: 0.45rem;
     color: rgba(34, 197, 94, 0.35);
     letter-spacing: 0.1em;
-    margin-left: auto;
-    flex-shrink: 0;
+    white-space: nowrap;
   }
   .node-status-label.deploying { color: rgba(234, 179, 8, 0.45); }
   .node-status-label.standby { color: rgba(255, 255, 255, 0.12); }
@@ -1404,6 +1405,7 @@ const edgeMidpoints = edges.map(edge => {
     width: 92%;
     max-height: 85vh;
     overflow-y: auto;
+    zoom: 1.1;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
   }

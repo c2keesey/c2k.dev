@@ -168,6 +168,16 @@ Use operational language, not generic labels:
 - **Worktree**: `/home/c2k/repos/c2k.dev-preview`
 - **To update preview**: `cd ~/repos/c2k.dev-preview && git checkout <branch> && bun run build && systemctl --user restart c2k-preview`
 
+## Screenshots
+
+After any visual change, **always screenshot before presenting to the user**. Use `shot-scraper`:
+- Basic: `shot-scraper http://localhost:4321/projects --selector ".component" -o /tmp/test.png`
+- With JS: `shot-scraper ... --javascript "document.querySelector('.btn').click()"`
+- Mobile: `--width 375 --height 812`
+- Desktop: `--width 1440 --height 900`
+
+For multi-step interactions (click sequences), use a bun script with `playwright`.
+
 ## Workflow
 
 - **Only deploy to production from main** — never build/deploy to `c2k-website` from feature branches. Use the preview service for testing feature branches.
