@@ -42,7 +42,7 @@ const projects: Project[] = [
     badge: 'web', status: 'ONLINE', pulseRate: 2.5,
     tech: ['Astro', 'TypeScript', 'Canvas', 'Cloudflare'],
     link: 'https://c2k.page', linkText: 'c2k.page',
-    color: '168, 85, 247', hero: 'c2k', x: 22, y: 42,
+    color: '168, 85, 247', hero: 'c2k', x: 36, y: 42,
   },
   {
     id: 'dotfiles', name: 'Dotfiles', tagline: 'Dev environment system',
@@ -58,7 +58,7 @@ const projects: Project[] = [
     badge: 'automation', status: 'ONLINE', pulseRate: 4,
     tech: ['Python', 'Spotify API', 'Stream Deck SDK'],
     link: 'https://github.com/c2keesey/spotify-macro-pad', linkText: 'github/spotify-macro',
-    color: '34, 197, 94', x: 8, y: 68,
+    color: '34, 197, 94', x: 10, y: 72,
   },
   {
     id: 'secretgate', name: 'Secret Gate', tagline: 'Human-in-the-loop gate',
@@ -66,28 +66,28 @@ const projects: Project[] = [
     badge: 'security', status: 'DEPLOYING', pulseRate: 1.5, wip: true,
     tech: ['Python', '1Password CLI', 'Telegram', 'Claude Code'],
     link: 'https://github.com/c2keesey/secret-gate', linkText: 'github/secret-gate',
-    color: '239, 68, 68', x: 78, y: 18,
+    color: '239, 68, 68', x: 76, y: 20,
   },
   {
     id: 'flux', name: 'Flux Gauntlet', tagline: 'LED wearable',
     description: '300-LED arm gauntlet with 16 rings on a 3D cylindrical mesh. 7 procedural effects: blast, lightning, fire, firework, casimir, twinkle, pew.',
     badge: 'hardware', status: 'STANDBY', pulseRate: 7,
     tech: ['C++', 'FastLED', 'ESP32'],
-    color: '249, 115, 22', hero: 'flux', x: 38, y: 80,
+    color: '249, 115, 22', hero: 'flux', x: 28, y: 82,
   },
   {
     id: 'corne', name: 'Corne', tagline: '42-key split keyboard',
     description: 'Custom split ergonomic keyboard. 7 layers with combos, home row mods, and vim-style navigation. Fully programmable firmware.',
     badge: 'hardware', status: 'ONLINE', pulseRate: 4,
     tech: ['QMK', 'C', 'KiCad'],
-    color: '139, 92, 246', x: 54, y: 52,
+    color: '6, 182, 212', x: 56, y: 54,
   },
   {
     id: 'lightning', name: 'Lightning Cloud', tagline: 'Procedural lightning',
     description: 'LED cloud lamp with procedural lightning bolt generation. Branching algorithms, flashing, fading — all code-driven on an ESP32.',
     badge: 'hardware', status: 'STANDBY', pulseRate: 8,
     tech: ['C++', 'FastLED', 'ESP32'],
-    color: '59, 130, 246', x: 72, y: 70,
+    color: '200, 210, 255', x: 68, y: 78,
   },
   {
     id: 'propeller', name: 'Propeller Scrape', tagline: 'Concert ticket monitor',
@@ -95,29 +95,40 @@ const projects: Project[] = [
     badge: 'utility', status: 'ONLINE', pulseRate: 5,
     tech: ['Python', 'BeautifulSoup', 'Telegram', 'cron'],
     link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape',
-    color: '249, 115, 22', x: 88, y: 46,
+    color: '249, 115, 22', x: 88, y: 50,
   },
 ];
 
+// Blend two "r, g, b" color strings into a hex color
+function blendNodeColors(idA: string, idB: string): string {
+  const a = getNode(idA);
+  const b = getNode(idB);
+  const [ar, ag, ab] = a.color.split(',').map(Number);
+  const [br, bg, bb] = b.color.split(',').map(Number);
+  const r = Math.round((ar + br) / 2);
+  const g = Math.round((ag + bg) / 2);
+  const bl = Math.round((ab + bb) / 2);
+  return `#${((1 << 24) + (r << 16) + (g << 8) + bl).toString(16).slice(1)}`;
+}
+
 // Real, meaningful connections between projects
-const edges: Edge[] = [
-  // MAIA connections
-  { from: 'maia', to: 'dotfiles', label: 'primary workspace', color: '#06b6d4' },
-  // c2k connections
-  { from: 'c2k', to: 'dotfiles', label: 'co-hosted on optiplex', color: '#a855f7' },
-  { from: 'c2k', to: 'corne', label: 'interactive keymap', color: '#8b5cf6' },
-  // Dotfiles connections
-  { from: 'dotfiles', to: 'corne', label: 'keyboard config', color: '#8b5cf6' },
-  { from: 'dotfiles', to: 'secretgate', label: 'claude code plugin', color: '#ef4444' },
-  { from: 'dotfiles', to: 'propeller', label: 'cron on optiplex', color: '#f97316' },
-  // Hardware cluster
-  { from: 'corne', to: 'flux', label: 'hand-soldered', color: '#f97316' },
-  { from: 'corne', to: 'lightning', label: 'hand-soldered', color: '#3b82f6' },
-  { from: 'flux', to: 'lightning', label: 'ESP32 + FastLED', color: '#f97316' },
-  // Automation cluster
-  { from: 'spotify', to: 'propeller', label: 'background automation', color: '#22c55e' },
-  { from: 'secretgate', to: 'propeller', label: 'telegram bots', color: '#f97316' },
+// Colors are auto-blended from source + destination node colors
+const edgesRaw: { from: string; to: string; label: string }[] = [
+  { from: 'maia', to: 'dotfiles', label: 'primary workspace' },
+  { from: 'maia', to: 'c2k', label: 'showcase piece' },
+  { from: 'c2k', to: 'dotfiles', label: 'co-hosted on optiplex' },
+  { from: 'c2k', to: 'corne', label: 'interactive keymap' },
+  { from: 'dotfiles', to: 'corne', label: 'keyboard config' },
+  { from: 'dotfiles', to: 'secretgate', label: 'claude code plugin' },
+  { from: 'dotfiles', to: 'propeller', label: 'cron on optiplex' },
+  { from: 'corne', to: 'flux', label: 'hand-soldered' },
+  { from: 'corne', to: 'lightning', label: 'hand-soldered' },
+  { from: 'flux', to: 'lightning', label: 'ESP32 + FastLED' },
+  { from: 'corne', to: 'spotify', label: 'hotkey macros' },
+  { from: 'spotify', to: 'propeller', label: 'background automation' },
+  { from: 'secretgate', to: 'propeller', label: 'telegram bots' },
 ];
+const edges: Edge[] = edgesRaw.map(e => ({ ...e, color: blendNodeColors(e.from, e.to) }));
 
 // Compute nominal status
 const nominalCount = projects.filter(p => p.status === 'ONLINE').length;
