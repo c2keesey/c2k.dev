@@ -211,6 +211,10 @@ const edgeMidpoints = edges.map(edge => {
       <span class="hud-label">APM</span>
       <span class="hud-apm-number" id="hud-apm">--</span>
       <svg class="hud-sparkline" id="hud-sparkline" viewBox="0 0 42 12" preserveAspectRatio="none"></svg>
+      <div class="hud-apm-tooltip" id="hud-apm-tooltip">
+        <div class="apm-tooltip-title">PUSHES / 7D</div>
+        <div class="apm-tooltip-bars" id="apm-tooltip-bars"></div>
+      </div>
     </div>
   </div>
 
@@ -1052,6 +1056,21 @@ const edgeMidpoints = edges.map(edge => {
           const points = daily.map((v: number, i: number) => `${i * 7},${12 - (v / max) * 10}`).join(' ');
           sparkEl.innerHTML = `<polygon points="0,12 ${points} 42,12" fill="rgba(249, 115, 22, 0.08)" /><polyline points="${points}" fill="none" stroke="rgba(249, 115, 22, 0.4)" stroke-width="1" stroke-linejoin="round" />`;
         }
+
+        // Populate tooltip with per-day bars
+        const tooltipBars = document.getElementById('apm-tooltip-bars');
+        if (tooltipBars && daily.length === 7) {
+          const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+          const now = new Date();
+          const todayIdx = (now.getDay() + 6) % 7; // 0=Mon
+          const max = Math.max(...daily, 1);
+          tooltipBars.innerHTML = daily.map((v: number, i: number) => {
+            const dayIdx = (todayIdx - 6 + i + 7) % 7;
+            const pct = (v / max) * 100;
+            const isToday = i === 6;
+            return `<div class="apm-day"><div class="apm-day-bar-bg"><div class="apm-day-bar-fill${isToday ? ' apm-today' : ''}" style="height:${pct}%"></div></div><span class="apm-day-label${isToday ? ' apm-today-label' : ''}">${days[dayIdx]}</span><span class="apm-day-count">${v}</span></div>`;
+          }).join('');
+        }
       } catch {}
     }
 
@@ -1626,6 +1645,100 @@ const edgeMidpoints = edges.map(edge => {
     width: 42px;
     height: 12px;
     flex-shrink: 0;
+  }
+
+  /* ── APM Tooltip ── */
+  .hud-apm-row {
+    position: relative;
+  }
+
+  .hud-apm-tooltip {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: rgba(15, 15, 17, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    padding: 0.5rem 0.6rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    z-index: 20;
+    min-width: 180px;
+  }
+
+  .hud-apm-row:hover .hud-apm-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .apm-tooltip-title {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+
+  /* Dynamic innerHTML — needs :global to bypass Astro scoping */
+  .apm-tooltip-bars :global(.apm-day) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+    min-width: 20px;
+  }
+
+  .apm-tooltip-bars {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+  }
+
+  .apm-tooltip-bars :global(.apm-day-bar-bg) {
+    width: 14px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .apm-tooltip-bars :global(.apm-day-bar-fill) {
+    width: 100%;
+    background: rgba(249, 115, 22, 0.4);
+    border-radius: 2px;
+    min-height: 2px;
+    transition: height 0.4s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .apm-tooltip-bars :global(.apm-today) {
+    background: rgba(249, 115, 22, 0.7);
+    box-shadow: 0 0 6px rgba(249, 115, 22, 0.3);
+  }
+
+  .apm-tooltip-bars :global(.apm-day-label) {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .apm-tooltip-bars :global(.apm-today-label) {
+    color: rgba(249, 115, 22, 0.5);
+  }
+
+  .apm-tooltip-bars :global(.apm-day-count) {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.35);
+    order: -1;
   }
 
   .resource-hud.offline .hud-fill {
