@@ -27,14 +27,23 @@ export async function GET() {
     const token = process.env.GITHUB_TOKEN;
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    const res = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/events?per_page=100`,
-      { signal: AbortSignal.timeout(5000), headers }
-    );
-    if (!res.ok) throw new Error(`GitHub API ${res.status}`);
-
-    const events = await res.json() as GHEvent[];
     const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+    // Paginate events API (up to 10 pages, 100 per page) to cover the full 7-day window
+    const events: GHEvent[] = [];
+    for (let page = 1; page <= 10; page++) {
+      const res = await fetch(
+        `https://api.github.com/users/${GITHUB_USERNAME}/events?per_page=100&page=${page}`,
+        { signal: AbortSignal.timeout(5000), headers }
+      );
+      if (!res.ok) break;
+      const batch = await res.json() as GHEvent[];
+      if (batch.length === 0) break;
+      events.push(...batch);
+      // Stop if we've reached events older than our cutoff
+      const oldest = new Date(batch[batch.length - 1].created_at).getTime();
+      if (oldest < cutoff) break;
+    }
 
     // Compute activity metrics: count pushes per day (GitHub Events API doesn't expose commit counts)
     let totalPushes = 0;
@@ -45,7 +54,7 @@ export async function GET() {
     for (const e of events) {
       if (e.type !== 'PushEvent') continue;
       const ts = new Date(e.created_at).getTime();
-      if (ts < cutoff) break;
+      if (ts < cutoff) continue;
       totalPushes++;
       const evtDate = new Date(e.created_at);
       const evtDayStart = new Date(evtDate.getFullYear(), evtDate.getMonth(), evtDate.getDate()).getTime();
@@ -60,7 +69,7 @@ export async function GET() {
 
     for (const e of events) {
       if (e.type !== 'PushEvent') continue;
-      if (new Date(e.created_at).getTime() < cutoff) break;
+      if (new Date(e.created_at).getTime() < cutoff) continue;
 
       const name = e.repo.name.includes('/') ? e.repo.name.split('/').pop()! : e.repo.name;
       if (seen.has(name)) continue;
