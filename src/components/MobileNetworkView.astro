@@ -152,6 +152,20 @@ const statusText = nominalCount === totalCount
 // Build index map for connection line drawing
 const projectIndex: Record<string, number> = {};
 projects.forEach((p, i) => { projectIndex[p.id] = i; });
+
+// For each gap between card i and card i+1, place edge labels only in the gap
+// immediately above the destination (lower card), so each label appears once
+const gaps: { labels: { text: string; color: string; from: string; to: string }[] }[] = [];
+for (let g = 0; g < projects.length - 1; g++) {
+  gaps.push({ labels: [] });
+}
+for (const edge of edges) {
+  const fromIdx = projectIndex[edge.from];
+  const toIdx = projectIndex[edge.to];
+  // Place label in the gap right above the lower-indexed endpoint
+  const targetGap = Math.max(fromIdx, toIdx) - 1;
+  gaps[targetGap].labels.push({ text: edge.label, color: edge.color, from: edge.from, to: edge.to });
+}
 ---
 
 <div class="mobile-network" id="mobile-network">
@@ -181,67 +195,80 @@ projects.forEach((p, i) => { projectIndex[p.id] = i; });
   </svg>
 
 
-  <!-- Project cards -->
+  <!-- Project cards with gap labels interleaved -->
   <div class="mn-cards" id="mn-cards">
     {projects.map((p, i) => (
-      <div
-        class={`mn-card${p.hero ? ` hero-${p.hero}` : ''}${p.showcaseSelector ? ' has-showcase' : ''}`}
-        style={`--card-color: ${p.color}; --pulse-rate: ${p.pulseRate}s; --card-delay: ${i * 60}ms;`}
-        data-project={p.id}
-        data-showcase={p.showcaseSelector || ''}
-      >
-        {/* Compact state */}
-        <div class="mn-card-compact">
-          <div class="mn-card-top">
-            <span class="mn-dot" data-status={p.status}></span>
-            <span class="mn-name text-scramble" data-text={p.name} data-delay={String(150 + i * 50)} data-always="false">{p.name}</span>
-            <span class={`mn-status-label ${p.status.toLowerCase()}`}>{p.status}</span>
-          </div>
-          <div class="mn-compact-sub">
-            <span class="mn-tagline">{p.tagline}</span>
-            <div class="mn-badges">
-              <span class="mn-badge" style={`background: rgba(${p.color}, 0.1); color: rgba(${p.color}, 0.7);`}>{p.badge}</span>
-              {p.wip && <span class="mn-badge mn-badge-wip">WIP</span>}
+      <>
+        <div
+          class={`mn-card${p.hero ? ` hero-${p.hero}` : ''}${p.showcaseSelector ? ' has-showcase' : ''}`}
+          style={`--card-color: ${p.color}; --pulse-rate: ${p.pulseRate}s; --card-delay: ${i * 60}ms;`}
+          data-project={p.id}
+          data-showcase={p.showcaseSelector || ''}
+        >
+          {/* Compact state */}
+          <div class="mn-card-compact">
+            <div class="mn-card-top">
+              <span class="mn-dot" data-status={p.status}></span>
+              <span class="mn-name text-scramble" data-text={p.name} data-delay={String(150 + i * 50)} data-always="false">{p.name}</span>
+              <span class={`mn-status-label ${p.status.toLowerCase()}`}>{p.status}</span>
+            </div>
+            <div class="mn-compact-sub">
+              <span class="mn-tagline">{p.tagline}</span>
+              <div class="mn-badges">
+                <span class="mn-badge" style={`background: rgba(${p.color}, 0.1); color: rgba(${p.color}, 0.7);`}>{p.badge}</span>
+                {p.wip && <span class="mn-badge mn-badge-wip">WIP</span>}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Expanded detail */}
-        <div class="mn-card-detail">
-          <p class="mn-desc">{p.description}</p>
-          <div class="mn-tech">
-            {p.tech.map(t => <span class="mn-tech-pill">{t}</span>)}
+          {/* Expanded detail */}
+          <div class="mn-card-detail">
+            <p class="mn-desc">{p.description}</p>
+            <div class="mn-tech">
+              {p.tech.map(t => <span class="mn-tech-pill">{t}</span>)}
+            </div>
+            {/* Connection tags */}
+            <div class="mn-connections-tags">
+              {connections[p.id].map(c => {
+                const other = projects.find(x => x.id === c.id)!;
+                return (
+                  <span class="mn-conn-tag" style={`--conn-color: ${other.color};`} data-connects={c.id}>
+                    {other.name}
+                    <span class="mn-conn-label">{c.label}</span>
+                  </span>
+                );
+              })}
+            </div>
+            {p.link && (
+              <a class="mn-link" href={p.link} target="_blank" rel="noopener" style={`color: rgba(${p.color}, 0.5);`}>
+                {p.linkText || p.link.replace('https://', '')} ↗
+              </a>
+            )}
+            {p.showcaseSelector && (
+              <div class="mn-explore-hint">
+                <span class="mn-explore-text">tap to explore</span>
+                <span class="mn-explore-arrow">→</span>
+              </div>
+            )}
           </div>
-          {/* Connection tags */}
-          <div class="mn-connections-tags">
-            {connections[p.id].map(c => {
-              const other = projects.find(x => x.id === c.id)!;
-              return (
-                <span class="mn-conn-tag" style={`--conn-color: ${other.color};`} data-connects={c.id}>
-                  {other.name}
-                  <span class="mn-conn-label">{c.label}</span>
-                </span>
-              );
-            })}
-          </div>
-          {p.link && (
-            <a class="mn-link" href={p.link} target="_blank" rel="noopener" style={`color: rgba(${p.color}, 0.5);`}>
-              {p.linkText || p.link.replace('https://', '')} ↗
-            </a>
-          )}
+
+          {/* Inline showcase container (state 3) */}
           {p.showcaseSelector && (
-            <div class="mn-explore-hint">
-              <span class="mn-explore-text">tap to explore</span>
-              <span class="mn-explore-arrow">→</span>
-            </div>
+            <div class="mn-card-showcase"></div>
           )}
         </div>
 
-        {/* Inline showcase container (state 3) */}
-        {p.showcaseSelector && (
-          <div class="mn-card-showcase"></div>
+        {/* Gap labels: edges crossing the gap between this card and the next */}
+        {i < projects.length - 1 && gaps[i].labels.length > 0 && (
+          <div class="mn-gap" data-gap={String(i)}>
+            {gaps[i].labels.map(l => (
+              <span class="mn-gap-label" style={`color: ${l.color};`} data-from={l.from} data-to={l.to}>
+                {l.text}
+              </span>
+            ))}
+          </div>
         )}
-      </div>
+      </>
     ))}
   </div>
 
@@ -255,6 +282,7 @@ function initMobileNetwork() {
   const cards = container.querySelectorAll<HTMLElement>('.mn-card');
   const svg = document.getElementById('mn-connections') as SVGElement | null;
   const edgeLines = svg?.querySelectorAll<SVGLineElement>('.mn-edge') || [];
+  const gapLabels = container.querySelectorAll<HTMLElement>('.mn-gap-label');
 
   let expandedCard: HTMLElement | null = null;
   let focusedCard: HTMLElement | null = null;
@@ -365,9 +393,27 @@ function initMobileNetwork() {
       requestAnimationFrame(renderStars);
     }
 
+    // Lightweight resize: just update canvas dimensions without recreating stars
+    function resizeCanvas() {
+      const rect = container!.getBoundingClientRect();
+      const newH = container!.scrollHeight;
+      if (Math.abs(newH - ch) > 10) {
+        cw = rect.width;
+        ch = newH;
+        canvas.width = cw * dpr;
+        canvas.height = ch * dpr;
+        canvas.style.width = cw + 'px';
+        canvas.style.height = ch + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+    }
+
     initCanvas();
     requestAnimationFrame(renderStars);
     window.addEventListener('resize', initCanvas);
+
+    // Expose resizeCanvas so animateConnections can call it
+    (container as any)._resizeCanvas = resizeCanvas;
   }
 
   // ── Card interaction: tap to expand, tap again for showcase ──
@@ -436,11 +482,32 @@ function initMobileNetwork() {
         card.classList.add('dimmed');
       }
     });
+
+    // Show/hide gap labels: only show labels for edges connected to this project
+    const gapContainers = container!.querySelectorAll<HTMLElement>('.mn-gap');
+    gapContainers.forEach(gap => {
+      let hasVisible = false;
+      gap.querySelectorAll<HTMLElement>('.mn-gap-label').forEach(label => {
+        const from = label.dataset.from || '';
+        const to = label.dataset.to || '';
+        if (from === projectId || to === projectId) {
+          label.classList.add('visible');
+          label.classList.remove('dimmed');
+          hasVisible = true;
+        } else {
+          label.classList.add('dimmed');
+          label.classList.remove('visible');
+        }
+      });
+      gap.classList.toggle('has-visible', hasVisible);
+    });
   }
 
   function clearHighlights() {
     edgeLines.forEach(l => { l.classList.remove('highlighted', 'dimmed'); });
     cards.forEach(c => { c.classList.remove('dimmed'); });
+    gapLabels.forEach(l => { l.classList.remove('visible', 'dimmed'); });
+    container!.querySelectorAll('.mn-gap').forEach(g => g.classList.remove('has-visible'));
   }
 
   // ── Inline showcase (state 3) ──
@@ -470,13 +537,17 @@ function initMobileNetwork() {
   }
 
   // Smoothly update connections during CSS transitions
-  function animateConnections(duration = 350) {
+  function animateConnections(duration = 400) {
+    const resizeCanvas = (container as any)._resizeCanvas;
     const start = performance.now();
     function tick(now: number) {
       updateConnections();
+      if (resizeCanvas) resizeCanvas();
       if (now - start < duration) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
+    // Final cleanup after all transitions settle
+    setTimeout(() => { updateConnections(); if (resizeCanvas) resizeCanvas(); }, duration + 100);
   }
 
   function closeInlineShowcase() {
@@ -635,6 +706,39 @@ initMobileNetwork();
     opacity: 0.04 !important;
   }
 
+  /* ── Gap labels (in-flow between cards) ── */
+  .mn-gap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.4rem;
+    padding: 0 0.25rem;
+    justify-content: center;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out, padding 0.25s ease-out, margin 0.25s ease-out;
+  }
+
+  .mn-gap.has-visible {
+    max-height: 2em;
+    padding: 0.1rem 0.25rem;
+  }
+
+  .mn-gap-label {
+    font-family: var(--font-mono);
+    font-size: 0.42rem;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    transition: opacity 0.25s ease-out;
+    white-space: nowrap;
+  }
+
+  .mn-gap-label.visible {
+    opacity: 0.55;
+  }
+
+  .mn-gap-label.dimmed {
+    opacity: 0;
+  }
 
   /* ── Cards ── */
   .mn-cards {
@@ -642,7 +746,15 @@ initMobileNetwork();
     z-index: 3;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0;
+  }
+
+  .mn-card {
+    margin-top: 0.75rem;
+  }
+
+  .mn-card:first-child {
+    margin-top: 0;
   }
 
   .mn-card {
