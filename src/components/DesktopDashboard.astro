@@ -208,7 +208,7 @@ const edgeMidpoints = edges.map(edge => {
     </div>
     <div class="hud-divider"></div>
     <div class="hud-row hud-apm-row">
-      <span class="hud-label">APM</span>
+      <span class="hud-label">PPD</span>
       <span class="hud-apm-number" id="hud-apm">--</span>
       <svg class="hud-sparkline" id="hud-sparkline" viewBox="0 0 42 12" preserveAspectRatio="none"></svg>
       <div class="hud-apm-tooltip" id="hud-apm-tooltip">
@@ -1048,7 +1048,7 @@ const edgeMidpoints = edges.map(edge => {
         const daily: number[] = data.pushesByDay ?? [0,0,0,0,0,0,0];
 
         const apmEl = document.getElementById('hud-apm');
-        if (apmEl) apmEl.textContent = String(total);
+        if (apmEl) apmEl.textContent = String(Math.round(total / 7));
 
         const sparkEl = document.getElementById('hud-sparkline');
         if (sparkEl && daily.length === 7) {
