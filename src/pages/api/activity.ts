@@ -36,6 +36,24 @@ export async function GET() {
     const events = await res.json() as GHEvent[];
     const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
+    // Compute activity metrics: count pushes per day (GitHub Events API doesn't expose commit counts)
+    let totalPushes = 0;
+    const pushesByDay = [0, 0, 0, 0, 0, 0, 0]; // [6 days ago ... today]
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    for (const e of events) {
+      if (e.type !== 'PushEvent') continue;
+      const ts = new Date(e.created_at).getTime();
+      if (ts < cutoff) break;
+      totalPushes++;
+      const evtDate = new Date(e.created_at);
+      const evtDayStart = new Date(evtDate.getFullYear(), evtDate.getMonth(), evtDate.getDate()).getTime();
+      const daysAgo = Math.floor((todayStart - evtDayStart) / (24 * 60 * 60 * 1000));
+      const idx = 6 - Math.min(daysAgo, 6);
+      pushesByDay[idx]++;
+    }
+
     // Collect unique repos from push events in last week
     const seen = new Set<string>();
     const repoNames: Array<{ fullName: string; name: string; head?: string; pushedAt: string }> = [];
@@ -81,9 +99,9 @@ export async function GET() {
       };
     }));
 
-    return json({ repos });
+    return json({ repos, totalPushes, pushesByDay });
   } catch {
-    return json({ repos: [] });
+    return json({ repos: [], totalPushes: 0, pushesByDay: [0,0,0,0,0,0,0] });
   }
 }
 

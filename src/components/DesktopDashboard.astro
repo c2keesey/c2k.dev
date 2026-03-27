@@ -184,6 +184,36 @@ const edgeMidpoints = edges.map(edge => {
     <span class="dashboard-sync" id="dashboard-sync">SYNC —</span>
   </div>
 
+  <!-- Resource HUD -->
+  <div class="resource-hud" id="resource-hud">
+    <div class="hud-row">
+      <span class="hud-label">CPU</span>
+      <div class="hud-bar"><div class="hud-fill" id="hud-cpu" style="--bar-color: 168, 85, 247;"></div></div>
+      <span class="hud-value" id="hud-cpu-val">--</span>
+    </div>
+    <div class="hud-row">
+      <span class="hud-label">MEM</span>
+      <div class="hud-bar"><div class="hud-fill" id="hud-mem" style="--bar-color: 139, 92, 246;"></div></div>
+      <span class="hud-value" id="hud-mem-val">--</span>
+    </div>
+    <div class="hud-row">
+      <span class="hud-label">SVC</span>
+      <div class="hud-bar"><div class="hud-fill" id="hud-svc" style="--bar-color: 34, 197, 94;"></div></div>
+      <span class="hud-value" id="hud-svc-val">--</span>
+    </div>
+    <div class="hud-row">
+      <span class="hud-label">CRON</span>
+      <div class="hud-bar"><div class="hud-fill" id="hud-cron" style="--bar-color: 34, 197, 94;"></div></div>
+      <span class="hud-value" id="hud-cron-val">--</span>
+    </div>
+    <div class="hud-divider"></div>
+    <div class="hud-row hud-apm-row">
+      <span class="hud-label">APM</span>
+      <span class="hud-apm-number" id="hud-apm">--</span>
+      <svg class="hud-sparkline" id="hud-sparkline" viewBox="0 0 42 12" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
   <!-- SVG edge layer -->
   <svg class="dashboard-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
     {edges.map((edge, i) => {
@@ -940,9 +970,89 @@ const edgeMidpoints = edges.map(edge => {
     async function fetchStatus() {
       try {
         const res = await fetch('/api/status');
-        if (res.ok) lastSync = Date.now();
-      } catch {}
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        lastSync = Date.now();
+        updateResourceBars(data);
+      } catch {
+        updateResourceBars(null);
+      }
       updateSync();
+    }
+
+    function updateResourceBars(data: any) {
+      const hud = document.getElementById('resource-hud');
+      if (!hud) return;
+
+      if (!data || data.status === 'offline') {
+        hud.classList.add('offline');
+        for (const k of ['cpu', 'mem', 'svc', 'cron']) {
+          const fill = document.getElementById(`hud-${k}`);
+          const val = document.getElementById(`hud-${k}-val`);
+          if (fill) fill.style.width = '0%';
+          if (val) val.textContent = '--';
+        }
+        return;
+      }
+
+      hud.classList.remove('offline');
+
+      const cpuFill = document.getElementById('hud-cpu');
+      const cpuVal = document.getElementById('hud-cpu-val');
+      if (cpuFill && data.cpu != null) cpuFill.style.width = `${data.cpu}%`;
+      if (cpuVal) cpuVal.textContent = data.cpu != null ? `${Math.round(data.cpu)}%` : '--';
+
+      const memFill = document.getElementById('hud-mem');
+      const memVal = document.getElementById('hud-mem-val');
+      if (memFill && data.memory != null) memFill.style.width = `${data.memory}%`;
+      if (memVal) memVal.textContent = data.memory != null ? `${Math.round(data.memory)}%` : '--';
+
+      if (data.services) {
+        const svcFill = document.getElementById('hud-svc');
+        const svcVal = document.getElementById('hud-svc-val');
+        const pct = data.services.total > 0 ? (data.services.running / data.services.total) * 100 : 0;
+        if (svcFill) svcFill.style.width = `${pct}%`;
+        if (svcVal) svcVal.textContent = `${data.services.running}/${data.services.total}`;
+      }
+
+      if (data.crons) {
+        const cronFill = document.getElementById('hud-cron');
+        const cronVal = document.getElementById('hud-cron-val');
+        const pct = data.crons.total > 0 ? (data.crons.ok / data.crons.total) * 100 : 0;
+        if (cronFill) cronFill.style.width = `${pct}%`;
+        if (cronVal) {
+          if (data.crons.error > 0) {
+            cronVal.textContent = `${data.crons.ok}/${data.crons.total} (${data.crons.error}!)`;
+            cronVal.classList.add('hud-cron-error');
+          } else {
+            cronVal.textContent = `${data.crons.ok}/${data.crons.total}`;
+            cronVal.classList.remove('hud-cron-error');
+          }
+        }
+        if (cronFill) {
+          cronFill.style.setProperty('--bar-color', data.crons.error > 0 ? '239, 68, 68' : '34, 197, 94');
+        }
+      }
+    }
+
+    async function fetchActivity() {
+      try {
+        const res = await fetch('/api/activity');
+        if (!res.ok) return;
+        const data = await res.json();
+        const total = data.totalPushes ?? 0;
+        const daily: number[] = data.pushesByDay ?? [0,0,0,0,0,0,0];
+
+        const apmEl = document.getElementById('hud-apm');
+        if (apmEl) apmEl.textContent = String(total);
+
+        const sparkEl = document.getElementById('hud-sparkline');
+        if (sparkEl && daily.length === 7) {
+          const max = Math.max(...daily, 1);
+          const points = daily.map((v: number, i: number) => `${i * 7},${12 - (v / max) * 10}`).join(' ');
+          sparkEl.innerHTML = `<polygon points="0,12 ${points} 42,12" fill="rgba(249, 115, 22, 0.08)" /><polyline points="${points}" fill="none" stroke="rgba(249, 115, 22, 0.4)" stroke-width="1" stroke-linejoin="round" />`;
+        }
+      } catch {}
     }
 
     function updateSync() {
@@ -952,6 +1062,7 @@ const edgeMidpoints = edges.map(edge => {
     }
 
     fetchStatus();
+    fetchActivity();
     setInterval(fetchStatus, 30000);
     setInterval(updateSync, 5000);
   }
@@ -1437,4 +1548,91 @@ const edgeMidpoints = edges.map(edge => {
   .focus-close:hover {
     color: rgba(255, 255, 255, 0.7);
   }
+
+  /* ── Resource HUD ── */
+  .resource-hud {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    z-index: 12;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 160px;
+  }
+
+  .hud-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .hud-label {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.1em;
+    min-width: 2.5rem;
+    text-align: right;
+  }
+
+  .hud-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 1.5px;
+    overflow: hidden;
+  }
+
+  .hud-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 1.5px;
+    background: rgba(var(--bar-color), 0.6);
+    box-shadow: 0 0 6px rgba(var(--bar-color), 0.3);
+    transition: width 0.6s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .hud-value {
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    color: rgba(255, 255, 255, 0.25);
+    min-width: 2.2rem;
+    text-align: right;
+  }
+
+  .hud-cron-error {
+    color: rgba(239, 68, 68, 0.6) !important;
+  }
+
+  .hud-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.04);
+    margin: 0.1rem 0;
+  }
+
+  .hud-apm-row {
+    gap: 0.5rem;
+  }
+
+  .hud-apm-number {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(249, 115, 22, 0.6);
+  }
+
+  .hud-sparkline {
+    width: 42px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  .resource-hud.offline .hud-fill {
+    width: 0% !important;
+  }
+  .resource-hud.offline .hud-value {
+    color: rgba(255, 255, 255, 0.08);
+  }
+
 </style>
