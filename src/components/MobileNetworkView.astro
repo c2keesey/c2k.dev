@@ -1,0 +1,1086 @@
+---
+// Mobile network view: vertical card stack with connection lines and system-monitor chrome
+// Carries the spirit of the desktop dashboard into a touch-friendly layout
+// Only visible below 1024px; desktop uses the spatial dashboard
+
+import TextScramble from './TextScramble.astro';
+
+interface Project {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  badge: string;
+  status: 'ONLINE' | 'DEPLOYING' | 'STANDBY';
+  pulseRate: number;
+  wip?: boolean;
+  tech: string[];
+  link?: string;
+  linkText?: string;
+  color: string; // "r, g, b"
+  hero?: 'maia' | 'flux' | 'c2k';
+  showcaseSelector?: string; // CSS selector for the full showcase component
+}
+
+interface Edge {
+  from: string;
+  to: string;
+  label: string;
+  color: string;
+}
+
+const projects: Project[] = [
+  {
+    id: 'maia', name: 'MAIA', tagline: 'AI geospatial platform',
+    description: 'Full-stack AI-native geospatial platform. Ask questions, get maps. LLM orchestration, agentic workflows, property data pipelines.',
+    badge: 'startup', status: 'ONLINE', pulseRate: 2,
+    tech: ['TypeScript', 'Python', 'FastAPI', 'Postgres', 'GCP'],
+    link: 'https://maia-analytics.com', linkText: 'maia-analytics.com',
+    color: '6, 182, 212', hero: 'maia', showcaseSelector: '.showcases-source .maia-showcase',
+  },
+  {
+    id: 'c2k', name: 'c2k.page', tagline: 'This website',
+    description: 'Personal site as system monitor. Self-hosted Astro SSR on an OptiPlex micro, exposed via Cloudflare Tunnel. Hand-crafted interactive showcases.',
+    badge: 'web', status: 'ONLINE', pulseRate: 2.5,
+    tech: ['Astro', 'TypeScript', 'Canvas', 'Cloudflare'],
+    link: 'https://c2k.page', linkText: 'c2k.page',
+    color: '168, 85, 247', hero: 'c2k', showcaseSelector: '.showcases-source .c2k-showcase',
+  },
+  {
+    id: 'dotfiles', name: 'Dotfiles', tagline: 'Dev environment system',
+    description: 'Version-controlled dev environment. Shell, editor, keybindings, Claude Code skills and hooks — all symlinked and synced across machines.',
+    badge: 'tooling', status: 'ONLINE', pulseRate: 3.5,
+    tech: ['Bash', 'Zsh', 'Claude Code', 'Tmux', 'Ghostty'],
+    link: 'https://github.com/c2keesey/dotfiles', linkText: 'github/dotfiles',
+    color: '168, 85, 247', showcaseSelector: '.showcases-source .df-showcase',
+  },
+  {
+    id: 'spotify', name: 'Spotify Macro', tagline: 'Stream Deck automations',
+    description: 'Five Spotify automations for Stream Deck. Playlist sorting, genre classification, heart sync, hotkey control, queue management.',
+    badge: 'automation', status: 'ONLINE', pulseRate: 4,
+    tech: ['Python', 'Spotify API', 'Stream Deck SDK'],
+    link: 'https://github.com/c2keesey/spotify-macro-pad', linkText: 'github/spotify-macro',
+    color: '34, 197, 94', showcaseSelector: '.showcases-source .sm-showcase',
+  },
+  {
+    id: 'secretgate', name: 'Secret Gate', tagline: 'Human-in-the-loop gate',
+    description: 'Routes AI agent requests for secrets (1Password) and sudo commands through Telegram for explicit approval. Claude Code plugin with PreToolUse hooks.',
+    badge: 'security', status: 'DEPLOYING', pulseRate: 1.5, wip: true,
+    tech: ['Python', '1Password CLI', 'Telegram', 'Claude Code'],
+    link: 'https://github.com/c2keesey/secret-gate', linkText: 'github/secret-gate',
+    color: '239, 68, 68',
+  },
+  {
+    id: 'flux', name: 'Flux Gauntlet', tagline: 'LED wearable',
+    description: '300-LED arm gauntlet with 16 rings on a 3D cylindrical mesh. 7 procedural effects: blast, lightning, fire, firework, casimir, twinkle, pew.',
+    badge: 'hardware', status: 'STANDBY', pulseRate: 7,
+    tech: ['C++', 'FastLED', 'ESP32'],
+    color: '249, 115, 22', hero: 'flux', showcaseSelector: '.showcases-source .fg-showcase',
+  },
+  {
+    id: 'corne', name: 'Corne', tagline: '42-key split keyboard',
+    description: 'Custom split ergonomic keyboard. 7 layers with combos, home row mods, and vim-style navigation. Fully programmable firmware.',
+    badge: 'hardware', status: 'ONLINE', pulseRate: 4,
+    tech: ['QMK', 'C', 'KiCad'],
+    color: '6, 182, 212', showcaseSelector: '.showcases-source .crn-showcase',
+  },
+  {
+    id: 'lightning', name: 'Lightning Cloud', tagline: 'Procedural lightning',
+    description: 'LED cloud lamp with procedural lightning bolt generation. Branching algorithms, flashing, fading — all code-driven on an ESP32.',
+    badge: 'hardware', status: 'STANDBY', pulseRate: 8,
+    tech: ['C++', 'FastLED', 'ESP32'],
+    color: '200, 210, 255', showcaseSelector: '.showcases-source .lc-showcase',
+  },
+  {
+    id: 'propeller', name: 'Propeller Scrape', tagline: 'Concert ticket monitor',
+    description: 'Scrapes Propeller rewards for new concert tickets in LA, SF, and Boulder. Sends Telegram notifications. Runs on cron.',
+    badge: 'utility', status: 'ONLINE', pulseRate: 5,
+    tech: ['Python', 'BeautifulSoup', 'Telegram', 'cron'],
+    link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape',
+    color: '249, 115, 22',
+  },
+];
+
+function blendColors(colorA: string, colorB: string): string {
+  const [ar, ag, ab] = colorA.split(',').map(Number);
+  const [br, bg, bb] = colorB.split(',').map(Number);
+  const r = Math.round((ar + br) / 2);
+  const g = Math.round((ag + bg) / 2);
+  const b = Math.round((ab + bb) / 2);
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
+const edgesRaw: { from: string; to: string; label: string }[] = [
+  { from: 'maia', to: 'dotfiles', label: 'primary workspace' },
+  { from: 'maia', to: 'c2k', label: 'showcase piece' },
+  { from: 'c2k', to: 'dotfiles', label: 'co-hosted on optiplex' },
+  { from: 'c2k', to: 'corne', label: 'interactive keymap' },
+  { from: 'dotfiles', to: 'corne', label: 'keyboard config' },
+  { from: 'dotfiles', to: 'secretgate', label: 'claude code plugin' },
+  { from: 'dotfiles', to: 'propeller', label: 'cron on optiplex' },
+  { from: 'corne', to: 'flux', label: 'hand-soldered' },
+  { from: 'corne', to: 'lightning', label: 'hand-soldered' },
+  { from: 'flux', to: 'lightning', label: 'ESP32 + FastLED' },
+  { from: 'corne', to: 'spotify', label: 'hotkey macros' },
+  { from: 'spotify', to: 'propeller', label: 'background automation' },
+  { from: 'secretgate', to: 'propeller', label: 'telegram bots' },
+];
+
+function getColor(id: string) {
+  return projects.find(p => p.id === id)!.color;
+}
+
+const edges: Edge[] = edgesRaw.map(e => ({
+  ...e,
+  color: blendColors(getColor(e.from), getColor(e.to)),
+}));
+
+// Build adjacency: for each project, list connected project IDs and edge labels
+const connections: Record<string, { id: string; label: string; color: string }[]> = {};
+projects.forEach(p => { connections[p.id] = []; });
+edges.forEach(e => {
+  connections[e.from].push({ id: e.to, label: e.label, color: e.color });
+  connections[e.to].push({ id: e.from, label: e.label, color: e.color });
+});
+
+const nominalCount = projects.filter(p => p.status === 'ONLINE').length;
+const totalCount = projects.length;
+const statusText = nominalCount === totalCount
+  ? `${totalCount} SYSTEMS NOMINAL`
+  : `${nominalCount}/${totalCount} NOMINAL`;
+
+// Build index map for connection line drawing
+const projectIndex: Record<string, number> = {};
+projects.forEach((p, i) => { projectIndex[p.id] = i; });
+
+// For each gap between card i and card i+1, place edge labels only in the gap
+// immediately above the destination (lower card), so each label appears once
+const gaps: { labels: { text: string; color: string; from: string; to: string }[] }[] = [];
+for (let g = 0; g < projects.length - 1; g++) {
+  gaps.push({ labels: [] });
+}
+for (const edge of edges) {
+  const fromIdx = projectIndex[edge.from];
+  const toIdx = projectIndex[edge.to];
+  // Place label in the gap right above the lower-indexed endpoint
+  const targetGap = Math.max(fromIdx, toIdx) - 1;
+  gaps[targetGap].labels.push({ text: edge.label, color: edge.color, from: edge.from, to: edge.to });
+}
+---
+
+<div class="mobile-network" id="mobile-network">
+  <!-- Canvas for stars + ambient effects -->
+  <canvas class="mobile-canvas" id="mobile-canvas"></canvas>
+
+  <!-- Header chrome -->
+  <div class="mn-header">
+    <span class="mn-label">PROJECT NETWORK</span>
+    <span class="mn-status">{statusText}</span>
+  </div>
+
+  <!-- SVG connection lines (behind cards) -->
+  <svg class="mn-connections" id="mn-connections" preserveAspectRatio="none">
+    {edges.map((edge, i) => (
+      <line
+        class="mn-edge"
+        data-from={edge.from}
+        data-to={edge.to}
+        stroke={edge.color}
+        stroke-width="1"
+        opacity="0.18"
+        stroke-dasharray="4 3"
+        stroke-linecap="round"
+      />
+    ))}
+  </svg>
+
+
+  <!-- Project cards with gap labels interleaved -->
+  <div class="mn-cards" id="mn-cards">
+    {projects.map((p, i) => (
+      <>
+        <div
+          class={`mn-card${p.hero ? ` hero-${p.hero}` : ''}${p.showcaseSelector ? ' has-showcase' : ''}`}
+          style={`--card-color: ${p.color}; --pulse-rate: ${p.pulseRate}s; --card-delay: ${i * 60}ms;`}
+          data-project={p.id}
+          data-showcase={p.showcaseSelector || ''}
+        >
+          {/* Compact state */}
+          <div class="mn-card-compact">
+            <div class="mn-card-top">
+              <span class="mn-dot" data-status={p.status}></span>
+              <span class="mn-name text-scramble" data-text={p.name} data-delay={String(150 + i * 50)} data-always="false">{p.name}</span>
+              <span class={`mn-status-label ${p.status.toLowerCase()}`}>{p.status}</span>
+            </div>
+            <div class="mn-compact-sub">
+              <span class="mn-tagline">{p.tagline}</span>
+              <div class="mn-badges">
+                <span class="mn-badge" style={`background: rgba(${p.color}, 0.1); color: rgba(${p.color}, 0.7);`}>{p.badge}</span>
+                {p.wip && <span class="mn-badge mn-badge-wip">WIP</span>}
+              </div>
+            </div>
+          </div>
+
+          {/* Expanded detail */}
+          <div class="mn-card-detail">
+            <p class="mn-desc">{p.description}</p>
+            <div class="mn-tech">
+              {p.tech.map(t => <span class="mn-tech-pill">{t}</span>)}
+            </div>
+            {/* Connection tags */}
+            <div class="mn-connections-tags">
+              {connections[p.id].map(c => {
+                const other = projects.find(x => x.id === c.id)!;
+                return (
+                  <span class="mn-conn-tag" style={`--conn-color: ${other.color};`} data-connects={c.id}>
+                    {other.name}
+                    <span class="mn-conn-label">{c.label}</span>
+                  </span>
+                );
+              })}
+            </div>
+            {p.link && (
+              <a class="mn-link" href={p.link} target="_blank" rel="noopener" style={`color: rgba(${p.color}, 0.5);`}>
+                {p.linkText || p.link.replace('https://', '')} ↗
+              </a>
+            )}
+            {p.showcaseSelector && (
+              <div class="mn-explore-hint">
+                <span class="mn-explore-text">tap to explore</span>
+                <span class="mn-explore-arrow">→</span>
+              </div>
+            )}
+          </div>
+
+          {/* Inline showcase container (state 3) */}
+          {p.showcaseSelector && (
+            <div class="mn-card-showcase"></div>
+          )}
+        </div>
+
+        {/* Gap labels: edges crossing the gap between this card and the next */}
+        {i < projects.length - 1 && gaps[i].labels.length > 0 && (
+          <div class="mn-gap" data-gap={String(i)}>
+            {gaps[i].labels.map(l => (
+              <span class="mn-gap-label" style={`color: ${l.color};`} data-from={l.from} data-to={l.to}>
+                {l.text}
+              </span>
+            ))}
+          </div>
+        )}
+      </>
+    ))}
+  </div>
+
+</div>
+
+<script>
+function initMobileNetwork() {
+  const container = document.getElementById('mobile-network');
+  if (!container) return;
+
+  const cards = container.querySelectorAll<HTMLElement>('.mn-card');
+  const svg = document.getElementById('mn-connections') as SVGElement | null;
+  const edgeLines = svg?.querySelectorAll<SVGLineElement>('.mn-edge') || [];
+  const gapLabels = container.querySelectorAll<HTMLElement>('.mn-gap-label');
+
+  let expandedCard: HTMLElement | null = null;
+  let focusedCard: HTMLElement | null = null;
+  let focusedShowcase: HTMLElement | null = null;
+  let focusedShowcaseParent: HTMLElement | null = null;
+
+  // ── Position SVG connection lines ──
+  function updateConnections() {
+    if (!svg) return;
+    const containerRect = container!.getBoundingClientRect();
+    // Use scrollHeight so SVG covers full content even when scrolled
+    const totalHeight = container!.scrollHeight;
+    svg.style.width = containerRect.width + 'px';
+    svg.style.height = totalHeight + 'px';
+    svg.setAttribute('viewBox', `0 0 ${containerRect.width} ${totalHeight}`);
+
+    // Use offsetTop chain for positions relative to container (scroll-stable)
+    const cardsEl = document.getElementById('mn-cards');
+    const cardsOffsetTop = cardsEl ? cardsEl.offsetTop : 0;
+    const cardCenters: Record<string, { x: number; y: number; top: number; bottom: number }> = {};
+    cards.forEach(card => {
+      const id = card.dataset.project || '';
+      const top = cardsOffsetTop + card.offsetTop;
+      const h = card.offsetHeight;
+      const rect = card.getBoundingClientRect();
+      cardCenters[id] = {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: top + h / 2,
+        top: top,
+        bottom: top + h,
+      };
+    });
+
+    // Assign each edge a horizontal lane spread across the card width
+    const cardsRect = cardsEl ? cardsEl.getBoundingClientRect() : containerRect;
+    const cardsLeft = cardsRect.left - containerRect.left;
+    const cardsWidth = cardsRect.width;
+    const edgeCount = edgeLines.length;
+    const laneMargin = 20;
+    const laneWidth = (cardsWidth - laneMargin * 2) / Math.max(edgeCount - 1, 1);
+
+    edgeLines.forEach((line, i) => {
+      const fromId = line.dataset.from || '';
+      const toId = line.dataset.to || '';
+      const from = cardCenters[fromId];
+      const to = cardCenters[toId];
+      if (!from || !to) return;
+
+      const laneX = cardsLeft + laneMargin + i * laneWidth;
+      // Connect from bottom of source card to top of target card
+      const topCard = from.y < to.y ? from : to;
+      const botCard = from.y < to.y ? to : from;
+      line.setAttribute('x1', String(laneX));
+      line.setAttribute('y1', String(topCard.bottom));
+      line.setAttribute('x2', String(laneX));
+      line.setAttribute('y2', String(botCard.top));
+    });
+
+  }
+
+  // ── Canvas: subtle star field ──
+  const canvas = document.getElementById('mobile-canvas') as HTMLCanvasElement;
+  if (canvas) {
+    const ctx = canvas.getContext('2d')!;
+    const dpr = window.devicePixelRatio || 1;
+    let cw = 0, ch = 0;
+
+    interface Star {
+      x: number; y: number; size: number; alpha: number;
+      twinkleSpeed: number; twinklePhase: number;
+    }
+    let stars: Star[] = [];
+
+    function initCanvas() {
+      const rect = container!.getBoundingClientRect();
+      cw = rect.width;
+      ch = container!.scrollHeight;
+      canvas.width = cw * dpr;
+      canvas.height = ch * dpr;
+      canvas.style.width = cw + 'px';
+      canvas.style.height = ch + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      stars = [];
+      const count = Math.floor((cw * ch) / 12000); // density relative to area
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * cw,
+          y: Math.random() * ch,
+          size: 0.4 + Math.random() * 1.2,
+          alpha: 0.01 + Math.random() * 0.025,
+          twinkleSpeed: 2.5 + Math.random() * 4,
+          twinklePhase: Math.random() * Math.PI * 2,
+        });
+      }
+    }
+
+    function renderStars(now: number) {
+      ctx.clearRect(0, 0, cw, ch);
+      for (const s of stars) {
+        const twinkle = 0.5 + 0.5 * Math.sin(now / 1000 * s.twinkleSpeed + s.twinklePhase);
+        const a = s.alpha * twinkle;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(180, 180, 210, ${a})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(renderStars);
+    }
+
+    // Lightweight resize: just update canvas dimensions without recreating stars
+    function resizeCanvas() {
+      const rect = container!.getBoundingClientRect();
+      const newH = container!.scrollHeight;
+      if (Math.abs(newH - ch) > 10) {
+        cw = rect.width;
+        ch = newH;
+        canvas.width = cw * dpr;
+        canvas.height = ch * dpr;
+        canvas.style.width = cw + 'px';
+        canvas.style.height = ch + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+    }
+
+    initCanvas();
+    requestAnimationFrame(renderStars);
+    window.addEventListener('resize', initCanvas);
+
+    // Expose resizeCanvas so animateConnections can call it
+    (container as any)._resizeCanvas = resizeCanvas;
+  }
+
+  // ── Card interaction: tap to expand, tap again for showcase ──
+
+  cards.forEach(card => {
+    card.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('.mn-link')) return;
+      if (focusedCard) return; // In state 3, ignore card clicks (use backdrop to close)
+
+      const projectId = card.dataset.project || '';
+      const showcaseSelector = card.dataset.showcase || '';
+
+      if (expandedCard === card) {
+        // State 2 → State 3 (inline showcase with dimmed backdrop)
+        if (showcaseSelector) {
+          openInlineShowcase(card, showcaseSelector);
+        }
+        return;
+      }
+
+      // Collapse any other expanded card
+      if (expandedCard) {
+        expandedCard.classList.remove('expanded');
+        clearHighlights();
+      }
+
+      // State 1 → State 2
+      expandedCard = card;
+      card.classList.add('expanded');
+      highlightConnections(projectId);
+
+      // Scroll card into better view
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+
+      // Update connection lines after expansion animation
+      animateConnections();
+    });
+  });
+
+  function highlightConnections(projectId: string) {
+    const connectedIds = new Set<string>([projectId]);
+
+    // Highlight connected edges and show their labels
+    edgeLines.forEach((line, i) => {
+      const from = line.dataset.from || '';
+      const to = line.dataset.to || '';
+      if (from === projectId || to === projectId) {
+        line.classList.add('highlighted');
+        line.classList.remove('dimmed');
+        if (from === projectId) connectedIds.add(to);
+        if (to === projectId) connectedIds.add(from);
+      } else {
+        line.classList.add('dimmed');
+        line.classList.remove('highlighted');
+      }
+    });
+
+    // Dim unrelated cards
+    cards.forEach(card => {
+      const id = card.dataset.project || '';
+      if (connectedIds.has(id)) {
+        card.classList.remove('dimmed');
+      } else {
+        card.classList.add('dimmed');
+      }
+    });
+
+    // Show/hide gap labels: only show labels for edges connected to this project
+    const gapContainers = container!.querySelectorAll<HTMLElement>('.mn-gap');
+    gapContainers.forEach(gap => {
+      let hasVisible = false;
+      gap.querySelectorAll<HTMLElement>('.mn-gap-label').forEach(label => {
+        const from = label.dataset.from || '';
+        const to = label.dataset.to || '';
+        if (from === projectId || to === projectId) {
+          label.classList.add('visible');
+          label.classList.remove('dimmed');
+          hasVisible = true;
+        } else {
+          label.classList.add('dimmed');
+          label.classList.remove('visible');
+        }
+      });
+      gap.classList.toggle('has-visible', hasVisible);
+    });
+  }
+
+  function clearHighlights() {
+    edgeLines.forEach(l => { l.classList.remove('highlighted', 'dimmed'); });
+    cards.forEach(c => { c.classList.remove('dimmed'); });
+    gapLabels.forEach(l => { l.classList.remove('visible', 'dimmed'); });
+    container!.querySelectorAll('.mn-gap').forEach(g => g.classList.remove('has-visible'));
+  }
+
+  // ── Inline showcase (state 3) ──
+
+  function openInlineShowcase(card: HTMLElement, selector: string) {
+    const showcase = document.querySelector(selector) as HTMLElement;
+    if (!showcase) return;
+
+    const showcaseContainer = card.querySelector('.mn-card-showcase') as HTMLElement;
+    if (!showcaseContainer) return;
+
+    focusedCard = card;
+    focusedShowcaseParent = showcase.parentElement;
+    focusedShowcase = showcase;
+
+    // Move showcase into the card
+    showcaseContainer.appendChild(showcase);
+    card.classList.add('focused');
+    container!.classList.add('has-focus');
+
+    // Scroll card into view
+    setTimeout(() => {
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+
+    animateConnections();
+  }
+
+  // Smoothly update connections during CSS transitions
+  function animateConnections(duration = 400) {
+    const resizeCanvas = (container as any)._resizeCanvas;
+    const start = performance.now();
+    function tick(now: number) {
+      updateConnections();
+      if (resizeCanvas) resizeCanvas();
+      if (now - start < duration) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    // Final cleanup after all transitions settle
+    setTimeout(() => { updateConnections(); if (resizeCanvas) resizeCanvas(); }, duration + 100);
+  }
+
+  function closeInlineShowcase() {
+    if (!focusedCard || !focusedShowcase || !focusedShowcaseParent) return;
+
+    const card = focusedCard;
+    const showcase = focusedShowcase;
+    const parent = focusedShowcaseParent;
+
+    // Remove focused state — CSS transitions animate the collapse
+    card.classList.remove('focused');
+    container!.classList.remove('has-focus');
+
+    if (expandedCard) {
+      expandedCard.classList.remove('expanded');
+      expandedCard = null;
+    }
+    clearHighlights();
+    animateConnections(400);
+
+    focusedCard = null;
+    focusedShowcase = null;
+    focusedShowcaseParent = null;
+
+    // Wait for the collapse transition to finish, then move showcase back
+    setTimeout(() => {
+      parent.appendChild(showcase);
+    }, 400);
+  }
+
+  // Tap outside to collapse/close (listen on document to catch taps anywhere)
+  document.addEventListener('click', (e) => {
+    const clickedCard = (e.target as HTMLElement).closest('.mn-card') as HTMLElement | null;
+
+    // State 3: close if tapping anything other than the focused card
+    if (focusedCard) {
+      if (clickedCard !== focusedCard) {
+        closeInlineShowcase();
+      }
+      return;
+    }
+
+    // State 2: close if tapping outside any card
+    if (expandedCard && !clickedCard) {
+      expandedCard.classList.remove('expanded');
+      expandedCard = null;
+      clearHighlights();
+      animateConnections();
+    }
+  });
+
+  // Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (focusedCard) {
+        closeInlineShowcase();
+      } else if (expandedCard) {
+        expandedCard.classList.remove('expanded');
+        expandedCard = null;
+        clearHighlights();
+        animateConnections();
+      }
+    }
+  });
+
+  // Initial position
+  updateConnections();
+  window.addEventListener('resize', () => { setTimeout(updateConnections, 100); });
+
+  // Observe scroll to keep connections updated
+  const scrollPanel = container!.closest('.swipe-panel');
+  if (scrollPanel) {
+    scrollPanel.addEventListener('scroll', updateConnections);
+  }
+}
+
+initMobileNetwork();
+</script>
+
+<style>
+  .mobile-network {
+    display: block;
+    position: relative;
+    padding: 0 1rem 2rem;
+    max-width: 720px;
+    margin: 0 auto;
+    overflow-x: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-network {
+      display: none;
+    }
+  }
+
+  /* ── Canvas ── */
+  .mobile-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Header ── */
+  .mn-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.5rem 0 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .mn-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.15);
+    letter-spacing: 0.15em;
+  }
+
+  .mn-status {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(34, 197, 94, 0.45);
+    padding: 0.1rem 0.4rem;
+    border: 1px solid rgba(34, 197, 94, 0.12);
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── SVG connections ── */
+  .mn-connections {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .mn-edge {
+    transition: opacity 0.2s ease-out;
+    animation: mn-edge-flow 3.5s linear infinite;
+  }
+
+  @keyframes mn-edge-flow {
+    to { stroke-dashoffset: -14; }
+  }
+
+  .mn-edge.highlighted {
+    opacity: 0.5 !important;
+    stroke-width: 1.5 !important;
+  }
+
+  .mn-edge.dimmed {
+    opacity: 0.04 !important;
+  }
+
+  /* ── Gap labels (in-flow between cards) ── */
+  .mn-gap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.4rem;
+    padding: 0 0.25rem;
+    justify-content: center;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out, padding 0.25s ease-out, margin 0.25s ease-out;
+  }
+
+  .mn-gap.has-visible {
+    max-height: 2em;
+    padding: 0.1rem 0.25rem;
+  }
+
+  .mn-gap-label {
+    font-family: var(--font-mono);
+    font-size: 0.42rem;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    transition: opacity 0.25s ease-out;
+    white-space: nowrap;
+  }
+
+  .mn-gap-label.visible {
+    opacity: 0.55;
+  }
+
+  .mn-gap-label.dimmed {
+    opacity: 0;
+  }
+
+  /* ── Cards ── */
+  .mn-cards {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .mn-card {
+    margin-top: 0.75rem;
+  }
+
+  .mn-card:first-child {
+    margin-top: 0;
+  }
+
+  .mn-card {
+    position: relative;
+    background: rgba(14, 14, 16, 0.75);
+    border: 1px solid rgba(var(--card-color), 0.12);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      border-color 0.2s ease-out,
+      box-shadow 0.2s ease-out,
+      opacity 0.3s ease-out;
+    animation: mn-card-enter 0.35s cubic-bezier(.2, .8, .2, 1) both;
+    animation-delay: var(--card-delay, 0ms);
+  }
+
+  @keyframes mn-card-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .mn-card.expanded {
+    border-color: rgba(var(--card-color), 0.3);
+    box-shadow:
+      0 0 20px rgba(var(--card-color), 0.06),
+      0 0 40px rgba(var(--card-color), 0.03);
+  }
+
+  .mn-card.dimmed {
+    opacity: 0.25;
+  }
+
+  /* ── Hero flair (matching desktop) ── */
+  .mn-card.hero-maia {
+    background: rgba(6, 182, 140, 0.06);
+    border-color: rgba(6, 182, 160, 0.18);
+  }
+
+  .mn-card.hero-flux .mn-name {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .mn-card.hero-c2k {
+    border-top: 1px solid transparent;
+    background-image:
+      linear-gradient(rgba(14, 14, 16, 0.75), rgba(14, 14, 16, 0.75)),
+      linear-gradient(90deg, rgba(168, 85, 247, 0.25), rgba(217, 70, 239, 0.15), rgba(249, 115, 22, 0.1));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+
+  /* ── Compact state ── */
+  .mn-card-compact {
+    padding: 0.65rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .mn-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .mn-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: mn-pulse var(--pulse-rate, 3s) ease-in-out infinite;
+  }
+
+  .mn-dot[data-status="ONLINE"] {
+    background: rgb(34, 197, 94);
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+  }
+  .mn-dot[data-status="DEPLOYING"] {
+    background: rgb(234, 179, 8);
+    box-shadow: 0 0 6px rgba(234, 179, 8, 0.4);
+  }
+  .mn-dot[data-status="STANDBY"] {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+  }
+
+  @keyframes mn-pulse {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 0.25; }
+  }
+
+  .mn-name {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(var(--card-color), 0.85);
+  }
+
+  .mn-status-label {
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    color: rgba(34, 197, 94, 0.35);
+    letter-spacing: 0.1em;
+    margin-left: auto;
+  }
+  .mn-status-label.deploying { color: rgba(234, 179, 8, 0.45); }
+  .mn-status-label.standby { color: rgba(255, 255, 255, 0.12); }
+
+  .mn-compact-sub {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .mn-tagline {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.22);
+  }
+
+  /* Badges hidden in compact, shown when expanded */
+  .mn-badges {
+    display: flex;
+    gap: 0.25rem;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 0.3s ease-out, opacity 0.25s ease-out;
+  }
+
+  .expanded .mn-badges,
+  .focused .mn-badges {
+    max-width: 120px;
+    opacity: 1;
+  }
+
+  /* ── Detail (expanded) ── */
+  .mn-card-detail {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    padding: 0 0.85rem;
+    transition:
+      max-height 0.3s cubic-bezier(.2, .8, .2, 1),
+      opacity 0.25s ease-out,
+      padding 0.3s ease-out;
+  }
+
+  .expanded .mn-card-detail {
+    max-height: 400px;
+    opacity: 1;
+    padding: 0 0.85rem 0.75rem;
+  }
+
+  /* Hide detail when showcase is shown (state 3) */
+  .focused .mn-card-detail {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* Hide showcase's own header when embedded in a card (outer card header stays) */
+  .mn-card-showcase :global(.maia-header),
+  .mn-card-showcase :global(.c2k-header),
+  .mn-card-showcase :global(.df-header),
+  .mn-card-showcase :global(.sm-header),
+  .mn-card-showcase :global(.fg-header),
+  .mn-card-showcase :global(.crn-header),
+  .mn-card-showcase :global(.lc-header) {
+    display: none;
+  }
+
+  .mn-badge {
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    padding: 0.08rem 0.35rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .mn-badge-wip {
+    background: rgba(234, 179, 8, 0.12) !important;
+    color: rgba(234, 179, 8, 0.7) !important;
+  }
+
+  .mn-desc {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.38);
+    line-height: 1.7;
+    margin-bottom: 0.5rem;
+  }
+
+  .mn-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mn-tech-pill {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    padding: 0.08rem 0.35rem;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.28);
+    border-radius: 3px;
+  }
+
+  /* ── Connection tags ── */
+  .mn-connections-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mn-conn-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(var(--conn-color), 0.5);
+    background: rgba(var(--conn-color), 0.06);
+    padding: 0.12rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid rgba(var(--conn-color), 0.08);
+  }
+
+  .mn-conn-label {
+    color: rgba(255, 255, 255, 0.18);
+    font-size: 0.42rem;
+  }
+
+  .mn-link {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    display: block;
+  }
+  .mn-link:hover { opacity: 0.8; }
+
+  /* ── Explore hint ── */
+  .mn-explore-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid rgba(var(--card-color), 0.06);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease-out 0.15s, transform 0.25s ease-out 0.15s;
+  }
+
+  .expanded .mn-explore-hint {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mn-explore-text {
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    color: rgba(var(--card-color), 0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .mn-explore-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(var(--card-color), 0.35);
+    animation: mn-hint-nudge 1.5s ease-in-out infinite;
+  }
+
+  @keyframes mn-hint-nudge {
+    0%, 100% { transform: translateX(0); opacity: 0.5; }
+    50% { transform: translateX(3px); opacity: 1; }
+  }
+
+  /* ── Focus mode: dim everything except the focused card ── */
+  .has-focus .mn-header,
+  .has-focus .mn-connections,
+  .has-focus .mobile-canvas {
+    opacity: 0.15;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .has-focus .mn-card:not(.focused) {
+    opacity: 0.1;
+    transition: opacity 0.3s ease-out;
+  }
+
+  /* ── Focused card (state 3: inline showcase) ── */
+  .mn-card.focused {
+    border-color: rgba(var(--card-color), 0.4);
+    box-shadow:
+      0 0 30px rgba(var(--card-color), 0.1),
+      0 0 60px rgba(var(--card-color), 0.05);
+  }
+
+  .mn-card-showcase {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    padding: 0 0.5rem;
+    transition:
+      max-height 0.35s cubic-bezier(.2, .8, .2, 1),
+      opacity 0.3s ease-out,
+      padding 0.3s ease-out;
+  }
+
+  .focused .mn-card-showcase {
+    max-height: 600px;
+    opacity: 1;
+    padding: 0.4rem 0.5rem 0;
+  }
+</style>

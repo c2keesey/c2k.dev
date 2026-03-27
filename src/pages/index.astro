@@ -8,9 +8,9 @@ import LightningCloudShowcase from '../components/LightningCloudShowcase.astro';
 import FluxGauntletShowcase from '../components/FluxGauntletShowcase.astro';
 import CorneShowcase from '../components/CorneShowcase.astro';
 import SpotifyMacroShowcase from '../components/SpotifyMacroShowcase.astro';
-import MiniProjectCard from '../components/MiniProjectCard.astro';
 import RotatingQuote from '../components/RotatingQuote.astro';
 import DesktopDashboard from '../components/DesktopDashboard.astro';
+import MobileNetworkView from '../components/MobileNetworkView.astro';
 import '../styles/global.css';
 ---
 
@@ -70,20 +70,19 @@ import '../styles/global.css';
 
       <!-- Panel: Projects -->
       <section class="swipe-panel" data-page="/projects">
-        <!-- Desktop: dashboard layout -->
+        <!-- Desktop: spatial dashboard layout -->
         <DesktopDashboard />
-        <!-- Mobile: stacked showcases -->
-        <div class="panel-content projects-mobile">
-          <section class="page-header">
-            <TextScramble text="Projects" tag="h1" class="page-title" always />
-            <TextScramble text="Things I'm building." tag="p" class="page-desc" delay={100} />
-          </section>
+        <!-- Mobile: network card stack -->
+        <MobileNetworkView />
+        <!-- Showcase components (hidden, moved into focus overlays on demand) -->
+        <div class="showcases-source">
+          <MaiaShowcase />
           <C2kShowcase />
+          <DotfilesShowcase />
           <SpotifyMacroShowcase />
           <FluxGauntletShowcase />
           <CorneShowcase />
           <LightningCloudShowcase />
-          <DotfilesShowcase />
           <MiniProjectCard
             name="tech-digest"
             tagline="Daily tech release digest via Telegram"
@@ -592,20 +591,20 @@ import '../styles/global.css';
     }
   }
 
-  @media (min-width: 1024px) {
-    .projects-mobile {
-      position: absolute;
-      left: -9999px;
-      visibility: hidden;
-      pointer-events: none;
-      width: 640px;
-    }
+  /* Showcases: hidden off-screen but preserving dimensions for canvas init */
+  .showcases-source {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+    pointer-events: none;
+    width: 640px;
   }
 
   .swipe-panel {
     min-width: 100%;
     scroll-snap-align: start;
     overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
     position: relative;
