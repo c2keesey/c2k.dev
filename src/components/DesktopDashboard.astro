@@ -182,6 +182,7 @@ const edgeMidpoints = edges.map(edge => {
     <span class="dashboard-label">PROJECT NETWORK</span>
     <span class="dashboard-status">{statusText}</span>
     <span class="dashboard-sync" id="dashboard-sync">SYNC —</span>
+    <span class="dashboard-tp-rate" id="dashboard-tp-rate"></span>
   </div>
 
   <!-- Resource HUD -->
@@ -268,6 +269,7 @@ const edgeMidpoints = edges.map(edge => {
           <span class="node-name text-scramble" data-text={p.name} data-delay={String(200 + i * 60)} data-always="false">{p.name}</span>
         </div>
         <span class="node-tagline">{p.tagline}</span>
+        <span class="node-tp-counter" id={`tp-${p.id}`}>0.0/s</span>
       </div>
 
       <div class="node-detail">
@@ -294,6 +296,27 @@ const edgeMidpoints = edges.map(edge => {
     </div>
   ))}
 
+  <!-- Game HUD (bottom-right, hidden until activated) -->
+  <div class="game-hud" id="game-hud">
+    <div class="game-hud-label">NETWORK OPTIMIZER</div>
+    <div class="game-hud-tp">
+      <span class="game-hud-tp-value" id="game-tp-value">0.0</span>
+      <span class="game-hud-tp-unit">TP</span>
+    </div>
+    <div class="game-hud-rate">
+      <span id="game-tp-rate">0.0</span>
+      <span class="game-hud-rate-unit">/s</span>
+    </div>
+  </div>
+
+  <!-- Upgrade popup (positioned dynamically) -->
+  <div class="upgrade-popup" id="upgrade-popup">
+    <div class="upgrade-popup-title" id="upgrade-popup-title"></div>
+    <div class="upgrade-popup-info" id="upgrade-popup-info"></div>
+    <button class="upgrade-popup-btn" id="upgrade-popup-btn">UPGRADE</button>
+    <div class="upgrade-popup-cost" id="upgrade-popup-cost"></div>
+  </div>
+
   <!-- Focus overlay for full showcase view (state 3) -->
   <div class="dashboard-focus-overlay" id="dashboard-focus-overlay">
     <div class="dashboard-focus-backdrop" id="dashboard-focus-backdrop"></div>
@@ -304,6 +327,8 @@ const edgeMidpoints = edges.map(edge => {
 </div>
 
 <script>
+  import { NetworkOptimizer } from '../game/optimizer';
+
   function initDashboard() {
     const dashboard = document.querySelector('.dashboard') as HTMLElement;
     if (!dashboard) return;
@@ -721,25 +746,33 @@ const edgeMidpoints = edges.map(edge => {
         // Count only alive particles toward cap
         let aliveCount = 0;
         for (let i = 0; i < particles.length; i++) if (particles[i].alive) aliveCount++;
-        const MAX_ALIVE = 35;
+        const MAX_ALIVE = 50;
+
+        // Get optimizer for edge-aware spawning
+        const opt = (window as any).__networkOptimizer as import('../game/optimizer').NetworkOptimizer | undefined;
 
         // Spawn forward and reverse particles per edge
         for (let i = 0; i < edgeEndpoints.length; i++) {
+          const density = opt?.getEdgeDensityMultiplier(i) ?? 1;
+          const baseIntervalF = (1.5 + Math.random() * 2) / density;
+          const baseIntervalR = (1.8 + Math.random() * 2.5) / density;
+
           spawnTimersF[i] -= dt;
           if (spawnTimersF[i] <= 0) {
             if (aliveCount < MAX_ALIVE) { particles.push(spawnParticle(i, false)); aliveCount++; }
-            spawnTimersF[i] = 1.5 + Math.random() * 2;
+            spawnTimersF[i] = baseIntervalF;
           }
           spawnTimersR[i] -= dt;
           if (spawnTimersR[i] <= 0) {
             if (aliveCount < MAX_ALIVE) { particles.push(spawnParticle(i, true)); aliveCount++; }
-            spawnTimersR[i] = 1.8 + Math.random() * 2.5;
+            spawnTimersR[i] = baseIntervalR;
           }
         }
 
         for (let pi = 0; pi < particles.length; pi++) {
           const p = particles[pi];
-          p.t += p.speed * dt;
+          const flowMult = opt?.getEdgeFlowMultiplier(p.ei) ?? 1;
+          p.t += p.speed * flowMult * dt;
 
           if (p.t >= 1 && p.alive) {
             computeParticlePos(p, 1, time);
@@ -1084,6 +1117,220 @@ const edgeMidpoints = edges.map(edge => {
     fetchActivity();
     setInterval(fetchStatus, 30000);
     setInterval(updateSync, 5000);
+
+    // ── Network Optimizer (hidden idle game) ──
+
+    const edgeEndpointsData: { fromId: string; toId: string }[] = JSON.parse(dashboard.dataset.edgeEndpoints || '[]');
+    const nodeIdList = Array.from(nodes).map(n => n.dataset.project || '');
+    const optimizer = new NetworkOptimizer(nodeIdList, edgeEndpointsData);
+
+    const gameHud = document.getElementById('game-hud')!;
+    const gameTpValue = document.getElementById('game-tp-value')!;
+    const gameTpRate = document.getElementById('game-tp-rate')!;
+    const headerTpRate = document.getElementById('dashboard-tp-rate')!;
+    const upgradePopup = document.getElementById('upgrade-popup')!;
+    const upgradeTitle = document.getElementById('upgrade-popup-title')!;
+    const upgradeInfo = document.getElementById('upgrade-popup-info')!;
+    const upgradeBtn = document.getElementById('upgrade-popup-btn')!;
+    const upgradeCost = document.getElementById('upgrade-popup-cost')!;
+
+    let popupTarget: { type: 'node'; id: string } | { type: 'edge'; index: number } | null = null;
+
+    function updateGameUI() {
+      const activated = optimizer.state.activated;
+
+      // HUD visibility
+      if (activated) {
+        gameHud.classList.add('visible');
+      }
+
+      // TP counters on nodes
+      nodes.forEach(n => {
+        const id = n.dataset.project || '';
+        const counter = document.getElementById(`tp-${id}`);
+        if (counter) {
+          if (activated) {
+            const rate = optimizer.getNodeRate(id);
+            counter.textContent = `${rate.toFixed(1)}/s`;
+            counter.classList.add('visible');
+          } else {
+            counter.classList.remove('visible');
+          }
+        }
+        // Node glow based on level
+        const level = optimizer.state.nodes[id]?.level ?? 0;
+        n.setAttribute('data-game-level', String(level));
+      });
+
+      // Edge visuals based on level
+      optimizer.state.edges.forEach((edge, i) => {
+        const line = edgeLines[i];
+        if (line) {
+          line.setAttribute('data-game-level', String(edge.level));
+        }
+      });
+
+      // HUD values
+      if (activated) {
+        gameTpValue.textContent = optimizer.state.tp.toFixed(1);
+        gameTpRate.textContent = optimizer.getTotalRate().toFixed(1);
+        headerTpRate.textContent = `${optimizer.getTotalRate().toFixed(1)} TP/s`;
+        headerTpRate.classList.add('visible');
+      }
+    }
+
+    function showUpgradePopup(x: number, y: number) {
+      if (!popupTarget) return;
+
+      const rect = dashboard.getBoundingClientRect();
+      const px = x - rect.left;
+      const py = y - rect.top;
+
+      upgradePopup.style.left = `${px}px`;
+      upgradePopup.style.top = `${py}px`;
+
+      if (popupTarget.type === 'node') {
+        const id = popupTarget.id;
+        const node = optimizer.state.nodes[id];
+        const cost = optimizer.getNodeUpgradeCost(id);
+        const currentRate = optimizer.getNodeRate(id);
+
+        upgradeTitle.textContent = id.toUpperCase();
+        if (cost === null) {
+          upgradeInfo.textContent = `Level MAX — ${currentRate.toFixed(2)} TP/s`;
+          upgradeBtn.style.display = 'none';
+          upgradeCost.textContent = '';
+        } else {
+          const nextLevel = (node?.level ?? 0) + 1;
+          upgradeInfo.textContent = `Level ${node?.level ?? 0} → ${nextLevel} — ${currentRate.toFixed(2)} TP/s`;
+          upgradeBtn.style.display = '';
+          upgradeBtn.textContent = 'UPGRADE';
+          upgradeCost.textContent = `${cost} TP`;
+          upgradeBtn.disabled = optimizer.state.tp < cost;
+          upgradeBtn.classList.toggle('affordable', optimizer.state.tp >= cost);
+        }
+      } else {
+        const idx = popupTarget.index;
+        const edge = optimizer.state.edges[idx];
+        const cost = optimizer.getEdgeUpgradeCost(idx);
+
+        upgradeTitle.textContent = `CONNECTION`;
+        if (cost === null) {
+          upgradeInfo.textContent = `Level MAX — ${optimizer.getEdgeFlowMultiplier(idx)}x flow`;
+          upgradeBtn.style.display = 'none';
+          upgradeCost.textContent = '';
+        } else {
+          upgradeInfo.textContent = `Level ${edge?.level ?? 0} → ${(edge?.level ?? 0) + 1} — ${optimizer.getEdgeFlowMultiplier(idx)}x flow`;
+          upgradeBtn.style.display = '';
+          upgradeBtn.textContent = 'UPGRADE';
+          upgradeCost.textContent = `${cost} TP`;
+          upgradeBtn.disabled = optimizer.state.tp < cost;
+          upgradeBtn.classList.toggle('affordable', optimizer.state.tp >= cost);
+        }
+      }
+
+      upgradePopup.classList.add('visible');
+    }
+
+    function hideUpgradePopup() {
+      upgradePopup.classList.remove('visible');
+      popupTarget = null;
+    }
+
+    // Right-click on nodes → upgrade menu
+    nodes.forEach(node => {
+      node.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const id = node.dataset.project || '';
+
+        if (!optimizer.state.activated) {
+          optimizer.activate();
+          updateGameUI();
+        }
+
+        popupTarget = { type: 'node', id };
+        showUpgradePopup(e.clientX, e.clientY);
+      });
+    });
+
+    // Right-click on edge labels → connection upgrade
+    edgeLabels.forEach((label, i) => {
+      // Make edge labels receive pointer events for game
+      label.style.pointerEvents = 'auto';
+      label.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!optimizer.state.activated) {
+          optimizer.activate();
+          updateGameUI();
+        }
+
+        popupTarget = { type: 'edge', index: i };
+        showUpgradePopup(e.clientX, e.clientY);
+      });
+    });
+
+    // Upgrade button action
+    upgradeBtn.addEventListener('click', () => {
+      if (!popupTarget) return;
+      let success = false;
+      if (popupTarget.type === 'node') {
+        success = optimizer.upgradeNode(popupTarget.id);
+      } else {
+        success = optimizer.upgradeEdge(popupTarget.index);
+      }
+      if (success) {
+        updateGameUI();
+        // Re-show popup with updated info
+        const rect = upgradePopup.getBoundingClientRect();
+        const dashRect = dashboard.getBoundingClientRect();
+        showUpgradePopup(rect.left + rect.width / 2 + dashRect.left, rect.top + dashRect.top);
+      }
+    });
+
+    // Click outside to close popup
+    document.addEventListener('click', (e) => {
+      if (upgradePopup.classList.contains('visible') &&
+          !(e.target as HTMLElement).closest('#upgrade-popup')) {
+        hideUpgradePopup();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && upgradePopup.classList.contains('visible')) {
+        hideUpgradePopup();
+      }
+    });
+
+    // Game tick — hook into the existing render loop isn't easy from here,
+    // so use a separate interval for TP accumulation
+    let lastGameTick = performance.now();
+    function gameTick() {
+      const now = performance.now();
+      const dt = Math.min((now - lastGameTick) / 1000, 0.5);
+      lastGameTick = now;
+
+      if (optimizer.state.activated) {
+        optimizer.tick(dt);
+        // Update HUD values (throttled to avoid excessive DOM writes)
+        gameTpValue.textContent = optimizer.state.tp.toFixed(1);
+        gameTpRate.textContent = optimizer.getTotalRate().toFixed(1);
+      }
+
+      requestAnimationFrame(gameTick);
+    }
+
+    // Expose optimizer to particle system for flow speed/density
+    (window as any).__networkOptimizer = optimizer;
+
+    // Save periodically
+    setInterval(() => { if (optimizer.state.activated) optimizer.save(); }, 10000);
+
+    // Initialize UI state
+    updateGameUI();
+    optimizer.onChange(updateGameUI);
+    requestAnimationFrame(gameTick);
   }
 
   initDashboard();
@@ -1746,6 +1993,207 @@ const edgeMidpoints = edges.map(edge => {
   }
   .resource-hud.offline .hud-value {
     color: rgba(255, 255, 255, 0.08);
+  }
+
+  /* ── Network Optimizer Game UI ── */
+
+  /* TP counter on each node */
+  .node-tp-counter {
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    color: rgba(var(--node-color), 0.3);
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    margin-top: 0.1rem;
+  }
+
+  .node-tp-counter.visible {
+    opacity: 1;
+  }
+
+  /* Node glow levels */
+  .dashboard-node[data-game-level="1"] {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.02),
+      0 0 12px rgba(var(--node-color), 0.06);
+  }
+
+  .dashboard-node[data-game-level="2"] {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.02),
+      0 0 20px rgba(var(--node-color), 0.1),
+      0 0 40px rgba(var(--node-color), 0.04);
+  }
+
+  .dashboard-node[data-game-level="3"] {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.03),
+      0 0 24px rgba(var(--node-color), 0.14),
+      0 0 48px rgba(var(--node-color), 0.06);
+    border-color: rgba(var(--node-color), 0.25);
+  }
+
+  /* Edge level visuals */
+  .edge-line[data-game-level="1"] {
+    opacity: 0.25 !important;
+    stroke-width: 2 !important;
+  }
+
+  .edge-line[data-game-level="2"] {
+    opacity: 0.35 !important;
+    stroke-width: 2.5 !important;
+    stroke-dasharray: none !important;
+  }
+
+  /* Game HUD (bottom-right) */
+  .game-hud {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 2rem;
+    z-index: 12;
+    background: rgba(14, 14, 16, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(168, 85, 247, 0.1);
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+
+  .game-hud.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .game-hud-label {
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    color: rgba(168, 85, 247, 0.35);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.3rem;
+  }
+
+  .game-hud-tp {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+
+  .game-hud-tp-value {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(168, 85, 247, 0.7);
+  }
+
+  .game-hud-tp-unit {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(168, 85, 247, 0.35);
+    letter-spacing: 0.1em;
+  }
+
+  .game-hud-rate {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(168, 85, 247, 0.4);
+    margin-top: 0.1rem;
+  }
+
+  .game-hud-rate-unit {
+    color: rgba(168, 85, 247, 0.25);
+  }
+
+  /* Header TP rate */
+  .dashboard-tp-rate {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(168, 85, 247, 0.35);
+    letter-spacing: 0.08em;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .dashboard-tp-rate.visible {
+    opacity: 1;
+  }
+
+  /* Upgrade popup */
+  .upgrade-popup {
+    position: absolute;
+    z-index: 50;
+    background: rgba(14, 14, 16, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    min-width: 160px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -100%) translateY(-12px) scale(0.95);
+    transition: opacity 0.15s ease-out, transform 0.15s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .upgrade-popup.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -100%) translateY(-12px) scale(1);
+  }
+
+  .upgrade-popup-title {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(168, 85, 247, 0.7);
+    margin-bottom: 0.25rem;
+  }
+
+  .upgrade-popup-info {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 0.4rem;
+  }
+
+  .upgrade-popup-btn {
+    display: block;
+    width: 100%;
+    padding: 0.3rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    background: rgba(168, 85, 247, 0.08);
+    border: 1px solid rgba(168, 85, 247, 0.15);
+    border-radius: 4px;
+    color: rgba(168, 85, 247, 0.4);
+    cursor: not-allowed;
+    transition: all 0.15s ease-out;
+  }
+
+  .upgrade-popup-btn.affordable {
+    background: rgba(168, 85, 247, 0.12);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: rgba(168, 85, 247, 0.7);
+    cursor: pointer;
+  }
+
+  .upgrade-popup-btn.affordable:hover {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.4);
+  }
+
+  .upgrade-popup-cost {
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    color: rgba(255, 255, 255, 0.2);
+    text-align: center;
+    margin-top: 0.2rem;
   }
 
 </style>
