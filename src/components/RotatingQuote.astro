@@ -141,7 +141,22 @@ const quotes = [
     font-size: 0.75rem;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.3);
-    min-height: 2.4em;
+    /* Fixed height to prevent layout shift when quotes rotate.
+       Sized for the longest quote (~3 lines on mobile, ~2 on desktop). */
+    height: 4.8em;
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .quote-text {
+      height: 3.2em;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .quote-text {
+      height: 2.4em;
+    }
   }
 
   .quote-author {
