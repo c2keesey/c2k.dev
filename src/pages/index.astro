@@ -249,8 +249,8 @@ import '../styles/global.css';
     </div>
     <footer class="global-footer">
       <div class="status-row">
-        <span class="status-dot" id="status-dot"></span>
-        <span class="status-text" id="status-text">connecting...</span>
+        <span class="status-dot connecting" id="status-dot"></span>
+        <span class="status-text" id="status-text">AWAITING TELEMETRY</span>
       </div>
     </footer>
   </body>
@@ -448,46 +448,79 @@ import '../styles/global.css';
     offline: '#6b7280',
   };
 
+  function setStatusState(color: string, className: string) {
+    statusDot.style.background = color;
+    statusDot.className = 'status-dot ' + className;
+  }
+
   async function updateStatus() {
     try {
       const res = await fetch('/api/status');
       const data = await res.json();
 
       if (data.status === 'offline') {
-        statusDot.style.background = STATUS_COLORS.offline;
-        statusText.textContent = 'optiplex offline';
+        setStatusState(STATUS_COLORS.offline, 'offline');
+        statusText.textContent = 'OPTIPLEX OFFLINE';
         return;
       }
 
-      statusDot.style.background = STATUS_COLORS[data.overall] ?? STATUS_COLORS.green;
+      // Determine overall state label
+      const hasErrors = data.overall === 'red';
+      const hasWarnings = data.overall === 'yellow';
 
-      const parts: string[] = ['optiplex'];
-
-      // Services
-      if (data.services.running === data.services.total) {
-        parts.push(`${data.services.total} services`);
+      if (hasErrors) {
+        setStatusState(STATUS_COLORS.red, 'advisory');
+      } else if (hasWarnings) {
+        setStatusState(STATUS_COLORS.yellow, 'warning');
       } else {
-        parts.push(`${data.services.running}/${data.services.total} services`);
+        setStatusState(STATUS_COLORS.green, 'nominal');
       }
 
-      // Crons
-      if (data.crons.error > 0) {
-        parts.push(`${data.crons.error} cron err`);
-      } else if (data.crons.ok === data.crons.total) {
-        parts.push(`${data.crons.total} crons ok`);
+      // Build status segments with priority levels
+      // Priority 1: state label (always shown)
+      // Priority 2: services summary (shown when space allows)
+      // Priority 3: vitals (shown on wider screens)
+      const segments: { text: string; priority: number }[] = [];
+
+      // State label — always first
+      if (hasErrors) {
+        segments.push({ text: 'ADVISORY', priority: 1 });
+      } else if (hasWarnings) {
+        segments.push({ text: 'STANDBY', priority: 1 });
       } else {
-        parts.push(`${data.crons.ok}/${data.crons.total} crons`);
+        segments.push({ text: 'OPERATIONAL', priority: 1 });
+      }
+
+      // Services summary
+      if (data.services.running === data.services.total) {
+        segments.push({ text: `${data.services.total} SERVICES`, priority: 2 });
+      } else {
+        segments.push({ text: `${data.services.running}/${data.services.total} SERVICES`, priority: 2 });
+      }
+
+      // Crons summary
+      if (data.crons.error > 0) {
+        segments.push({ text: `${data.crons.error} CRON FAULT`, priority: 2 });
+      } else if (data.crons.ok === data.crons.total) {
+        segments.push({ text: `${data.crons.total} CRONS`, priority: 3 });
+      } else {
+        segments.push({ text: `${data.crons.ok}/${data.crons.total} CRONS`, priority: 3 });
       }
 
       // System vitals
-      if (data.cpu !== null) parts.push(`cpu ${data.cpu}%`);
-      if (data.memory !== null) parts.push(`mem ${data.memory}%`);
-      if (data.uptime) parts.push(data.uptime);
+      if (data.cpu !== null) segments.push({ text: `CPU ${data.cpu}%`, priority: 3 });
+      if (data.memory !== null) segments.push({ text: `MEM ${data.memory}%`, priority: 3 });
+      if (data.uptime) segments.push({ text: data.uptime.toUpperCase(), priority: 4 });
 
-      statusText.textContent = parts.join(' · ');
+      // Responsive: on narrow screens, only show higher-priority segments
+      const isMobile = window.innerWidth < 640;
+      const maxPriority = isMobile ? 2 : 4;
+      const visibleSegments = segments.filter(s => s.priority <= maxPriority);
+
+      statusText.textContent = visibleSegments.map(s => s.text).join(' \u00b7 ');
     } catch {
-      statusDot.style.background = STATUS_COLORS.offline;
-      statusText.textContent = 'status unavailable';
+      setStatusState(STATUS_COLORS.offline, 'offline');
+      statusText.textContent = 'SIGNAL LOST';
     }
   }
 
@@ -846,21 +879,57 @@ import '../styles/global.css';
     border-radius: 50%;
     background: #6b7280;
     flex-shrink: 0;
-    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .status-dot.connecting {
+    animation: pulse-connecting 1.5s ease-in-out infinite;
+  }
+
+  .status-dot.nominal {
+    animation: pulse-nominal 3s ease-in-out infinite;
+  }
+
+  .status-dot.advisory {
+    animation: pulse-advisory 1s ease-in-out infinite;
+  }
+
+  .status-dot.warning {
+    animation: pulse-warning 2s ease-in-out infinite;
+  }
+
+  .status-dot.offline {
+    animation: none;
+    opacity: 0.5;
   }
 
   .status-text {
     font-family: var(--font-mono);
     font-size: 0.7rem;
     color: var(--text-muted);
-    text-transform: lowercase;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
   }
 
-  @keyframes pulse {
+  @keyframes pulse-connecting {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  @keyframes pulse-nominal {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  @keyframes pulse-advisory {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes pulse-warning {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
   }
