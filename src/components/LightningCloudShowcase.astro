@@ -45,14 +45,31 @@
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const w = canvas.offsetWidth;
-    const h = canvas.offsetHeight;
+    let w = canvas.offsetWidth;
+    let h = canvas.offsetHeight;
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.scale(dpr, dpr);
 
+    function resizeCanvas() {
+      const newW = canvas.offsetWidth;
+      const newH = canvas.offsetHeight;
+      if (newW > 0 && newH > 0 && newW !== w) {
+        w = newW;
+        h = newH;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+        cloudY = h * 0.2;
+      }
+    }
+
+    canvas.addEventListener('showcase-resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);
+
     // Cloud shape (top area)
-    const cloudY = h * 0.2;
+    let cloudY = h * 0.2;
 
     interface Segment { x1: number; y1: number; x2: number; y2: number; alpha: number; width: number; }
     interface Bolt { segments: Segment[]; born: number; flashCount: number; lastFlash: number; fading: boolean; fadeStart: number; }

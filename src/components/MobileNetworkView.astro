@@ -528,6 +528,13 @@ function initMobileNetwork() {
     card.classList.add('focused');
     container!.classList.add('has-focus');
 
+    // Tell canvases to resize to their new container width
+    setTimeout(() => {
+      showcaseContainer.querySelectorAll('canvas').forEach(canvas => {
+        canvas.dispatchEvent(new Event('showcase-resize'));
+      });
+    }, 50);
+
     // Scroll card into view
     setTimeout(() => {
       card.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -923,7 +930,7 @@ initMobileNetwork();
     overflow: hidden;
   }
 
-  /* Hide showcase's own header when embedded in a card (outer card header stays) */
+  /* Hide showcase's own header and glow when embedded in a card */
   .mn-card-showcase :global(.maia-header),
   .mn-card-showcase :global(.c2k-header),
   .mn-card-showcase :global(.df-header),
@@ -1071,16 +1078,38 @@ initMobileNetwork();
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    padding: 0 0.5rem;
     transition:
       max-height 0.35s cubic-bezier(.2, .8, .2, 1),
-      opacity 0.3s ease-out,
-      padding 0.3s ease-out;
+      opacity 0.3s ease-out;
   }
 
   .focused .mn-card-showcase {
     max-height: 600px;
     opacity: 1;
-    padding: 0.4rem 0.5rem 0;
+  }
+
+  /* Strip showcase card wrappers when embedded so they use full card width */
+  .mn-card-showcase :global(.fg-card),
+  .mn-card-showcase :global(.maia-card),
+  .mn-card-showcase :global(.c2k-card),
+  .mn-card-showcase :global(.df-card),
+  .mn-card-showcase :global(.sm-card),
+  .mn-card-showcase :global(.crn-card),
+  .mn-card-showcase :global(.lc-card) {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0.5rem 0.85rem;
+    background: transparent;
+  }
+
+  .mn-card-showcase :global(.fg-showcase),
+  .mn-card-showcase :global(.maia-showcase),
+  .mn-card-showcase :global(.c2k-showcase),
+  .mn-card-showcase :global(.df-showcase),
+  .mn-card-showcase :global(.sm-showcase),
+  .mn-card-showcase :global(.crn-showcase),
+  .mn-card-showcase :global(.lc-showcase) {
+    margin: 0;
   }
 </style>

@@ -78,11 +78,27 @@
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const w = canvas.offsetWidth;
-    const h = canvas.offsetHeight;
+    let w = canvas.offsetWidth;
+    let h = canvas.offsetHeight;
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.scale(dpr, dpr);
+
+    function resizeCanvas() {
+      const newW = canvas.offsetWidth;
+      const newH = canvas.offsetHeight;
+      if (newW > 0 && newH > 0 && newW !== w) {
+        w = newW;
+        h = newH;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+      }
+    }
+
+    canvas.addEventListener('showcase-resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);
 
     // Real ring layout: 16 rings, wrist (21) to fingertip (10), total 300
     const ringSizes = [21, 27, 25, 23, 23, 22, 20, 19, 19, 19, 17, 16, 15, 12, 12, 10];

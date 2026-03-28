@@ -46,11 +46,27 @@
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = canvas.offsetWidth * dpr;
-    canvas.height = canvas.offsetHeight * dpr;
+    let w = canvas.offsetWidth;
+    let h = canvas.offsetHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
     ctx.scale(dpr, dpr);
-    const w = canvas.offsetWidth;
-    const h = canvas.offsetHeight;
+
+    function resizeCanvas() {
+      const newW = canvas.offsetWidth;
+      const newH = canvas.offsetHeight;
+      if (newW > 0 && newH > 0 && newW !== w) {
+        w = newW;
+        h = newH;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+      }
+    }
+
+    canvas.addEventListener('showcase-resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);
 
     // Generate "map" points
     interface MapPoint {
