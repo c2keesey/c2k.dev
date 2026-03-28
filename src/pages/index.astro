@@ -358,6 +358,8 @@ import '../styles/global.css';
         panels[activeIndex]?.querySelectorAll('.text-scramble').forEach(el => {
           el.dispatchEvent(new Event('scramble:trigger'));
         });
+        // Sync mobile bottom nav
+        window.dispatchEvent(new CustomEvent('nav:update', { detail: { index: activeIndex } }));
       }
     }, 100);
   }, { passive: true });
@@ -411,6 +413,8 @@ import '../styles/global.css';
         panels[index]?.querySelectorAll('.text-scramble').forEach(el => {
           el.dispatchEvent(new Event('scramble:trigger'));
         });
+        // Sync mobile bottom nav
+        window.dispatchEvent(new CustomEvent('nav:update', { detail: { index } }));
       }
     }
   }
@@ -427,6 +431,11 @@ import '../styles/global.css';
       navigateToPanel(i);
     });
   });
+
+  // Mobile bottom nav: listen for tab clicks
+  window.addEventListener('nav:goto', ((e: CustomEvent) => {
+    navigateToPanel(e.detail.index);
+  }) as EventListener);
 
   // Position indicator on load after fonts
   document.fonts?.ready.then(() => {
@@ -644,6 +653,17 @@ import '../styles/global.css';
 
   .swipe-container::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Mobile: account for bottom nav instead of footer */
+  @media (max-width: 767px) {
+    .swipe-container {
+      height: calc(100dvh - 57px - 56px - env(safe-area-inset-bottom, 0px));
+    }
+
+    .global-footer {
+      display: none;
+    }
   }
 
   @media (min-width: 768px) {
