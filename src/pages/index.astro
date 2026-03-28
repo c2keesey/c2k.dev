@@ -214,14 +214,14 @@ import '../styles/global.css';
 
 
             <div class="fetch-colors" id="fetch-colors">
-              <span class="fetch-swatch" style="background: #a855f7;"></span>
-              <span class="fetch-swatch" style="background: #f97316;"></span>
-              <span class="fetch-swatch" style="background: #22c55e;"></span>
-              <span class="fetch-swatch" style="background: #3b82f6;"></span>
-              <span class="fetch-swatch" style="background: #ef4444;"></span>
-              <span class="fetch-swatch" style="background: #eab308;"></span>
-              <span class="fetch-swatch" style="background: #06b6d4;"></span>
-              <span class="fetch-swatch" style="background: #e4e4e7;"></span>
+              <button class="fetch-swatch" style="background: #a855f7;" data-hex="#a855f7" data-name="purple" aria-label="Purple #a855f7"></button>
+              <button class="fetch-swatch" style="background: #f97316;" data-hex="#f97316" data-name="orange" aria-label="Orange #f97316"></button>
+              <button class="fetch-swatch" style="background: #22c55e;" data-hex="#22c55e" data-name="green" aria-label="Green #22c55e"></button>
+              <button class="fetch-swatch" style="background: #3b82f6;" data-hex="#3b82f6" data-name="blue" aria-label="Blue #3b82f6"></button>
+              <button class="fetch-swatch" style="background: #ef4444;" data-hex="#ef4444" data-name="red" aria-label="Red #ef4444"></button>
+              <button class="fetch-swatch" style="background: #eab308;" data-hex="#eab308" data-name="yellow" aria-label="Yellow #eab308"></button>
+              <button class="fetch-swatch" style="background: #06b6d4;" data-hex="#06b6d4" data-name="cyan" aria-label="Cyan #06b6d4"></button>
+              <button class="fetch-swatch" style="background: #e4e4e7;" data-hex="#e4e4e7" data-name="zinc" aria-label="Zinc #e4e4e7"></button>
             </div>
           </div>
 
@@ -502,6 +502,34 @@ import '../styles/global.css';
       window.location.href = '/' + location.hash;
     }
     lastFooterTap = now;
+  });
+
+  // Color swatch tooltips
+  document.querySelectorAll<HTMLButtonElement>('.fetch-swatch').forEach(swatch => {
+    const hex = swatch.dataset.hex || '';
+    const name = swatch.dataset.name || '';
+
+    const tooltip = document.createElement('div');
+    tooltip.className = 'swatch-tooltip';
+    tooltip.innerHTML = `<span class="swatch-hex">${hex}</span><span class="swatch-name">${name}</span>`;
+    swatch.appendChild(tooltip);
+
+    // Desktop: hover
+    swatch.addEventListener('mouseenter', () => tooltip.classList.add('visible'));
+    swatch.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+
+    // Mobile: tap to toggle, tap elsewhere to dismiss
+    swatch.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasVisible = tooltip.classList.contains('visible');
+      // Close all other tooltips
+      document.querySelectorAll('.swatch-tooltip.visible').forEach(t => t.classList.remove('visible'));
+      if (!wasVisible) tooltip.classList.add('visible');
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.swatch-tooltip.visible').forEach(t => t.classList.remove('visible'));
   });
 
   // Currently building
@@ -966,13 +994,13 @@ import '../styles/global.css';
   }
 
   .fetch-link {
-    color: rgba(0, 220, 255, 0.7);
+    color: rgba(6, 182, 212, 0.7);
     text-decoration: none;
     transition: color 0.2s;
   }
 
   .fetch-link:hover {
-    color: rgba(0, 220, 255, 1);
+    color: rgba(6, 182, 212, 1);
   }
 
   .fetch-accent {
@@ -991,6 +1019,72 @@ import '../styles/global.css';
     width: 16px;
     height: 16px;
     border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  }
+
+  .fetch-swatch:hover {
+    transform: scale(1.3);
+    box-shadow: 0 0 8px currentColor;
+  }
+
+  .fetch-swatch:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.4);
+    outline-offset: 2px;
+  }
+
+  .swatch-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: #1c1c1f;
+    border: 1px solid #27272a;
+    border-radius: 6px;
+    padding: 0.3rem 0.5rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+    z-index: 10;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    line-height: 1.3;
+  }
+
+  .swatch-tooltip.visible {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
+  .swatch-tooltip .swatch-hex {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
+  .swatch-tooltip .swatch-name {
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    font-size: 0.55rem;
+    letter-spacing: 0.04em;
+  }
+
+  .swatch-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #27272a;
   }
 
   /* About blurb */

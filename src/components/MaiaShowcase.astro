@@ -74,7 +74,7 @@
       lifespan: number; // total ms this dot lives
     }
     const points: MapPoint[] = [];
-    const colors = ['rgba(0, 220, 255, 0.6)', 'rgba(132, 204, 22, 0.5)', 'rgba(0, 180, 210, 0.4)'];
+    const colors = ['rgba(6, 182, 212, 0.6)', 'rgba(132, 204, 22, 0.5)', 'rgba(6, 182, 212, 0.4)'];
 
     function spawnPoint(time: number) {
       points.push({
@@ -123,7 +123,7 @@
       ctx.clearRect(0, 0, w, h);
 
       // Draw grid lines
-      ctx.strokeStyle = 'rgba(0, 120, 140, 0.1)';
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
       ctx.lineWidth = 0.5;
       for (let x = 0; x < w; x += 20) {
         ctx.beginPath();
@@ -195,8 +195,8 @@
   .maia-card {
     display: block;
     position: relative;
-    background: #00272b;
-    border: 1px solid rgba(0, 120, 140, 0.3);
+    background: #032a2f;
+    border: 1px solid rgba(6, 182, 212, 0.2);
     border-radius: 12px;
     padding: 1.75rem;
     overflow: hidden;
@@ -224,8 +224,8 @@
     font-family: var(--font-mono);
     font-size: 0.65rem;
     padding: 0.15rem 0.5rem;
-    background: rgba(0, 180, 210, 0.2);
-    color: rgba(0, 220, 255, 0.8);
+    background: rgba(6, 182, 212, 0.2);
+    color: rgba(6, 182, 212, 0.85);
     border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -248,7 +248,7 @@
   /* Mini map */
   .maia-mini-map {
     background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(0, 120, 140, 0.2);
+    border: 1px solid rgba(6, 182, 212, 0.15);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 0.75rem;
@@ -263,9 +263,9 @@
   .maia-query {
     font-family: var(--font-mono);
     font-size: 0.7rem;
-    color: rgba(0, 220, 255, 0.6);
+    color: rgba(6, 182, 212, 0.6);
     padding: 0.4rem 0.6rem;
-    border-top: 1px solid rgba(0, 120, 140, 0.15);
+    border-top: 1px solid rgba(6, 182, 212, 0.12);
     min-height: 1.5rem;
   }
 
@@ -294,12 +294,12 @@
   .maia-link {
     font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: rgba(0, 220, 255, 0.5);
+    color: rgba(6, 182, 212, 0.5);
     text-decoration: none;
     transition: color 0.2s;
   }
 
   .maia-link:hover {
-    color: rgba(0, 220, 255, 0.9);
+    color: rgba(6, 182, 212, 0.9);
   }
 </style>
