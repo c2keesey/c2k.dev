@@ -255,10 +255,13 @@
   }
 
   .terminal {
-    background: #0d0d0f;
-    border: 1px solid var(--border);
+    background: rgba(13, 13, 15, 0.65);
+    border: 1px solid rgba(168, 85, 247, 0.12);
     border-radius: 10px;
     overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
   }
 
   .terminal-chrome {
@@ -266,7 +269,7 @@
     align-items: center;
     gap: 6px;
     padding: 10px 14px;
-    background: #161618;
+    background: rgba(22, 22, 24, 0.8);
     border-bottom: 1px solid var(--border);
   }
 
