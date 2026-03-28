@@ -53,19 +53,49 @@ import '../styles/global.css';
                 <a href="https://linkedin.com/in/c2keesey" class="text-scramble" data-text="linkedin" data-delay="350" data-always="false" target="_blank" rel="noopener">linkedin</a>
               </div>
             </div>
+            <RotatingQuote />
           </section>
 
-          <RotatingQuote />
+          <div class="home-grid">
+            <div class="home-grid-left">
+              <div class="building-section" id="building-section">
+                <div class="building-header">
+                  <span class="building-pulse"></span>
+                  <span class="building-label">currently building</span>
+                </div>
+                <div class="building-repos" id="building-repos"></div>
+              </div>
 
-          <div class="building-section" id="building-section">
-            <div class="building-header">
-              <span class="building-pulse"></span>
-              <span class="building-label">currently building</span>
+              <div class="systems-widget" id="systems-widget">
+                <div class="systems-header">
+                  <span class="systems-dot"></span>
+                  <span class="systems-label">systems</span>
+                </div>
+                <div class="systems-body" id="systems-body">
+                  <div class="systems-stat">
+                    <span class="systems-stat-val" id="sys-services">--</span>
+                    <span class="systems-stat-key">services</span>
+                  </div>
+                  <div class="systems-stat">
+                    <span class="systems-stat-val" id="sys-crons">--</span>
+                    <span class="systems-stat-key">crons</span>
+                  </div>
+                  <div class="systems-stat">
+                    <span class="systems-stat-val" id="sys-cpu">--%</span>
+                    <span class="systems-stat-key">cpu</span>
+                  </div>
+                  <div class="systems-stat">
+                    <span class="systems-stat-val" id="sys-mem">--%</span>
+                    <span class="systems-stat-key">mem</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="building-repos" id="building-repos"></div>
-          </div>
 
-          <MaiaShowcase />
+            <div class="home-grid-right">
+              <MaiaShowcase />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -133,116 +163,121 @@ import '../styles/global.css';
             <TextScramble text="About" tag="h1" class="page-title" always />
           </section>
 
-          <!-- Fastfetch-style readout -->
-          <div class="about-fetch">
-            <div class="fetch-block">
-              <div class="fetch-row">
-                <span class="fetch-key">name</span>
-                <span class="fetch-val text-scramble" data-text="Christopher Keesey" data-delay="100" data-always="false">Christopher Keesey</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">handle</span>
-                <span class="fetch-val text-scramble" data-text="C2K" data-delay="150" data-always="false">C2K</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">role</span>
-                <span class="fetch-val text-scramble" data-text="CTO · context engineer" data-delay="200" data-always="false">CTO · context engineer</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">company</span>
-                <span class="fetch-val"><a href="https://maia-analytics.com" class="fetch-link text-scramble" data-text="MAIA Analytics" data-delay="250" data-always="false" target="_blank" rel="noopener">MAIA Analytics</a></span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">location</span>
-                <span class="fetch-val text-scramble" data-text="Outer Sunset, SF" data-delay="300" data-always="false">Outer Sunset, SF</span>
+          <div class="about-grid">
+            <div class="about-grid-left">
+              <!-- Fastfetch-style readout -->
+              <div class="about-fetch">
+                <div class="fetch-block">
+                  <div class="fetch-row">
+                    <span class="fetch-key">name</span>
+                    <span class="fetch-val text-scramble" data-text="Christopher Keesey" data-delay="100" data-always="false">Christopher Keesey</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">handle</span>
+                    <span class="fetch-val text-scramble" data-text="C2K" data-delay="150" data-always="false">C2K</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">role</span>
+                    <span class="fetch-val text-scramble" data-text="CTO · context engineer" data-delay="200" data-always="false">CTO · context engineer</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">company</span>
+                    <span class="fetch-val"><a href="https://maia-analytics.com" class="fetch-link text-scramble" data-text="MAIA Analytics" data-delay="250" data-always="false" target="_blank" rel="noopener">MAIA Analytics</a></span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">location</span>
+                    <span class="fetch-val text-scramble" data-text="Outer Sunset, SF" data-delay="300" data-always="false">Outer Sunset, SF</span>
+                  </div>
+                </div>
+
+                <div class="fetch-divider"></div>
+
+                <div class="fetch-block">
+                  <div class="fetch-row">
+                    <span class="fetch-key">editor</span>
+                    <span class="fetch-val">Claude Code</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">terminal</span>
+                    <span class="fetch-val">Ghostty + Tmux</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">keyboard</span>
+                    <span class="fetch-val">Corne 42-key split</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">host</span>
+                    <span class="fetch-val">OptiPlex micro · Ubuntu</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">network</span>
+                    <span class="fetch-val">Tailscale + Cloudflare Tunnel</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">whip</span>
+                    <span class="fetch-val">Maroon Honda Odyssey</span>
+                  </div>
+                </div>
+
+                <div class="fetch-divider"></div>
+
+                <div class="fetch-block">
+                  <div class="fetch-row">
+                    <span class="fetch-key">languages</span>
+                    <span class="fetch-val">Natural Language · TypeScript · Python · Go</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">frontend</span>
+                    <span class="fetch-val">React · Astro · Tailwind</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">backend</span>
+                    <span class="fetch-val">FastAPI · Node · Postgres</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">infra</span>
+                    <span class="fetch-val">GCP · Docker · systemd · Cloudflare</span>
+                  </div>
+                  <div class="fetch-row">
+                    <span class="fetch-key">ai</span>
+                    <span class="fetch-val">Claude Code · MCP · Pydantic AI</span>
+                  </div>
+                </div>
+
+                <div class="fetch-colors" id="fetch-colors">
+                  <span class="fetch-swatch" style="background: #a855f7;"></span>
+                  <span class="fetch-swatch" style="background: #f97316;"></span>
+                  <span class="fetch-swatch" style="background: #22c55e;"></span>
+                  <span class="fetch-swatch" style="background: #3b82f6;"></span>
+                  <span class="fetch-swatch" style="background: #ef4444;"></span>
+                  <span class="fetch-swatch" style="background: #eab308;"></span>
+                  <span class="fetch-swatch" style="background: #06b6d4;"></span>
+                  <span class="fetch-swatch" style="background: #e4e4e7;"></span>
+                </div>
               </div>
             </div>
 
-            <div class="fetch-divider"></div>
+            <div class="about-grid-right">
+              <div class="about-blurb">
+                <p>I'm Christopher Keesey — C2K. I'm building MAIA Analytics, an AI-native geospatial platform where you ask questions and get maps. Day to day that means LLM orchestration, agentic workflows, and a lot of property data pipelines — TypeScript, Python, FastAPI, Postgres, Claude Code. I care about simple code, minimal abstraction, and shipping.</p>
+                <p>When I'm not building, I'm surfing the Outer Sunset, skiing backcountry, or mixing dubstep and drum & bass. I solder things that don't need to exist — LED gauntlets, lightning clouds, split keyboards. Everything I use is version-controlled, self-hosted where it matters, and accessible from anywhere. This site is the public layer of that system.</p>
+              </div>
 
-            <div class="fetch-block">
-              <div class="fetch-row">
-                <span class="fetch-key">editor</span>
-                <span class="fetch-val">Claude Code</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">terminal</span>
-                <span class="fetch-val">Ghostty + Tmux</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">keyboard</span>
-                <span class="fetch-val">Corne 42-key split</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">host</span>
-                <span class="fetch-val">OptiPlex micro · Ubuntu</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">network</span>
-                <span class="fetch-val">Tailscale + Cloudflare Tunnel</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">whip</span>
-                <span class="fetch-val">Maroon Honda Odyssey</span>
+              <div class="about-links">
+                <a href="https://github.com/c2keesey" class="about-link-card" target="_blank" rel="noopener">
+                  <span class="about-link-name">GitHub</span>
+                  <span class="about-link-handle">c2keesey</span>
+                </a>
+                <a href="https://x.com/c2keesey" class="about-link-card" target="_blank" rel="noopener">
+                  <span class="about-link-name">X</span>
+                  <span class="about-link-handle">c2keesey</span>
+                </a>
+                <a href="https://linkedin.com/in/c2keesey" class="about-link-card" target="_blank" rel="noopener">
+                  <span class="about-link-name">LinkedIn</span>
+                  <span class="about-link-handle">c2keesey</span>
+                </a>
               </div>
             </div>
-
-            <div class="fetch-divider"></div>
-
-            <div class="fetch-block">
-              <div class="fetch-row">
-                <span class="fetch-key">languages</span>
-                <span class="fetch-val">Natural Language · TypeScript · Python · Go</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">frontend</span>
-                <span class="fetch-val">React · Astro · Tailwind</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">backend</span>
-                <span class="fetch-val">FastAPI · Node · Postgres</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">infra</span>
-                <span class="fetch-val">GCP · Docker · systemd · Cloudflare</span>
-              </div>
-              <div class="fetch-row">
-                <span class="fetch-key">ai</span>
-                <span class="fetch-val">Claude Code · MCP · Pydantic AI</span>
-              </div>
-            </div>
-
-
-            <div class="fetch-colors" id="fetch-colors">
-              <span class="fetch-swatch" style="background: #a855f7;"></span>
-              <span class="fetch-swatch" style="background: #f97316;"></span>
-              <span class="fetch-swatch" style="background: #22c55e;"></span>
-              <span class="fetch-swatch" style="background: #3b82f6;"></span>
-              <span class="fetch-swatch" style="background: #ef4444;"></span>
-              <span class="fetch-swatch" style="background: #eab308;"></span>
-              <span class="fetch-swatch" style="background: #06b6d4;"></span>
-              <span class="fetch-swatch" style="background: #e4e4e7;"></span>
-            </div>
-          </div>
-
-          <div class="about-blurb">
-            <p>I'm Christopher Keesey — C2K. I'm building MAIA Analytics, an AI-native geospatial platform where you ask questions and get maps. Day to day that means LLM orchestration, agentic workflows, and a lot of property data pipelines — TypeScript, Python, FastAPI, Postgres, Claude Code. I care about simple code, minimal abstraction, and shipping.</p>
-            <p>When I'm not building, I'm surfing the Outer Sunset, skiing backcountry, or mixing dubstep and drum & bass. I solder things that don't need to exist — LED gauntlets, lightning clouds, split keyboards. Everything I use is version-controlled, self-hosted where it matters, and accessible from anywhere. This site is the public layer of that system.</p>
-          </div>
-
-          <div class="about-links">
-            <a href="https://github.com/c2keesey" class="about-link-card" target="_blank" rel="noopener">
-              <span class="about-link-name">GitHub</span>
-              <span class="about-link-handle">c2keesey</span>
-            </a>
-            <a href="https://x.com/c2keesey" class="about-link-card" target="_blank" rel="noopener">
-              <span class="about-link-name">X</span>
-              <span class="about-link-handle">c2keesey</span>
-            </a>
-            <a href="https://linkedin.com/in/c2keesey" class="about-link-card" target="_blank" rel="noopener">
-              <span class="about-link-name">LinkedIn</span>
-              <span class="about-link-handle">c2keesey</span>
-            </a>
           </div>
         </div>
       </section>
@@ -485,6 +520,16 @@ import '../styles/global.css';
       if (data.uptime) parts.push(data.uptime);
 
       statusText.textContent = parts.join(' · ');
+
+      // Populate systems widget
+      const sysServices = document.getElementById('sys-services');
+      const sysCrons = document.getElementById('sys-crons');
+      const sysCpu = document.getElementById('sys-cpu');
+      const sysMem = document.getElementById('sys-mem');
+      if (sysServices) sysServices.textContent = `${data.services.running}/${data.services.total}`;
+      if (sysCrons) sysCrons.textContent = `${data.crons.ok}/${data.crons.total}`;
+      if (sysCpu) sysCpu.textContent = data.cpu !== null ? `${data.cpu}%` : '--';
+      if (sysMem) sysMem.textContent = data.memory !== null ? `${data.memory}%` : '--';
     } catch {
       statusDot.style.background = STATUS_COLORS.offline;
       statusText.textContent = 'status unavailable';
@@ -617,9 +662,16 @@ import '../styles/global.css';
     padding: 3rem 1.5rem;
   }
 
+  @media (min-width: 1024px) {
+    [data-page="/"] > .panel-content,
+    [data-page="/about"] > .panel-content {
+      max-width: 92%;
+    }
+  }
+
   /* Home */
   .hero {
-    padding: 2rem 0 2.5rem;
+    padding: 2rem 0 1.5rem;
   }
 
   .hero-title-wrapper {
@@ -811,6 +863,118 @@ import '../styles/global.css';
 
   .building-row:hover .building-time {
     color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Home grid — two columns on desktop */
+  .home-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .home-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+  }
+
+  .home-grid-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .home-grid-right {
+    min-width: 0;
+  }
+
+  /* Systems widget */
+  .systems-widget {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .systems-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem 0;
+  }
+
+  .systems-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+    animation: building-glow 3s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  .systems-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .systems-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem 1rem;
+  }
+
+  .systems-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+  }
+
+  .systems-stat-val {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .systems-stat-key {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* About grid — two columns on desktop */
+  .about-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+  }
+
+  .about-grid-left {
+    min-width: 0;
+  }
+
+  .about-grid-right {
+    min-width: 0;
   }
 
   .hero-sub {

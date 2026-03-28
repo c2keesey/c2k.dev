@@ -40,8 +40,8 @@ const quotes = [
 ---
 
 <div class="rotating-quote" id="rotating-quote">
-  <div class="quote-text" id="quote-text">{quotes[0].text}</div>
-  <div class="quote-author" id="quote-author">— {quotes[0].author}</div>
+  <div class="quote-text" id="quote-text">// {quotes[0].text}</div>
+  <div class="quote-author" id="quote-author">// — {quotes[0].author}</div>
 </div>
 
 <script define:vars={{ quotes }}>
@@ -115,13 +115,13 @@ const quotes = [
     const INTERVAL = 12000;
 
     // Initial scramble on load
-    scrambleText(textEl, quotes[0].text);
-    scrambleText(authorEl, `— ${quotes[0].author}`);
+    scrambleText(textEl, `// ${quotes[0].text}`);
+    scrambleText(authorEl, `// — ${quotes[0].author}`);
 
     setInterval(() => {
       index = (index + 1) % quotes.length;
-      scrambleText(textEl, quotes[index].text);
-      scrambleText(authorEl, `— ${quotes[index].author}`);
+      scrambleText(textEl, `// ${quotes[index].text}`);
+      scrambleText(authorEl, `// — ${quotes[index].author}`);
     }, INTERVAL);
   }
 
@@ -131,26 +131,23 @@ const quotes = [
 
 <style>
   .rotating-quote {
-    padding: 1.25rem 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    margin: 0 0 1.5rem;
+    padding: 0.5rem 0 0;
+    margin: 0.75rem 0 0;
+    opacity: 0.8;
   }
 
   .quote-text {
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
     line-height: 1.6;
-    color: var(--text-muted);
-    font-style: italic;
-    min-height: 3em;
+    color: rgba(255, 255, 255, 0.3);
+    min-height: 2.4em;
   }
 
   .quote-author {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: 0.75rem;
-    opacity: 0.7;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.2);
+    margin-top: 0.35rem;
   }
 </style>
