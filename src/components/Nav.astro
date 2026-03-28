@@ -6,7 +6,8 @@ const links = [
 ];
 ---
 
-<nav>
+<!-- Desktop top nav -->
+<nav class="top-nav">
   <div class="nav-inner">
     <a href="/" class="logo">C2K</a>
     <div class="nav-links" id="nav-links">
@@ -20,8 +21,38 @@ const links = [
   </div>
 </nav>
 
+<!-- Mobile bottom nav -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bottom-tab" data-index="0" aria-label="Home">
+      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="bottom-tab" data-index="1" aria-label="Projects">
+      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+      <span class="tab-label">Projects</span>
+    </button>
+    <button class="bottom-tab" data-index="2" aria-label="About">
+      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span class="tab-label">About</span>
+    </button>
+  </div>
+</nav>
+
 <style>
-  nav {
+  /* ── Desktop top nav ── */
+  .top-nav {
     position: sticky;
     top: 0;
     z-index: 100;
@@ -87,4 +118,137 @@ const links = [
     pointer-events: none;
     z-index: 0;
   }
+
+  /* Hide top nav links on mobile (keep logo) */
+  @media (max-width: 767px) {
+    .nav-links {
+      display: none;
+    }
+  }
+
+  /* ── Mobile bottom nav ── */
+  .bottom-nav {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .bottom-nav {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 11, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .bottom-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 56px;
+      padding: 0 16px;
+    }
+
+    .bottom-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      height: 40px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 20px;
+      padding: 0 14px;
+      transition: background 250ms ease-out, color 250ms ease-out, padding 250ms ease-out, gap 250ms ease-out;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .tab-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      transition: color 250ms ease-out;
+    }
+
+    .tab-label {
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      transition: max-width 250ms ease-out, opacity 200ms ease-out;
+    }
+
+    /* Active state */
+    .bottom-tab[data-active="true"] {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--purple);
+      gap: 8px;
+      padding: 0 18px;
+    }
+
+    .bottom-tab[data-active="true"] .tab-label {
+      max-width: 80px;
+      opacity: 1;
+    }
+
+    .bottom-tab[data-active="true"] .tab-icon {
+      color: var(--purple);
+    }
+  }
 </style>
+
+<script>
+  function initBottomNav() {
+    const bottomNav = document.getElementById('bottom-nav');
+    if (!bottomNav) return;
+
+    const tabs = bottomNav.querySelectorAll<HTMLButtonElement>('.bottom-tab');
+
+    // Set active tab based on URL
+    function setActiveTab(index: number) {
+      tabs.forEach((tab, i) => {
+        tab.setAttribute('data-active', String(i === index));
+      });
+    }
+
+    // Determine initial active tab from URL
+    const pages = ['/', '/projects', '/about'];
+    const path = location.pathname;
+    const initialIndex = pages.findIndex(p =>
+      p === '/' ? path === '/' || path === '' : path.startsWith(p)
+    );
+    setActiveTab(Math.max(0, initialIndex));
+
+    // Listen for clicks — dispatch to the swipe container
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const index = parseInt(tab.dataset.index || '0', 10);
+        setActiveTab(index);
+        // Dispatch custom event that index.astro's script listens for
+        window.dispatchEvent(new CustomEvent('nav:goto', { detail: { index } }));
+      });
+    });
+
+    // Listen for scroll-driven page changes to sync the active tab
+    window.addEventListener('nav:update', ((e: CustomEvent) => {
+      setActiveTab(e.detail.index);
+    }) as EventListener);
+  }
+
+  // Run on load and after Astro view transitions
+  initBottomNav();
+  document.addEventListener('astro:after-swap', initBottomNav);
+</script>
