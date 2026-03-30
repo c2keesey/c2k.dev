@@ -141,7 +141,7 @@ const links = [
       left: 0;
       right: 0;
       z-index: 100;
-      padding: 0 0 calc(20px + env(safe-area-inset-bottom, 0px));
+      padding: 0 0 calc(28px + env(safe-area-inset-bottom, 0px));
       pointer-events: none;
     }
 
@@ -210,7 +210,7 @@ const links = [
       overflow: hidden;
       width: 0;
       opacity: 0;
-      transition: none;
+      transition: opacity 120ms ease-out;
     }
 
     /* Active state */
@@ -222,7 +222,7 @@ const links = [
     .bottom-tab[data-active="true"] .tab-label {
       width: auto;
       opacity: 1;
-      transition: opacity 150ms ease-out 100ms;
+      transition: opacity 250ms ease-in-out 60ms;
     }
   }
 </style>
