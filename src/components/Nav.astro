@@ -232,40 +232,44 @@ const links = [
     const bottomNav = document.getElementById('bottom-nav');
     if (!bottomNav) return;
 
-    const pill = document.getElementById('bottom-nav-pill') as HTMLElement;
     const tabs = bottomNav.querySelectorAll<HTMLButtonElement>('.bottom-tab');
     const highlight = document.getElementById('bottom-nav-highlight') as HTMLElement;
 
+    // Pure math — no DOM measurement needed
+    // Pill: 220px, padding: 5px each side → inner: 210px
+    // Flex: inactive=1, active=2.2, total=4.2
+    const PADDING = 5;
+    const INNER = 210;
+    const FLEX_INACTIVE = 1;
+    const FLEX_ACTIVE = 2.2;
+    const TOTAL_FLEX = FLEX_INACTIVE * 2 + FLEX_ACTIVE; // 4.2
+    const W_INACTIVE = INNER / TOTAL_FLEX * FLEX_INACTIVE; // 50px
+    const W_ACTIVE = INNER / TOTAL_FLEX * FLEX_ACTIVE;     // 110px
+
     function moveHighlight(index: number) {
-      if (!highlight || !pill) return;
-      const tab = tabs[index];
-      if (!tab) return;
-      const pillRect = pill.getBoundingClientRect();
-      const tabRect = tab.getBoundingClientRect();
-      highlight.style.left = `${tabRect.left - pillRect.left}px`;
-      highlight.style.width = `${tabRect.width}px`;
+      if (!highlight) return;
+      // Active tab position = padding + (inactive tabs before it) * W_INACTIVE
+      const left = PADDING + index * W_INACTIVE;
+      highlight.style.left = `${left}px`;
+      highlight.style.width = `${W_ACTIVE}px`;
     }
 
     function setActiveTab(index: number) {
       tabs.forEach((tab, i) => {
         tab.setAttribute('data-active', String(i === index));
       });
-      // Force reflow so display:none/block takes effect, then measure
-      pill.offsetHeight;
       moveHighlight(index);
     }
 
     // Determine initial active tab from URL
     const pages = ['/', '/projects', '/about'];
     const path = location.pathname;
-    const initialIndex = pages.findIndex(p =>
+    const activeIdx = Math.max(0, pages.findIndex(p =>
       p === '/' ? path === '/' || path === '' : path.startsWith(p)
-    );
+    ));
 
-    // Set initial state without any transitions
+    // Set initial state without transitions
     if (highlight) highlight.style.transition = 'none';
-    // Force labels to appear instantly on first render
-    const activeIdx = Math.max(0, initialIndex);
     tabs.forEach((tab, i) => {
       tab.setAttribute('data-active', String(i === activeIdx));
       const label = tab.querySelector('.tab-label') as HTMLElement;
@@ -274,18 +278,15 @@ const links = [
         label.style.opacity = '1';
       }
     });
-    pill.offsetHeight;
     moveHighlight(activeIdx);
     requestAnimationFrame(() => {
       if (highlight) highlight.style.transition = '';
       tabs.forEach((tab) => {
         const label = tab.querySelector('.tab-label') as HTMLElement;
-        if (label) label.style.transition = '';
-        if (label) label.style.opacity = '';
+        if (label) { label.style.transition = ''; label.style.opacity = ''; }
       });
     });
 
-    // Listen for clicks
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         const index = parseInt(tab.dataset.index || '0', 10);
@@ -294,7 +295,6 @@ const links = [
       });
     });
 
-    // Listen for scroll-driven page changes
     window.addEventListener('nav:update', ((e: CustomEvent) => {
       setActiveTab(e.detail.index);
     }) as EventListener);
