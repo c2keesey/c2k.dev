@@ -23,16 +23,17 @@ const links = [
 
 <!-- Mobile bottom nav -->
 <nav class="bottom-nav" id="bottom-nav">
-  <div class="bottom-nav-inner">
+  <div class="bottom-nav-pill" id="bottom-nav-pill">
+    <div class="bottom-nav-highlight" id="bottom-nav-highlight"></div>
     <button class="bottom-tab" data-index="0" aria-label="Home">
-      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
         <polyline points="9 22 9 12 15 12 15 22"></polyline>
       </svg>
       <span class="tab-label">Home</span>
     </button>
     <button class="bottom-tab" data-index="1" aria-label="Projects">
-      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="3" width="7" height="7"></rect>
         <rect x="14" y="3" width="7" height="7"></rect>
         <rect x="14" y="14" width="7" height="7"></rect>
@@ -41,7 +42,7 @@ const links = [
       <span class="tab-label">Projects</span>
     </button>
     <button class="bottom-tab" data-index="2" aria-label="About">
-      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
         <circle cx="12" cy="7" r="4"></circle>
       </svg>
@@ -133,79 +134,91 @@ const links = [
 
   @media (max-width: 767px) {
     .bottom-nav {
-      display: block;
+      display: flex;
+      justify-content: center;
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       z-index: 100;
-      background: rgba(10, 10, 11, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      padding: 0 0 calc(20px + env(safe-area-inset-bottom, 0px));
+      pointer-events: none;
     }
 
-    .bottom-nav-inner {
+    .bottom-nav-pill {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      height: 56px;
-      padding: 0 16px;
+      position: relative;
+      gap: 2px;
+      padding: 5px;
+      background: rgba(28, 28, 32, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4),
+                  0 0 0 0.5px rgba(255, 255, 255, 0.04) inset;
+      pointer-events: auto;
+    }
+
+    .bottom-nav-highlight {
+      position: absolute;
+      top: 5px;
+      height: calc(100% - 10px);
+      border-radius: 16px;
+      background: rgba(168, 85, 247, 0.13);
+      pointer-events: none;
+      transition: left 300ms cubic-bezier(.4, 0, .2, 1),
+                  width 300ms cubic-bezier(.4, 0, .2, 1);
+      will-change: left, width;
     }
 
     .bottom-tab {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0;
-      height: 40px;
+      gap: 7px;
+      height: 42px;
+      padding: 0 16px;
       border: none;
       background: transparent;
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.35);
       cursor: pointer;
-      border-radius: 20px;
-      padding: 0 14px;
-      transition: background 250ms ease-out, color 250ms ease-out, padding 250ms ease-out, gap 250ms ease-out;
-      overflow: hidden;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      border-radius: 16px;
+      position: relative;
+      z-index: 1;
+      transition: color 250ms ease-out;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .tab-icon {
       width: 20px;
       height: 20px;
       flex-shrink: 0;
-      transition: color 250ms ease-out;
     }
 
     .tab-label {
-      max-width: 0;
-      opacity: 0;
-      overflow: hidden;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: capitalize;
       white-space: nowrap;
-      transition: max-width 250ms ease-out, opacity 200ms ease-out;
+      overflow: hidden;
+      width: 0;
+      opacity: 0;
+      transition: none;
     }
 
     /* Active state */
     .bottom-tab[data-active="true"] {
-      background: rgba(168, 85, 247, 0.15);
       color: var(--purple);
-      gap: 8px;
-      padding: 0 18px;
     }
 
     .bottom-tab[data-active="true"] .tab-label {
-      max-width: 80px;
+      width: auto;
       opacity: 1;
-    }
-
-    .bottom-tab[data-active="true"] .tab-icon {
-      color: var(--purple);
+      transition: opacity 150ms ease-out 80ms;
     }
   }
 </style>
@@ -215,13 +228,27 @@ const links = [
     const bottomNav = document.getElementById('bottom-nav');
     if (!bottomNav) return;
 
+    const pill = document.getElementById('bottom-nav-pill') as HTMLElement;
     const tabs = bottomNav.querySelectorAll<HTMLButtonElement>('.bottom-tab');
+    const highlight = document.getElementById('bottom-nav-highlight') as HTMLElement;
 
-    // Set active tab based on URL
+    function moveHighlight(index: number) {
+      if (!highlight || !pill) return;
+      const tab = tabs[index];
+      if (!tab) return;
+      const pillRect = pill.getBoundingClientRect();
+      const tabRect = tab.getBoundingClientRect();
+      highlight.style.left = `${tabRect.left - pillRect.left}px`;
+      highlight.style.width = `${tabRect.width}px`;
+    }
+
     function setActiveTab(index: number) {
       tabs.forEach((tab, i) => {
         tab.setAttribute('data-active', String(i === index));
       });
+      // Force reflow so display:none/block takes effect, then measure
+      pill.offsetHeight;
+      moveHighlight(index);
     }
 
     // Determine initial active tab from URL
@@ -230,25 +257,45 @@ const links = [
     const initialIndex = pages.findIndex(p =>
       p === '/' ? path === '/' || path === '' : path.startsWith(p)
     );
-    setActiveTab(Math.max(0, initialIndex));
 
-    // Listen for clicks — dispatch to the swipe container
+    // Set initial state without any transitions
+    if (highlight) highlight.style.transition = 'none';
+    // Force labels to appear instantly on first render
+    const activeIdx = Math.max(0, initialIndex);
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('data-active', String(i === activeIdx));
+      const label = tab.querySelector('.tab-label') as HTMLElement;
+      if (label && i === activeIdx) {
+        label.style.transition = 'none';
+        label.style.opacity = '1';
+      }
+    });
+    pill.offsetHeight;
+    moveHighlight(activeIdx);
+    requestAnimationFrame(() => {
+      if (highlight) highlight.style.transition = '';
+      tabs.forEach((tab) => {
+        const label = tab.querySelector('.tab-label') as HTMLElement;
+        if (label) label.style.transition = '';
+        if (label) label.style.opacity = '';
+      });
+    });
+
+    // Listen for clicks
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         const index = parseInt(tab.dataset.index || '0', 10);
         setActiveTab(index);
-        // Dispatch custom event that index.astro's script listens for
         window.dispatchEvent(new CustomEvent('nav:goto', { detail: { index } }));
       });
     });
 
-    // Listen for scroll-driven page changes to sync the active tab
+    // Listen for scroll-driven page changes
     window.addEventListener('nav:update', ((e: CustomEvent) => {
       setActiveTab(e.detail.index);
     }) as EventListener);
   }
 
-  // Run on load and after Astro view transitions
   initBottomNav();
   document.addEventListener('astro:after-swap', initBottomNav);
 </script>
