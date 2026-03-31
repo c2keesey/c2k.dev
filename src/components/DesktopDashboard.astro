@@ -105,6 +105,13 @@ const projects: Project[] = [
     link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape',
     color: '249, 115, 22', x: 88, y: 50,
   },
+  {
+    id: 'dashboard', name: 'Optiplex Dashboard', tagline: 'Server monitoring PWA',
+    description: 'Mobile-first dashboard for the Optiplex. CPU, memory, disk, network sparklines, cron job status, Claude sessions — all polled live. Installable PWA over Tailscale.',
+    badge: 'infra', status: 'ONLINE', pulseRate: 3,
+    tech: ['Next.js', 'TypeScript', 'shadcn/ui', 'SQLite', 'systeminformation'],
+    color: '224, 122, 95', x: 56, y: 32,
+  },
 ];
 
 // Blend two "r, g, b" color strings into a hex color
@@ -137,6 +144,9 @@ const edgesRaw: { from: string; to: string; label: string }[] = [
   { from: 'secretgate', to: 'propeller', label: 'telegram bots' },
   { from: 'techdigest', to: 'secretgate', label: 'telegram bots' },
   { from: 'techdigest', to: 'dotfiles', label: 'cron on optiplex' },
+  { from: 'dashboard', to: 'c2k', label: 'co-hosted on optiplex' },
+  { from: 'dashboard', to: 'dotfiles', label: 'monitored services' },
+  { from: 'dashboard', to: 'techdigest', label: 'monitors crons' },
 ];
 const edges: Edge[] = edgesRaw.map(e => ({ ...e, color: blendNodeColors(e.from, e.to) }));
 

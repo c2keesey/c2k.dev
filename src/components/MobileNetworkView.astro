@@ -99,6 +99,13 @@ const projects: Project[] = [
     link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape',
     color: '249, 115, 22',
   },
+  {
+    id: 'dashboard', name: 'Optiplex Dashboard', tagline: 'Server monitoring PWA',
+    description: 'Mobile-first dashboard for the Optiplex. CPU, memory, disk, network sparklines, cron job status, Claude sessions — all polled live. Installable PWA over Tailscale.',
+    badge: 'infra', status: 'ONLINE', pulseRate: 3,
+    tech: ['Next.js', 'TypeScript', 'shadcn/ui', 'SQLite', 'systeminformation'],
+    color: '224, 122, 95',
+  },
 ];
 
 function blendColors(colorA: string, colorB: string): string {
@@ -124,6 +131,8 @@ const edgesRaw: { from: string; to: string; label: string }[] = [
   { from: 'corne', to: 'spotify', label: 'hotkey macros' },
   { from: 'spotify', to: 'propeller', label: 'background automation' },
   { from: 'secretgate', to: 'propeller', label: 'telegram bots' },
+  { from: 'dashboard', to: 'c2k', label: 'co-hosted on optiplex' },
+  { from: 'dashboard', to: 'dotfiles', label: 'monitored services' },
 ];
 
 function getColor(id: string) {
