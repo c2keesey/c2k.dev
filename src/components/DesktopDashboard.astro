@@ -42,7 +42,7 @@ const projects: Project[] = [
     badge: 'web', status: 'ONLINE', pulseRate: 2.5,
     tech: ['Astro', 'TypeScript', 'Canvas', 'Cloudflare'],
     link: 'https://c2k.page', linkText: 'c2k.page',
-    color: '168, 85, 247', hero: 'c2k', x: 36, y: 42,
+    color: '168, 85, 247', x: 36, y: 42,
   },
   {
     id: 'flux', name: 'Flux Gauntlet', tagline: 'LED wearable',
@@ -1560,15 +1560,6 @@ const edgeMidpoints = edges.map(edge => {
     background-clip: text;
   }
 
-  /* c2k.page: thin gradient top border accent */
-  .dashboard-node.hero-c2k {
-    border-top: 1px solid transparent;
-    background-image:
-      linear-gradient(rgba(14, 14, 16, 0.72), rgba(14, 14, 16, 0.72)),
-      linear-gradient(90deg, rgba(168, 85, 247, 0.25), rgba(217, 70, 239, 0.15), rgba(249, 115, 22, 0.1));
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-  }
 
   /* ── Compact ── */
   .node-compact {
