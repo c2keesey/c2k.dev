@@ -47,20 +47,19 @@ const projects: Project[] = [
     color: '168, 85, 247', hero: 'c2k', showcaseSelector: '.showcases-source .c2k-showcase',
   },
   {
+    id: 'dashboard', name: 'Optiplex Dashboard', tagline: 'Server monitoring PWA',
+    description: 'Mobile-first dashboard for the Optiplex. CPU, memory, disk, network sparklines, cron job status, Claude sessions — all polled live. Installable PWA over Tailscale.',
+    badge: 'infra', status: 'ONLINE', pulseRate: 3,
+    tech: ['Next.js', 'TypeScript', 'shadcn/ui', 'SQLite', 'systeminformation'],
+    color: '224, 122, 95',
+  },
+  {
     id: 'dotfiles', name: 'Dotfiles', tagline: 'Dev environment system',
     description: 'Version-controlled dev environment. Shell, editor, keybindings, Claude Code skills and hooks — all symlinked and synced across machines.',
     badge: 'tooling', status: 'ONLINE', pulseRate: 3.5,
     tech: ['Bash', 'Zsh', 'Claude Code', 'Tmux', 'Ghostty'],
     link: 'https://github.com/c2keesey/dotfiles', linkText: 'github/dotfiles',
     color: '168, 85, 247', showcaseSelector: '.showcases-source .df-showcase',
-  },
-  {
-    id: 'spotify', name: 'Spotify Macro', tagline: 'Stream Deck automations',
-    description: 'Five Spotify automations for Stream Deck. Playlist sorting, genre classification, heart sync, hotkey control, queue management.',
-    badge: 'automation', status: 'ONLINE', pulseRate: 4,
-    tech: ['Python', 'Spotify API', 'Stream Deck SDK'],
-    link: 'https://github.com/c2keesey/spotify-macro-pad', linkText: 'github/spotify-macro',
-    color: '34, 197, 94', showcaseSelector: '.showcases-source .sm-showcase',
   },
   {
     id: 'secretgate', name: 'Secret Gate', tagline: 'Human-in-the-loop gate',
@@ -71,11 +70,20 @@ const projects: Project[] = [
     color: '239, 68, 68',
   },
   {
-    id: 'flux', name: 'Flux Gauntlet', tagline: 'LED wearable',
-    description: '300-LED arm gauntlet with 16 rings on a 3D cylindrical mesh. 7 procedural effects: blast, lightning, fire, firework, casimir, twinkle, pew.',
-    badge: 'hardware', status: 'STANDBY', pulseRate: 7,
-    tech: ['C++', 'FastLED', 'ESP32'],
-    color: '249, 115, 22', hero: 'flux', showcaseSelector: '.showcases-source .fg-showcase',
+    id: 'techdigest', name: 'Tech Digest', tagline: 'Daily release digest',
+    description: 'Fetches release notes from GitHub repos and web changelogs, parses with Claude CLI, sends formatted summaries via Telegram. Includes a bot for remote repo control.',
+    badge: 'automation', status: 'ONLINE', pulseRate: 5,
+    tech: ['Python', 'Claude CLI', 'Telegram', 'GitHub API', 'cron'],
+    link: 'https://github.com/c2keesey/tech-digest', linkText: 'github/tech-digest',
+    color: '139, 92, 246',
+  },
+  {
+    id: 'spotify', name: 'Spotify Macro', tagline: 'Stream Deck automations',
+    description: 'Five Spotify automations for Stream Deck. Playlist sorting, genre classification, heart sync, hotkey control, queue management.',
+    badge: 'automation', status: 'ONLINE', pulseRate: 4,
+    tech: ['Python', 'Spotify API', 'Stream Deck SDK'],
+    link: 'https://github.com/c2keesey/spotify-macro-pad', linkText: 'github/spotify-macro',
+    color: '34, 197, 94', showcaseSelector: '.showcases-source .sm-showcase',
   },
   {
     id: 'corne', name: 'Corne', tagline: '42-key split keyboard',
@@ -83,6 +91,13 @@ const projects: Project[] = [
     badge: 'hardware', status: 'ONLINE', pulseRate: 4,
     tech: ['QMK', 'C', 'KiCad'],
     color: '6, 182, 212', showcaseSelector: '.showcases-source .crn-showcase',
+  },
+  {
+    id: 'flux', name: 'Flux Gauntlet', tagline: 'LED wearable',
+    description: '300-LED arm gauntlet with 16 rings on a 3D cylindrical mesh. 7 procedural effects: blast, lightning, fire, firework, casimir, twinkle, pew.',
+    badge: 'hardware', status: 'STANDBY', pulseRate: 7,
+    tech: ['C++', 'FastLED', 'ESP32'],
+    color: '249, 115, 22', hero: 'flux', showcaseSelector: '.showcases-source .fg-showcase',
   },
   {
     id: 'lightning', name: 'Lightning Cloud', tagline: 'Procedural lightning',
@@ -98,13 +113,6 @@ const projects: Project[] = [
     tech: ['Python', 'BeautifulSoup', 'Telegram', 'cron'],
     link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape',
     color: '249, 115, 22',
-  },
-  {
-    id: 'dashboard', name: 'Optiplex Dashboard', tagline: 'Server monitoring PWA',
-    description: 'Mobile-first dashboard for the Optiplex. CPU, memory, disk, network sparklines, cron job status, Claude sessions — all polled live. Installable PWA over Tailscale.',
-    badge: 'infra', status: 'ONLINE', pulseRate: 3,
-    tech: ['Next.js', 'TypeScript', 'shadcn/ui', 'SQLite', 'systeminformation'],
-    color: '224, 122, 95',
   },
 ];
 
@@ -131,8 +139,11 @@ const edgesRaw: { from: string; to: string; label: string }[] = [
   { from: 'corne', to: 'spotify', label: 'hotkey macros' },
   { from: 'spotify', to: 'propeller', label: 'background automation' },
   { from: 'secretgate', to: 'propeller', label: 'telegram bots' },
+  { from: 'techdigest', to: 'secretgate', label: 'telegram bots' },
+  { from: 'techdigest', to: 'dotfiles', label: 'cron on optiplex' },
   { from: 'dashboard', to: 'c2k', label: 'co-hosted on optiplex' },
   { from: 'dashboard', to: 'dotfiles', label: 'monitored services' },
+  { from: 'dashboard', to: 'techdigest', label: 'monitors crons' },
 ];
 
 function getColor(id: string) {

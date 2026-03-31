@@ -109,11 +109,26 @@ import '../styles/global.css';
         <div class="showcases-source">
           <MaiaShowcase />
           <C2kShowcase />
+          <MiniProjectCard
+            name="optiplex-dashboard"
+            tagline="Server monitoring PWA"
+            description="Mobile-first dashboard for the Optiplex. CPU, memory, disk, network sparklines, cron job status, Claude sessions — all polled live. Installable PWA over Tailscale."
+            badge="infra"
+            tech={['Next.js', 'TypeScript', 'shadcn/ui', 'SQLite', 'systeminformation']}
+            accentColor="224, 122, 95"
+          />
           <DotfilesShowcase />
-          <SpotifyMacroShowcase />
-          <FluxGauntletShowcase />
-          <CorneShowcase />
-          <LightningCloudShowcase />
+          <MiniProjectCard
+            name="secret-gate"
+            tagline="Human-in-the-loop approval gate"
+            description="Routes AI agent requests for secrets (1Password) and sudo commands through Telegram for explicit approval. Ships as a Claude Code plugin with PreToolUse hooks."
+            badge="security"
+            wip={true}
+            tech={['Python', '1Password CLI', 'Telegram', 'Claude Code Plugin']}
+            link="https://github.com/c2keesey/secret-gate"
+            linkText="github.com/c2keesey/secret-gate"
+            accentColor="239, 68, 68"
+          />
           <MiniProjectCard
             name="tech-digest"
             tagline="Daily tech release digest via Telegram"
@@ -132,25 +147,10 @@ import '../styles/global.css';
             tech={['Next.js', 'TypeScript', 'Claude Haiku', 'SQLite', 'Tailwind', 'RSS']}
             accentColor="56, 189, 248"
           />
-          <MiniProjectCard
-            name="secret-gate"
-            tagline="Human-in-the-loop approval gate"
-            description="Routes AI agent requests for secrets (1Password) and sudo commands through Telegram for explicit approval. Ships as a Claude Code plugin with PreToolUse hooks."
-            badge="security"
-            wip={true}
-            tech={['Python', '1Password CLI', 'Telegram', 'Claude Code Plugin']}
-            link="https://github.com/c2keesey/secret-gate"
-            linkText="github.com/c2keesey/secret-gate"
-            accentColor="239, 68, 68"
-          />
-          <MiniProjectCard
-            name="optiplex-dashboard"
-            tagline="Server monitoring PWA"
-            description="Mobile-first dashboard for the Optiplex. CPU, memory, disk, network sparklines, cron job status, Claude sessions — all polled live. Installable PWA over Tailscale."
-            badge="infra"
-            tech={['Next.js', 'TypeScript', 'shadcn/ui', 'SQLite', 'systeminformation']}
-            accentColor="224, 122, 95"
-          />
+          <SpotifyMacroShowcase />
+          <CorneShowcase />
+          <FluxGauntletShowcase />
+          <LightningCloudShowcase />
           <MiniProjectCard
             name="propeller-scrape"
             tagline="Concert ticket monitor"
