@@ -295,6 +295,10 @@ for (const edge of edges) {
 </div>
 
 <script>
+function isWarmTheme(): boolean {
+  return document.documentElement.dataset.theme === 'warm';
+}
+
 function initMobileNetwork() {
   const container = document.getElementById('mobile-network');
   if (!container) return;
@@ -407,7 +411,9 @@ function initMobileNetwork() {
         const a = s.alpha * twinkle;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(180, 180, 210, ${a})`;
+        ctx.fillStyle = isWarmTheme()
+          ? `rgba(80, 70, 55, ${a})`
+          : `rgba(180, 180, 210, ${a})`;
         ctx.fill();
       }
       requestAnimationFrame(renderStars);
@@ -837,7 +843,7 @@ initMobileNetwork();
     border-top: 1px solid transparent;
     background-image:
       linear-gradient(var(--bg-glass-heavy), var(--bg-glass-heavy)),
-      linear-gradient(90deg, rgba(168, 85, 247, 0.25), rgba(217, 70, 239, 0.15), rgba(249, 115, 22, 0.1));
+      linear-gradient(90deg, var(--purple-glow), rgba(217, 70, 239, 0.15), rgba(249, 115, 22, 0.1));
     background-origin: border-box;
     background-clip: padding-box, border-box;
   }

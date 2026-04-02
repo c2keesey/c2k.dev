@@ -71,6 +71,10 @@
 </div>
 
 <script>
+  function isWarmTheme(): boolean {
+    return document.documentElement.dataset.theme === 'warm';
+  }
+
   function initFluxGauntlet() {
     const canvas = document.getElementById('fg-canvas') as HTMLCanvasElement;
     if (!canvas) return;
@@ -616,7 +620,9 @@
         ctx.arc(pos.x, pos.y, ledR, 0, Math.PI * 2);
         ctx.fillStyle = brightness > 5
           ? `rgba(${r}, ${g}, ${b}, ${depthAlpha})`
-          : `rgba(255, 255, 255, ${0.04 * depthAlpha})`;
+          : isWarmTheme()
+            ? `rgba(0, 0, 0, ${0.04 * depthAlpha})`
+            : `rgba(255, 255, 255, ${0.04 * depthAlpha})`;
         ctx.fill();
       }
 
@@ -888,5 +894,72 @@
 
   .fg-link:hover {
     color: rgba(255, 130, 70, 0.9);
+  }
+
+  /* Warm theme overrides */
+  :global([data-theme="warm"]) .fg-card {
+    background: var(--bg-glass);
+    border-color: rgba(220, 80, 30, 0.15);
+  }
+
+  :global([data-theme="warm"]) .fg-canvas-wrap {
+    background: rgba(40, 25, 15, 0.85);
+  }
+
+  :global([data-theme="warm"]) .fg-badge {
+    background: rgba(220, 80, 30, 0.1);
+    color: rgba(220, 80, 30, 0.85);
+  }
+
+  :global([data-theme="warm"]) .fg-btn.active {
+    background: rgba(220, 80, 30, 0.12);
+    color: rgba(220, 80, 30, 0.9);
+  }
+
+  :global([data-theme="warm"]) .fg-specs {
+    border-color: rgba(220, 80, 30, 0.1);
+    background: rgba(220, 80, 30, 0.03);
+  }
+
+  :global([data-theme="warm"]) .fg-spec-val {
+    color: rgba(220, 80, 30, 0.9);
+  }
+
+  :global([data-theme="warm"]) .fg-spec-sep {
+    background: rgba(220, 80, 30, 0.15);
+  }
+
+  :global([data-theme="warm"]) .fg-pre-llm {
+    background: rgba(220, 80, 30, 0.08);
+    border-color: rgba(220, 80, 30, 0.15);
+    color: rgba(220, 80, 30, 0.5);
+  }
+
+  :global([data-theme="warm"]) .fg-link {
+    color: rgba(220, 80, 30, 0.5);
+  }
+
+  :global([data-theme="warm"]) .fg-link:hover {
+    color: rgba(220, 80, 30, 1);
+  }
+
+  :global([data-theme="warm"]) .fg-viz {
+    border-color: rgba(220, 80, 30, 0.15);
+  }
+
+  :global([data-theme="warm"]) .fg-media {
+    border-color: rgba(220, 80, 30, 0.15);
+  }
+
+  :global([data-theme="warm"]) .fg-controls {
+    border-top-color: rgba(220, 80, 30, 0.1);
+  }
+
+  :global([data-theme="warm"]) .fg-btn {
+    border-right-color: rgba(220, 80, 30, 0.1);
+  }
+
+  :global([data-theme="warm"]) .fg-btn:hover {
+    background: rgba(220, 80, 30, 0.08);
   }
 </style>
