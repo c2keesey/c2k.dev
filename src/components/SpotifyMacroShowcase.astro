@@ -437,15 +437,15 @@
   .sm-card {
     display: block;
     position: relative;
-    background: rgba(14, 14, 16, 0.65);
+    background: var(--bg-glass);
     border: 1px solid rgba(30, 215, 96, 0.12);
     border-radius: 12px;
     padding: 1.75rem;
     overflow: hidden;
-    color: white;
+    color: var(--text);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--card-shadow);
   }
 
   .sm-content {
@@ -481,13 +481,13 @@
   .sm-tagline {
     font-size: 1rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-secondary);
     margin-bottom: 0.35rem;
   }
 
   .sm-desc {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.45);
+    color: var(--text-tertiary);
     line-height: 1.5;
     margin-bottom: 1rem;
   }
@@ -508,7 +508,7 @@
     gap: 0.4rem;
     padding: 0.4rem 0.6rem;
     background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--text-ghost);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
@@ -543,18 +543,18 @@
     font-family: var(--font-mono);
     font-size: 0.65rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
   }
 
   .sm-auto-detail {
     font-family: var(--font-mono);
     font-size: 0.55rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--text-quaternary);
   }
 
   /* Visualization canvas */
   .sm-viz {
-    background: rgba(0, 0, 0, 0.35);
+    background: var(--bg-overlay);
     border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
@@ -579,8 +579,8 @@
     font-family: var(--font-mono);
     font-size: 0.65rem;
     padding: 0.1rem 0.4rem;
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.4);
+    background: var(--bg-code);
+    color: var(--text-quaternary);
     border-radius: 3px;
   }
 

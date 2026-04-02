@@ -62,15 +62,15 @@
   .c2k-card {
     display: block;
     position: relative;
-    background: rgba(14, 14, 16, 0.65);
-    border: 1px solid rgba(168, 85, 247, 0.12);
+    background: var(--bg-glass);
+    border: 1px solid var(--glass-border);
     border-radius: 12px;
     padding: 1.75rem;
     overflow: hidden;
-    color: white;
+    color: var(--text);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--card-shadow);
   }
 
   .c2k-content {
@@ -99,7 +99,7 @@
     font-family: var(--font-mono);
     font-size: 0.65rem;
     padding: 0.15rem 0.5rem;
-    background: rgba(168, 85, 247, 0.15);
+    background: var(--purple-bg);
     color: var(--purple);
     border-radius: 4px;
     text-transform: uppercase;
@@ -109,20 +109,20 @@
   .c2k-tagline {
     font-size: 1rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-secondary);
     margin-bottom: 0.35rem;
   }
 
   .c2k-desc {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.45);
+    color: var(--text-tertiary);
     line-height: 1.5;
     margin-bottom: 0.75rem;
   }
 
   /* Mini site preview */
   .c2k-preview {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--bg-overlay);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.6rem 0.8rem;
@@ -149,7 +149,7 @@
   }
 
   .c2k-dim {
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--text-quaternary);
   }
 
   .c2k-pulse-dot {
@@ -165,7 +165,7 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: #22c55e;
+    background: var(--green);
     flex-shrink: 0;
   }
 
@@ -186,8 +186,8 @@
     font-family: var(--font-mono);
     font-size: 0.65rem;
     padding: 0.1rem 0.4rem;
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.4);
+    background: var(--bg-code);
+    color: var(--text-quaternary);
     border-radius: 3px;
   }
 
@@ -199,7 +199,7 @@
   .c2k-link {
     font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: rgba(168, 85, 247, 0.5);
+    color: var(--purple-dim);
     text-decoration: none;
     transition: color 0.2s;
   }

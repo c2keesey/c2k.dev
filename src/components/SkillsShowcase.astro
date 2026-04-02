@@ -251,7 +251,7 @@
     font-family: var(--font-mono);
     font-size: 0.7rem;
     padding: 0.15rem 0.5rem;
-    background: rgba(168, 85, 247, 0.15);
+    background: var(--purple-bg);
     color: var(--purple);
     border-radius: 4px;
     transition: background 0.2s;
@@ -259,17 +259,17 @@
   }
 
   .skills-tag:hover {
-    background: rgba(168, 85, 247, 0.3);
+    background: var(--purple-glow);
   }
 
   .skills-terminal {
-    background: rgba(13, 13, 15, 0.65);
-    border: 1px solid rgba(168, 85, 247, 0.12);
+    background: var(--bg-glass);
+    border: 1px solid var(--glass-border);
     border-radius: 10px;
     overflow: hidden;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--card-shadow);
   }
 
   .skills-chrome {
@@ -352,7 +352,7 @@
   }
 
   .skill-row.active {
-    background: rgba(168, 85, 247, 0.08);
+    background: var(--purple-bg-subtle);
   }
 
   .skill-cmd {
@@ -375,8 +375,8 @@
   .skill-cat {
     font-size: 0.65rem;
     padding: 0.1rem 0.4rem;
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.35);
+    background: var(--bg-code);
+    color: var(--text-quaternary);
     border-radius: 3px;
     text-transform: uppercase;
     letter-spacing: 0.03em;

@@ -29,6 +29,13 @@ import '../styles/global.css';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,600,700,800&display=swap" rel="stylesheet" />
+    <script is:inline>
+      // FOUC prevention: apply theme before first paint
+      (function() {
+        var t = localStorage.getItem('c2k-theme');
+        if (t && t !== 'dark') document.documentElement.dataset.theme = t;
+      })();
+    </script>
   </head>
   <body>
     <Nav />
@@ -806,7 +813,7 @@ import '../styles/global.css';
   .bio-tagline {
     font-family: var(--font-mono);
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--text-quaternary);
     margin-top: 0.25rem;
   }
 
@@ -819,7 +826,7 @@ import '../styles/global.css';
   .bio-links a {
     font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--text-quaternary);
     text-decoration: none;
     transition: color 0.2s;
   }
@@ -831,14 +838,14 @@ import '../styles/global.css';
   .building-section {
     margin-bottom: 2rem;
     position: relative;
-    background: rgba(14, 14, 16, 0.65);
-    border: 1px solid rgba(168, 85, 247, 0.12);
+    background: var(--bg-glass);
+    border: 1px solid var(--glass-border);
     border-left: 2px solid var(--purple);
     border-radius: 10px;
     overflow: hidden;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--card-shadow);
   }
 
   .building-section::before {
@@ -864,20 +871,20 @@ import '../styles/global.css';
     height: 6px;
     border-radius: 50%;
     background: var(--purple);
-    box-shadow: 0 0 6px var(--purple), 0 0 12px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 0 6px var(--purple), 0 0 12px var(--purple-glow);
     animation: building-glow 2s ease-in-out infinite;
     flex-shrink: 0;
   }
 
   @keyframes building-glow {
-    0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--purple), 0 0 12px rgba(168, 85, 247, 0.3); }
-    50% { opacity: 0.5; box-shadow: 0 0 3px var(--purple), 0 0 6px rgba(168, 85, 247, 0.15); }
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--purple), 0 0 12px var(--purple-glow); }
+    50% { opacity: 0.5; box-shadow: 0 0 3px var(--purple), 0 0 6px var(--purple-bg); }
   }
 
   .building-label {
     font-family: var(--font-mono);
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--text-quaternary);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -899,7 +906,7 @@ import '../styles/global.css';
   }
 
   .building-row:hover {
-    background: rgba(168, 85, 247, 0.06);
+    background: var(--purple-bg-subtle);
   }
 
   @keyframes building-fade-in {
@@ -911,14 +918,14 @@ import '../styles/global.css';
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: #a855f7;
+    background: var(--purple);
     opacity: 0.6;
     flex-shrink: 0;
   }
 
   .building-row:hover .building-dot {
     opacity: 1;
-    box-shadow: 0 0 6px rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 6px var(--purple-dim);
   }
 
   .building-info {
@@ -933,13 +940,13 @@ import '../styles/global.css';
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     font-weight: 500;
-    color: #a855f7;
+    color: var(--purple);
   }
 
   .building-commit {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.68rem;
-    color: rgba(255, 255, 255, 0.25);
+    color: var(--text-faint);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -948,13 +955,13 @@ import '../styles/global.css';
   .building-time {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--text-faint);
     flex-shrink: 0;
     white-space: nowrap;
   }
 
   .building-row:hover .building-time {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-tertiary);
   }
 
   /* Home grid — two columns on desktop */
@@ -985,13 +992,13 @@ import '../styles/global.css';
 
   /* Systems widget */
   .systems-widget {
-    background: rgba(14, 14, 16, 0.65);
-    border: 1px solid rgba(34, 197, 94, 0.12);
+    background: var(--bg-glass);
+    border: 1px solid var(--green-border);
     border-radius: 10px;
     overflow: hidden;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--card-shadow);
   }
 
   .systems-header {
@@ -1005,8 +1012,8 @@ import '../styles/global.css';
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #22c55e;
-    box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green-glow);
     animation: building-glow 3s ease-in-out infinite;
     flex-shrink: 0;
   }
@@ -1014,7 +1021,7 @@ import '../styles/global.css';
   .systems-label {
     font-family: var(--font-mono);
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--text-quaternary);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -1037,13 +1044,13 @@ import '../styles/global.css';
     font-family: var(--font-mono);
     font-size: 0.85rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
   }
 
   .systems-stat-key {
     font-family: var(--font-mono);
     font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.25);
+    color: var(--text-faint);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -1081,7 +1088,7 @@ import '../styles/global.css';
   .global-footer {
     padding: 0.6rem 1.5rem;
     border-top: 1px solid var(--border);
-    background: rgba(10, 10, 11, 0.8);
+    background: var(--bg-nav);
     backdrop-filter: blur(12px);
   }
 
@@ -1171,8 +1178,8 @@ import '../styles/global.css';
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
-    text-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+    color: var(--text-tertiary);
+    text-shadow: 0 0 12px var(--purple-glow);
     margin-bottom: 0.5rem;
   }
 
@@ -1216,7 +1223,7 @@ import '../styles/global.css';
     font-family: var(--font-mono);
     font-size: 0.7rem;
     padding: 0.15rem 0.5rem;
-    background: rgba(168, 85, 247, 0.15);
+    background: var(--purple-bg);
     color: var(--purple);
     border-radius: 4px;
     text-transform: lowercase;
@@ -1224,15 +1231,15 @@ import '../styles/global.css';
 
   /* About — fastfetch readout */
   .about-fetch {
-    background: rgba(14, 14, 16, 0.65);
-    border: 1px solid rgba(168, 85, 247, 0.12);
+    background: var(--bg-glass);
+    border: 1px solid var(--glass-border);
     border-radius: 10px;
     padding: 1.25rem 1.5rem;
     font-family: var(--font-mono);
     font-size: 0.8rem;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--card-shadow);
   }
 
   .fetch-block {
@@ -1261,21 +1268,21 @@ import '../styles/global.css';
   }
 
   .fetch-val {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-tertiary);
   }
 
   .fetch-link {
-    color: rgba(6, 182, 212, 0.7);
+    color: var(--cyan);
     text-decoration: none;
     transition: color 0.2s;
   }
 
   .fetch-link:hover {
-    color: rgba(6, 182, 212, 1);
+    color: var(--cyan-hover);
   }
 
   .fetch-accent {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-quaternary);
     font-style: italic;
   }
 
@@ -1303,7 +1310,7 @@ import '../styles/global.css';
   }
 
   .fetch-swatch:focus-visible {
-    outline: 1px solid rgba(255, 255, 255, 0.4);
+    outline: 1px solid var(--text-quaternary);
     outline-offset: 2px;
   }
 
@@ -1312,8 +1319,8 @@ import '../styles/global.css';
     bottom: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%) scale(0.9);
-    background: #1c1c1f;
-    border: 1px solid #27272a;
+    background: var(--tooltip-bg);
+    border: 1px solid var(--tooltip-border);
     border-radius: 6px;
     padding: 0.3rem 0.5rem;
     white-space: nowrap;
@@ -1323,7 +1330,7 @@ import '../styles/global.css';
     z-index: 10;
     font-family: var(--font-mono);
     font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-tertiary);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1337,12 +1344,12 @@ import '../styles/global.css';
   }
 
   .swatch-tooltip .swatch-hex {
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-secondary);
     font-weight: 500;
   }
 
   .swatch-tooltip .swatch-name {
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--text-quaternary);
     text-transform: uppercase;
     font-size: 0.55rem;
     letter-spacing: 0.04em;
@@ -1355,7 +1362,7 @@ import '../styles/global.css';
     left: 50%;
     transform: translateX(-50%);
     border: 4px solid transparent;
-    border-top-color: #27272a;
+    border-top-color: var(--tooltip-border);
   }
 
   /* About blurb */
@@ -1364,7 +1371,7 @@ import '../styles/global.css';
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    color: rgba(255, 255, 255, 0.45);
+    color: var(--text-tertiary);
     line-height: 1.7;
     font-size: 0.85rem;
   }
@@ -1383,32 +1390,32 @@ import '../styles/global.css';
     align-items: center;
     gap: 0.2rem;
     padding: 0.75rem 0.5rem;
-    background: rgba(14, 14, 16, 0.65);
-    border: 1px solid rgba(168, 85, 247, 0.1);
+    background: var(--bg-glass);
+    border: 1px solid var(--glass-border);
     border-radius: 10px;
     text-decoration: none;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
-    transition: background 0.2s, border-color 0.2s;
+    box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--card-shadow);
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
   }
 
   .about-link-card:hover {
-    background: rgba(168, 85, 247, 0.08);
-    border-color: rgba(168, 85, 247, 0.3);
+    background: var(--purple-bg-subtle);
+    border-color: var(--purple-glow);
   }
 
   .about-link-name {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
   }
 
   .about-link-handle {
     font-family: var(--font-mono);
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--text-quaternary);
   }
 
   @media (max-width: 500px) {

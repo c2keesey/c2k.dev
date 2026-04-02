@@ -1,0 +1,102 @@
+---
+// Theme toggle: dark ↔ warm
+// Uses data-theme attribute on <html> and persists to localStorage
+---
+
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+  <svg class="theme-icon theme-icon-dark" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+    <path d="M13.5 8.5a5.5 5.5 0 0 1-7-7 5.5 5.5 0 1 0 7 7z" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <svg class="theme-icon theme-icon-warm" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+    <circle cx="8" cy="8" r="3"/>
+    <path d="M8 2v1M8 13v1M2 8h1M13 8h1M4.2 4.2l.7.7M11.1 11.1l.7.7M11.8 4.2l-.7.7M4.9 11.1l-.7.7" stroke-linecap="round"/>
+  </svg>
+  <span class="theme-label" id="theme-label">dark</span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.3rem 0.6rem;
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .theme-toggle:hover {
+    color: var(--text);
+    border-color: var(--glass-border);
+    background: var(--bg-glass);
+  }
+
+  .theme-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: none;
+  }
+
+  :global(html:not([data-theme])) .theme-icon-dark,
+  :global(html[data-theme="dark"]) .theme-icon-dark { display: block; }
+  :global(html[data-theme="warm"]) .theme-icon-warm { display: block; }
+
+  .theme-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 767px) {
+    .theme-label {
+      display: none;
+    }
+    .theme-toggle {
+      padding: 0.35rem;
+    }
+  }
+</style>
+
+<script>
+  function initThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    const label = document.getElementById('theme-label');
+    if (!btn) return;
+
+    type Theme = 'dark' | 'warm';
+
+    function getTheme(): Theme {
+      return (document.documentElement.dataset.theme as Theme) || 'dark';
+    }
+
+    function setTheme(theme: Theme) {
+      if (theme === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.dataset.theme = theme;
+      }
+      localStorage.setItem('c2k-theme', theme);
+      if (label) label.textContent = theme;
+
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) {
+        meta.setAttribute('content', theme === 'warm' ? '#9333ea' : '#7c3aed');
+      }
+    }
+
+    btn.addEventListener('click', () => {
+      setTheme(getTheme() === 'dark' ? 'warm' : 'dark');
+    });
+
+    if (label) label.textContent = getTheme();
+  }
+
+  initThemeToggle();
+  document.addEventListener('astro:after-swap', initThemeToggle);
+</script>

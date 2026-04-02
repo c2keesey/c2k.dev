@@ -1097,7 +1097,10 @@ const edgeMidpoints = edges.map(edge => {
         if (sparkEl && daily.length === 7) {
           const max = Math.max(...daily, 1);
           const points = daily.map((v: number, i: number) => `${i * 7},${12 - (v / max) * 10}`).join(' ');
-          sparkEl.innerHTML = `<polygon points="0,12 ${points} 42,12" fill="rgba(249, 115, 22, 0.08)" /><polyline points="${points}" fill="none" stroke="rgba(249, 115, 22, 0.4)" stroke-width="1" stroke-linejoin="round" />`;
+          const cs = getComputedStyle(document.documentElement);
+          const sFill = cs.getPropertyValue('--dash-sparkline-fill').trim() || 'rgba(249, 115, 22, 0.08)';
+          const sStroke = cs.getPropertyValue('--dash-sparkline-stroke').trim() || 'rgba(249, 115, 22, 0.4)';
+          sparkEl.innerHTML = `<polygon points="0,12 ${points} 42,12" fill="${sFill}" /><polyline points="${points}" fill="none" stroke="${sStroke}" stroke-width="1" stroke-linejoin="round" />`;
         }
 
         // Populate tooltip with per-day bars
@@ -1366,8 +1369,8 @@ const edgeMidpoints = edges.map(edge => {
     background: radial-gradient(
       ellipse 80% 70% at 48% 45%,
       transparent 0%,
-      rgba(5, 5, 7, 0.15) 60%,
-      rgba(5, 5, 7, 0.45) 100%
+      var(--dash-vignette-mid) 60%,
+      var(--dash-vignette-edge) 100%
     );
     pointer-events: none;
     z-index: 10;
@@ -1377,7 +1380,7 @@ const edgeMidpoints = edges.map(edge => {
   .dashboard-grid {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-image: radial-gradient(circle, var(--dash-dot-grid) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
   }
@@ -1398,17 +1401,17 @@ const edgeMidpoints = edges.map(edge => {
     font-family: var(--font-mono);
     font-size: 0.85rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.45);
+    color: var(--text-tertiary);
     letter-spacing: 0.14em;
-    text-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+    text-shadow: 0 0 12px var(--purple-glow);
   }
 
   .dashboard-status {
     font-family: var(--font-mono);
     font-size: 0.55rem;
-    color: rgba(34, 197, 94, 0.45);
+    color: var(--green-dim);
     padding: 0.1rem 0.45rem;
-    border: 1px solid rgba(34, 197, 94, 0.12);
+    border: 1px solid var(--green-border);
     border-radius: 3px;
     letter-spacing: 0.08em;
   }
@@ -1416,7 +1419,7 @@ const edgeMidpoints = edges.map(edge => {
   .dashboard-sync {
     font-family: var(--font-mono);
     font-size: 0.45rem;
-    color: rgba(255, 255, 255, 0.12);
+    color: var(--text-ghost);
     letter-spacing: 0.08em;
   }
 
@@ -1455,11 +1458,11 @@ const edgeMidpoints = edges.map(edge => {
     z-index: 4;
     font-family: var(--font-mono);
     font-size: 0.5rem;
-    color: rgba(255, 255, 255, 0.45);
-    background: rgba(10, 10, 12, 0.85);
+    color: var(--text-tertiary);
+    background: var(--dash-tooltip-bg);
     padding: 0.15rem 0.4rem;
     border-radius: 3px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--dash-tooltip-border);
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
@@ -1487,10 +1490,10 @@ const edgeMidpoints = edges.map(edge => {
     position: absolute;
     transform: translate(-50%, -50%);
     z-index: 6;
-    background: rgba(14, 14, 16, 0.72);
+    background: var(--dash-node-bg);
     border: 1px solid rgba(var(--node-color), 0.15);
     border-radius: 10px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    box-shadow: inset 0 1px 0 var(--dash-dot-grid), var(--card-shadow);
     cursor: pointer;
     min-width: 175px;
     max-width: 175px;
@@ -1517,7 +1520,7 @@ const edgeMidpoints = edges.map(edge => {
     border-color: rgba(var(--node-color), 0.4);
     transform: translate(-50%, -50%) scale(1.03);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.03),
+      inset 0 1px 0 var(--glass-highlight),
       0 0 24px rgba(var(--node-color), 0.08),
       0 0 48px rgba(var(--node-color), 0.03);
     z-index: 8;
@@ -1526,10 +1529,10 @@ const edgeMidpoints = edges.map(edge => {
   .dashboard-node.expanded {
     border-color: rgba(var(--node-color), 0.35);
     max-width: 320px;
-    background: rgba(12, 12, 14, 0.9);
+    background: var(--dash-node-expanded);
     transform: translate(-50%, -50%) scale(1);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.03),
+      inset 0 1px 0 var(--glass-highlight),
       0 0 30px rgba(var(--node-color), 0.08),
       0 0 60px rgba(var(--node-color), 0.04);
     z-index: 10;
@@ -1585,15 +1588,15 @@ const edgeMidpoints = edges.map(edge => {
 
   .node-status-dot[data-status="ONLINE"] {
     background: rgb(34, 197, 94);
-    box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+    box-shadow: 0 0 6px var(--green-glow);
   }
   .node-status-dot[data-status="DEPLOYING"] {
     background: rgb(234, 179, 8);
-    box-shadow: 0 0 6px rgba(234, 179, 8, 0.4);
+    box-shadow: 0 0 6px var(--yellow-glow);
   }
   .node-status-dot[data-status="STANDBY"] {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+    background: var(--text-faint);
+    box-shadow: 0 0 4px var(--text-ghost);
   }
 
   @keyframes pulse {
@@ -1615,17 +1618,17 @@ const edgeMidpoints = edges.map(edge => {
     right: 0;
     font-family: var(--font-mono);
     font-size: 0.45rem;
-    color: rgba(34, 197, 94, 0.35);
+    color: var(--green-dim);
     letter-spacing: 0.1em;
     white-space: nowrap;
   }
-  .node-status-label.deploying { color: rgba(234, 179, 8, 0.45); }
-  .node-status-label.standby { color: rgba(255, 255, 255, 0.12); }
+  .node-status-label.deploying { color: var(--yellow-dim); }
+  .node-status-label.standby { color: var(--text-ghost); }
 
   .node-tagline {
     font-family: var(--font-mono);
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.22);
+    color: var(--text-faint);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1667,7 +1670,7 @@ const edgeMidpoints = edges.map(edge => {
   }
 
   .node-badge-wip {
-    background: rgba(234, 179, 8, 0.12) !important;
+    background: var(--yellow-bg) !important;
     color: rgba(234, 179, 8, 0.7) !important;
   }
 
@@ -1747,7 +1750,7 @@ const edgeMidpoints = edges.map(edge => {
   .dashboard-node.expanded.has-showcase:hover {
     border-color: rgba(var(--node-color), 0.5);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      inset 0 1px 0 var(--glass-highlight),
       0 0 20px rgba(var(--node-color), 0.12),
       0 0 50px rgba(var(--node-color), 0.06);
   }
@@ -1839,7 +1842,7 @@ const edgeMidpoints = edges.map(edge => {
   .hud-label {
     font-family: var(--font-mono);
     font-size: 0.5rem;
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--text-faint);
     letter-spacing: 0.1em;
     min-width: 2.5rem;
     text-align: right;
@@ -1906,9 +1909,9 @@ const edgeMidpoints = edges.map(edge => {
     position: absolute;
     top: calc(100% + 0.5rem);
     right: 0;
-    background: rgba(15, 15, 17, 0.9);
+    background: var(--dash-node-expanded);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--dash-tooltip-border);
     border-radius: 6px;
     padding: 0.5rem 0.6rem;
     opacity: 0;
@@ -2018,20 +2021,20 @@ const edgeMidpoints = edges.map(edge => {
   /* Node glow levels */
   .dashboard-node[data-game-level="1"] {
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.02),
+      inset 0 1px 0 var(--dash-dot-grid),
       0 0 12px rgba(var(--node-color), 0.06);
   }
 
   .dashboard-node[data-game-level="2"] {
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.02),
+      inset 0 1px 0 var(--dash-dot-grid),
       0 0 20px rgba(var(--node-color), 0.1),
       0 0 40px rgba(var(--node-color), 0.04);
   }
 
   .dashboard-node[data-game-level="3"] {
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.03),
+      inset 0 1px 0 var(--glass-highlight),
       0 0 24px rgba(var(--node-color), 0.14),
       0 0 48px rgba(var(--node-color), 0.06);
     border-color: rgba(var(--node-color), 0.25);
@@ -2055,7 +2058,7 @@ const edgeMidpoints = edges.map(edge => {
     bottom: 1.5rem;
     right: 2rem;
     z-index: 12;
-    background: rgba(14, 14, 16, 0.72);
+    background: var(--dash-node-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(168, 85, 247, 0.1);
@@ -2130,7 +2133,7 @@ const edgeMidpoints = edges.map(edge => {
   .upgrade-popup {
     position: absolute;
     z-index: 50;
-    background: rgba(14, 14, 16, 0.92);
+    background: var(--dash-node-expanded);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(168, 85, 247, 0.2);

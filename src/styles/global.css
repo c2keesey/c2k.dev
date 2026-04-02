@@ -1,20 +1,146 @@
+/* ── Theme tokens ── */
 :root {
+  /* Backgrounds */
   --bg: #0a0a0b;
   --bg-surface: #141416;
   --bg-hover: #1c1c1f;
+  --bg-glass: rgba(14, 14, 16, 0.65);
+  --bg-glass-heavy: rgba(14, 14, 16, 0.72);
+  --bg-nav: rgba(10, 10, 11, 0.8);
+  --bg-overlay: rgba(0, 0, 0, 0.3);
+  --bg-overlay-heavy: rgba(0, 0, 0, 0.75);
+  --bg-code: rgba(255, 255, 255, 0.06);
+
+  /* Text */
   --text: #e4e4e7;
   --text-muted: #71717a;
-  --border: #27272a;
+  --text-secondary: rgba(255, 255, 255, 0.9);
+  --text-tertiary: rgba(255, 255, 255, 0.45);
+  --text-quaternary: rgba(255, 255, 255, 0.3);
+  --text-faint: rgba(255, 255, 255, 0.2);
+  --text-ghost: rgba(255, 255, 255, 0.12);
 
+  /* Borders & surfaces */
+  --border: #27272a;
+  --glass-border: rgba(168, 85, 247, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.03);
+  --glass-highlight-strong: rgba(255, 255, 255, 0.06);
+
+  /* Accents */
   --purple: #a855f7;
+  --purple-dim: rgba(168, 85, 247, 0.5);
+  --purple-bg: rgba(168, 85, 247, 0.15);
+  --purple-bg-subtle: rgba(168, 85, 247, 0.06);
+  --purple-glow: rgba(168, 85, 247, 0.3);
   --orange: #f97316;
+  --green: #22c55e;
+  --green-dim: rgba(34, 197, 94, 0.45);
+  --green-border: rgba(34, 197, 94, 0.12);
+  --green-glow: rgba(34, 197, 94, 0.4);
+  --yellow-dim: rgba(234, 179, 8, 0.45);
+  --yellow-bg: rgba(234, 179, 8, 0.12);
+  --yellow-glow: rgba(234, 179, 8, 0.4);
+  --cyan: rgba(6, 182, 212, 0.7);
+  --cyan-hover: rgba(6, 182, 212, 1);
+  --red: #ef4444;
+
+  /* Gradient */
   --gradient: linear-gradient(135deg, var(--purple), #d946ef, var(--orange));
   --gradient-text: linear-gradient(90deg, var(--purple), #d946ef, var(--orange));
 
+  /* Dashboard-specific */
+  --dash-vignette-mid: rgba(5, 5, 7, 0.15);
+  --dash-vignette-edge: rgba(5, 5, 7, 0.45);
+  --dash-dot-grid: rgba(255, 255, 255, 0.02);
+  --dash-node-bg: rgba(14, 14, 16, 0.72);
+  --dash-node-expanded: rgba(12, 12, 14, 0.9);
+  --dash-tooltip-bg: rgba(10, 10, 12, 0.85);
+  --dash-tooltip-border: rgba(255, 255, 255, 0.06);
+  --dash-sparkline-fill: rgba(249, 115, 22, 0.08);
+  --dash-sparkline-stroke: rgba(249, 115, 22, 0.4);
+
+  /* Tooltip */
+  --tooltip-bg: #1c1c1f;
+  --tooltip-border: #27272a;
+
+  /* Selection */
+  --selection-bg: var(--purple);
+  --selection-text: white;
+
+  /* Shadows (none on dark — depth comes from light/dark contrast) */
+  --card-shadow: none;
+  --card-shadow-hover: none;
+
+  /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-heading: 'Satoshi', 'Outfit', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
 }
+
+/* ── Warm light theme — golden hour vibes ── */
+[data-theme="warm"] {
+  --bg: #faf7f4;
+  --bg-surface: #f2ede7;
+  --bg-hover: #e9e2d9;
+  --bg-glass: rgba(242, 237, 231, 0.8);
+  --bg-glass-heavy: rgba(242, 237, 231, 0.88);
+  --bg-nav: rgba(250, 247, 244, 0.85);
+  --bg-overlay: rgba(180, 165, 145, 0.12);
+  --bg-overlay-heavy: rgba(180, 165, 145, 0.25);
+  --bg-code: rgba(0, 0, 0, 0.04);
+
+  --text: #2c2520;
+  --text-muted: #6b6058;
+  --text-secondary: rgba(44, 37, 32, 0.9);
+  --text-tertiary: rgba(44, 37, 32, 0.7);
+  --text-quaternary: rgba(44, 37, 32, 0.5);
+  --text-faint: rgba(44, 37, 32, 0.35);
+  --text-ghost: rgba(44, 37, 32, 0.18);
+
+  --border: #ddd5c9;
+  --glass-border: rgba(147, 51, 234, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.5);
+  --glass-highlight-strong: rgba(255, 255, 255, 0.7);
+
+  --purple: #9333ea;
+  --purple-dim: rgba(147, 51, 234, 0.55);
+  --purple-bg: rgba(147, 51, 234, 0.12);
+  --purple-bg-subtle: rgba(147, 51, 234, 0.05);
+  --purple-glow: rgba(147, 51, 234, 0.2);
+  --orange: #ea580c;
+  --green: #16a34a;
+  --green-dim: rgba(22, 163, 74, 0.55);
+  --green-border: rgba(22, 163, 74, 0.15);
+  --green-glow: rgba(22, 163, 74, 0.25);
+  --yellow-dim: rgba(202, 138, 4, 0.6);
+  --yellow-bg: rgba(202, 138, 4, 0.1);
+  --yellow-glow: rgba(202, 138, 4, 0.25);
+  --cyan: rgba(8, 145, 178, 0.8);
+  --cyan-hover: rgba(8, 145, 178, 1);
+  --red: #dc2626;
+
+  --gradient-text: linear-gradient(90deg, var(--purple), #c026d3, var(--orange));
+
+  --dash-vignette-mid: rgba(210, 200, 185, 0.08);
+  --dash-vignette-edge: rgba(190, 178, 160, 0.18);
+  --dash-dot-grid: rgba(0, 0, 0, 0.03);
+  --dash-node-bg: rgba(242, 237, 231, 0.82);
+  --dash-node-expanded: rgba(250, 247, 244, 0.95);
+  --dash-tooltip-bg: rgba(250, 247, 244, 0.92);
+  --dash-tooltip-border: rgba(0, 0, 0, 0.08);
+  --dash-sparkline-fill: rgba(234, 88, 12, 0.06);
+  --dash-sparkline-stroke: rgba(234, 88, 12, 0.45);
+
+  --tooltip-bg: #f5f0ea;
+  --tooltip-border: #ddd5c9;
+
+  --card-shadow: 0 1px 3px rgba(120, 100, 80, 0.08), 0 4px 12px rgba(120, 100, 80, 0.06);
+  --card-shadow-hover: 0 2px 8px rgba(120, 100, 80, 0.12), 0 8px 24px rgba(120, 100, 80, 0.08);
+
+  --selection-bg: var(--purple);
+  --selection-text: white;
+}
+
 
 * {
   margin: 0;
@@ -28,6 +154,7 @@ html {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
@@ -40,6 +167,6 @@ a {
 }
 
 ::selection {
-  background: var(--purple);
-  color: white;
+  background: var(--selection-bg);
+  color: var(--selection-text);
 }
