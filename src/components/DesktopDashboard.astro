@@ -913,10 +913,22 @@ const edgeMidpoints = edges.map(edge => {
 
       function drawMesh() {
         mctx.lineWidth = 0.5;
+        const warm = isWarmTheme();
+        // Warm theme: show all triangles with a base tone, heat boosts them
+        // Dark theme: only show heated triangles (original behavior)
+        const baseFill = warm ? 0.018 : 0;
+        const baseStroke = warm ? 0.03 : 0;
 
         for (let i = 0; i < meshTris.length; i++) {
           const heat = triHeat[i];
-          if (heat < 0.003) continue; // skip invisible triangles
+          const fillA = warm
+            ? baseFill + heat * 0.06
+            : heat * 0.09;
+          const strokeA = warm
+            ? baseStroke + heat * 0.1
+            : heat * 0.14;
+
+          if (fillA < 0.003 && strokeA < 0.003) continue;
 
           const tri = meshTris[i];
           const ax = displacedX[tri.a], ay = displacedY[tri.a];
@@ -928,13 +940,13 @@ const edgeMidpoints = edges.map(edge => {
           mctx.lineTo(bx, by);
           mctx.lineTo(cx, cy);
           mctx.closePath();
-          mctx.fillStyle = isWarmTheme()
-            ? `rgba(147,51,234,${(heat * 0.06).toFixed(4)})`
-            : `rgba(168,85,247,${(heat * 0.09).toFixed(4)})`;
+          mctx.fillStyle = warm
+            ? `rgba(180,140,100,${fillA.toFixed(4)})`
+            : `rgba(168,85,247,${fillA.toFixed(4)})`;
           mctx.fill();
-          mctx.strokeStyle = isWarmTheme()
-            ? `rgba(147,51,234,${(heat * 0.1).toFixed(4)})`
-            : `rgba(168,85,247,${(heat * 0.14).toFixed(4)})`;
+          mctx.strokeStyle = warm
+            ? `rgba(160,120,80,${strokeA.toFixed(4)})`
+            : `rgba(168,85,247,${strokeA.toFixed(4)})`;
           mctx.stroke();
         }
       }
