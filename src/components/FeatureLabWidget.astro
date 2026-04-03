@@ -392,13 +392,27 @@
         if (!res.ok) return;
         const data = await res.json();
 
+        // Check viewport compatibility
+        const vp = data.current?.viewport || 'both';
+        const isMobile = window.innerWidth < 768;
+        const viewportMatch = vp === 'both'
+          || (vp === 'mobile' && isMobile)
+          || (vp === 'desktop' && !isMobile);
+
+        if (!viewportMatch && data.status === 'pending_review') {
+          // Feature doesn't target this viewport — hide widget
+          widget.style.display = 'none';
+          return;
+        }
+        widget.style.display = 'block';
+
         currentStatus = data.status;
         updatePill(data.status);
 
         if (data.status === 'pending_review' && data.current) {
           title.textContent = data.current.title || 'Untitled';
           desc.textContent = data.current.description || '';
-          source.textContent = data.current.source || '';
+          source.textContent = `${data.current.source || ''}${vp !== 'both' ? ` · ${vp}` : ''}`;
 
           if (data.current.files_changed?.length) {
             files.innerHTML = data.current.files_changed
