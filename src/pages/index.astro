@@ -15,6 +15,7 @@ import MobileNetworkView from '../components/MobileNetworkView.astro';
 import BlogDesktop from '../components/BlogDesktop.astro';
 import BlogMobile from '../components/BlogMobile.astro';
 import FeatureLabWidget from '../components/FeatureLabWidget.astro';
+const showFeatureLab = !!process.env.FEATURE_LAB;
 import '../styles/global.css';
 ---
 
@@ -312,7 +313,7 @@ import '../styles/global.css';
         <span class="status-text" id="status-text">AWAITING TELEMETRY</span>
       </div>
     </footer>
-    <FeatureLabWidget />
+    {showFeatureLab && <FeatureLabWidget />}
   </body>
 </html>
 

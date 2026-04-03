@@ -45,6 +45,14 @@
     display: none; /* hidden until JS confirms preview port */
   }
 
+  /* Push above mobile bottom nav */
+  @media (max-width: 767px) {
+    .fl-widget {
+      bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      right: 1rem;
+    }
+  }
+
   /* ── Pill ── */
   .fl-pill {
     display: flex;
