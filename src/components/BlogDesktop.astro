@@ -1,0 +1,729 @@
+---
+// Desktop blog: spatial broadsheet layout with reading overlay
+// Visible at >= 1024px, hidden on mobile
+
+interface Post {
+  id: string;
+  title: string;
+  channel: string;
+  channelColor: string;
+  date: string;
+  readingTime: string;
+  excerpt: string;
+  content: string;
+  gridArea: string;
+}
+
+const posts: Post[] = [
+  {
+    id: 'context-engineering',
+    title: 'Context Engineering is the New Programming',
+    channel: 'AI/ML',
+    channelColor: '#06b6d4',
+    date: '2026-03-28',
+    readingTime: '4 min',
+    excerpt: 'I used to spend most of my time writing code. Now I spend most of it deciding what the model should know before it writes a single line.',
+    content: '',
+    gridArea: 'featured',
+  },
+  {
+    id: 'self-hosted-stack',
+    title: 'The Self-Hosted Stack',
+    channel: 'INFRA',
+    channelColor: '#22c55e',
+    date: '2026-03-21',
+    readingTime: '4 min',
+    excerpt: 'A Dell OptiPlex micro, zero open ports, and the feeling of knowing exactly which process handles every request.',
+    content: '',
+    gridArea: 'infra',
+  },
+  {
+    id: '42-keys',
+    title: 'Why I Type on 42 Keys',
+    channel: 'HARDWARE',
+    channelColor: '#f97316',
+    date: '2026-03-14',
+    readingTime: '4 min',
+    excerpt: 'Three weeks of genuine suffering, then something clicked. Constraints are a design principle.',
+    content: '',
+    gridArea: 'hardware',
+  },
+  {
+    id: 'awkward-middle',
+    title: 'The Awkward Middle of Working with AI',
+    channel: 'AI/ML',
+    channelColor: '#06b6d4',
+    date: '2026-03-07',
+    readingTime: '4 min',
+    excerpt: 'Five sessions running, context-switching every two minutes. Things get done but the felt sense is fragmented.',
+    content: '',
+    gridArea: 'claude',
+  },
+  {
+    id: 'maia-geospatial',
+    title: 'Ask a Question, Get a Map',
+    channel: 'PRODUCT',
+    channelColor: '#3b82f6',
+    date: '2026-02-28',
+    readingTime: '4 min',
+    excerpt: 'The hard part of building MAIA isn\'t the AI. It\'s the data underneath.',
+    content: '',
+    gridArea: 'maia',
+  },
+  {
+    id: 'dont-build-before-you-need-it',
+    title: 'Don\'t Build Before You Need It',
+    channel: 'PHILOSOPHY',
+    channelColor: '#a855f7',
+    date: '2026-02-21',
+    readingTime: '3 min',
+    excerpt: 'There are always a bunch of good sounding ideas. The hard part is killing them.',
+    content: '',
+    gridArea: 'philosophy',
+  },
+];
+
+const channels = [...new Set(posts.map(p => p.channel))].map(ch => {
+  const post = posts.find(p => p.channel === ch)!;
+  return { name: ch, color: post.channelColor };
+});
+---
+
+<div class="blog-desktop">
+  <!-- Header -->
+  <div class="blog-header">
+    <div class="blog-header-left">
+      <h1 class="blog-title text-scramble" data-text="TRANSMISSIONS" data-delay="100" data-always="false">–––––––––––––</h1>
+      <span class="blog-signal-count">{posts.length} SIGNALS RECEIVED</span>
+    </div>
+    <div class="blog-header-right">
+      <div class="blog-channels">
+        {channels.map(ch => (
+          <span class="blog-channel-tag" style={`--ch-color: ${ch.color}`}>
+            <span class="channel-dot"></span>
+            {ch.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Spatial broadsheet grid -->
+  <div class="blog-broadsheet" id="blog-broadsheet">
+    {posts.map((post, i) => (
+      <article
+        class="transmission-card"
+        data-post-id={post.id}
+        data-grid-area={post.gridArea}
+        style={`--card-accent: ${post.channelColor}; animation-delay: ${i * 60}ms`}
+      >
+        <div class="card-chrome">
+          <span class="card-channel" style={`color: ${post.channelColor}`}>{post.channel}</span>
+          <span class="card-date">{post.date}</span>
+        </div>
+        <h2 class="card-title">{post.title}</h2>
+        <p class="card-excerpt">{post.excerpt}</p>
+        <div class="card-footer">
+          <span class="card-duration">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="5" cy="5" r="4" />
+              <path d="M5 2.5V5.5L7 6.5" stroke-linecap="round" />
+            </svg>
+            {post.readingTime}
+          </span>
+          <span class="card-status">DECODED</span>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <!-- Reading overlay -->
+  <div class="reading-overlay" id="reading-overlay">
+    <div class="reading-chrome">
+      <div class="reading-chrome-left">
+        <span class="reading-channel" id="reading-channel"></span>
+        <span class="reading-date" id="reading-date"></span>
+        <span class="reading-duration" id="reading-duration"></span>
+      </div>
+      <button class="reading-close" id="reading-close" aria-label="Close transmission">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round" />
+        </svg>
+        CLOSE
+      </button>
+    </div>
+    <div class="reading-body" id="reading-body">
+      <h1 class="reading-title" id="reading-title"></h1>
+      <div class="reading-content" id="reading-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initBlogDesktop() {
+    const broadsheet = document.getElementById('blog-broadsheet');
+    const overlay = document.getElementById('reading-overlay');
+    const readingTitle = document.getElementById('reading-title');
+    const readingContent = document.getElementById('reading-content');
+    const readingChannel = document.getElementById('reading-channel');
+    const readingDate = document.getElementById('reading-date');
+    const readingDuration = document.getElementById('reading-duration');
+    const readingClose = document.getElementById('reading-close');
+
+    if (!broadsheet || !overlay) return;
+
+    // Post data stored in data attributes
+    const postData: Record<string, { title: string; content: string; channel: string; channelColor: string; date: string; duration: string }> = {};
+
+    // Build post data map from the server-rendered elements
+    const cards = broadsheet.querySelectorAll<HTMLElement>('.transmission-card');
+
+    cards.forEach(card => {
+      const id = card.dataset.postId || '';
+      const title = card.querySelector('.card-title')?.textContent || '';
+      const channel = card.querySelector('.card-channel')?.textContent || '';
+      const date = card.querySelector('.card-date')?.textContent || '';
+      const duration = card.querySelector('.card-duration')?.textContent?.trim() || '';
+      const accentColor = card.style.getPropertyValue('--card-accent');
+
+      postData[id] = { title, content: '', channel, channelColor: accentColor, date, duration };
+
+      card.addEventListener('click', () => openPost(id));
+    });
+
+    function openPost(id: string) {
+      const data = postData[id];
+      if (!data || !readingTitle || !readingContent || !readingChannel || !readingDate || !readingDuration) return;
+
+      // Get content from hidden data
+      const contentEl = document.querySelector(`[data-blog-content="${id}"]`);
+      const content = contentEl?.innerHTML || '';
+
+      readingChannel.textContent = data.channel;
+      readingChannel.style.color = data.channelColor;
+      readingDate.textContent = data.date;
+      readingDuration.textContent = data.duration;
+
+      // Scramble title decode
+      scrambleTitle(readingTitle, data.title);
+      readingContent.innerHTML = content;
+
+      // Stagger paragraph fade-in
+      readingContent.querySelectorAll('p').forEach((p, i) => {
+        (p as HTMLElement).style.animationDelay = `${200 + i * 80}ms`;
+        p.classList.add('reading-p-enter');
+      });
+
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function scrambleTitle(el: HTMLElement, target: string) {
+      const chars = '0123456789ABCDEF~!@#$%^&*()+=_';
+      const duration = 600;
+      const birthOffsets: number[] = [];
+      const resolveOffsets: number[] = [];
+      const bw = duration * 0.3;
+      const rw = duration * 0.7;
+
+      for (let i = 0; i < target.length; i++) {
+        const bias = (i / target.length) * bw * 0.5;
+        birthOffsets[i] = bias + Math.random() * bw * 0.5;
+        resolveOffsets[i] = bw + bias + Math.random() * rw * 0.4;
+      }
+
+      el.textContent = target.replace(/[^ ]/g, '–');
+      let start: number | null = null;
+
+      function step(ts: number) {
+        if (!start) start = ts;
+        const elapsed = ts - start;
+
+        if (elapsed >= duration) {
+          el.textContent = target;
+          return;
+        }
+
+        el.textContent = '';
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < target.length; i++) {
+          if (target[i] === ' ') {
+            frag.appendChild(document.createTextNode(' '));
+          } else if (elapsed >= resolveOffsets[i]) {
+            frag.appendChild(document.createTextNode(target[i]));
+          } else if (elapsed >= birthOffsets[i]) {
+            const span = document.createElement('span');
+            span.style.background = 'var(--gradient-text)';
+            span.style.webkitBackgroundClip = 'text';
+            span.style.webkitTextFillColor = 'transparent';
+            span.style.backgroundClip = 'text';
+            span.textContent = chars[Math.floor(Math.random() * chars.length)];
+            frag.appendChild(span);
+          } else {
+            const span = document.createElement('span');
+            span.style.opacity = '0.15';
+            span.textContent = '–';
+            frag.appendChild(span);
+          }
+        }
+        el.appendChild(frag);
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function closeOverlay() {
+      if (!overlay) return;
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    readingClose?.addEventListener('click', closeOverlay);
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay?.classList.contains('open')) {
+        closeOverlay();
+      }
+    });
+
+    // Close on overlay background click
+    overlay?.addEventListener('click', (e) => {
+      if (e.target === overlay) closeOverlay();
+    });
+  }
+
+  initBlogDesktop();
+</script>
+
+<!-- Hidden content blocks for reading overlay -->
+<div style="display:none">
+  <div data-blog-content="context-engineering">
+    <p>I used to spend most of my time writing code. Now I spend most of it deciding what the model should know before it writes a single line. The shift happened gradually and then all at once — one day I realized the thing I was actually getting good at wasn't TypeScript or Python, it was assembling the right information at the right time for a model to do its job.</p>
+    <p>I've been calling this context engineering, and I think it's genuinely a new skill. Not prompt engineering — that's writing a clever sentence. This is more like building the information architecture around every model call. Which files go in the context? What documentation matters right now? How do you structure the system prompt so the model has the right mental model of your codebase? What tools does it need access to, and what memory should it surface from past sessions?</p>
+    <p>At MAIA this is everything. Our natural-language-to-map pipeline lives or dies by the context we assemble before the model even starts reasoning. The model doesn't need to know everything about geospatial analysis. It needs to know exactly the right things for this specific query. A well-scoped context turns a mediocre prompt into a perfect map. A sloppy one produces garbage regardless of how smart the model is.</p>
+    <p>Claude Code is where this really clicked for me. The CLAUDE.md file, hooks, MCP servers — it's all context engineering. You're not configuring a text editor. You're building a workspace that shapes how an intelligence interacts with your code. And the compounding effect is real. Better context produces better output, which teaches you what context matters, which produces even better output next time. The feedback loop is tighter than anything I've experienced in traditional programming.</p>
+    <p>I think in a few years we'll look back and realize the people who got really good at this early had a massive advantage. Not because they were better programmers, but because they understood that the new bottleneck isn't writing code — it's shaping what the model knows.</p>
+  </div>
+  <div data-blog-content="self-hosted-stack">
+    <p>Everything I run sits on a Dell OptiPlex micro in my apartment in the Outer Sunset. Ubuntu, 32 gigs of RAM, a 1TB NVMe. It draws maybe 15 watts at idle. My cloud bill is zero.</p>
+    <p>I know the obvious question is why not just use Vercel or Railway or whatever. And the honest answer is that I want to understand every layer. When something breaks I want to know exactly where to look. Not in some abstract "it's good to understand things" way — I mean I've been burned enough times by managed services hiding complexity that I'd rather just own it. Running your own infrastructure teaches you things that platforms deliberately abstract away, and those things matter when you're debugging at 2am.</p>
+    <p>The stack is simple. Cloudflare Tunnel exposes public stuff — this site, MAIA staging. Tailscale handles everything private — dashboards, dev tools, SSH from my phone. systemd manages all the services. No Docker, no Kubernetes, no orchestration layer pretending to be simple. Just unit files and timers.</p>
+    <p>The real unlock was Tailscale and Cloudflare Tunnel together. Tailscale gives me a private mesh network across every device I own. Cloudflare Tunnel gives me public ingress without opening a single port. Between the two I have zero exposed ports on the machine but can reach anything from anywhere. My morning news digest, tech release monitor, concert ticket scraper, this website — all running on the same box, all accessible exactly where they need to be and nowhere else.</p>
+    <p>There's a specific feeling I'm chasing here. Typing a URL and knowing exactly which process on which machine on which port will handle that request, because I set all of it up myself. That's the feeling.</p>
+  </div>
+  <div data-blog-content="42-keys">
+    <p>I type on a Corne. 42 keys, split in half, no number row. When people see it they usually ask if it's a joke. It's not a joke but I understand the reaction.</p>
+    <p>It took three weeks of genuine suffering to learn. My typing speed dropped from around 100 WPM to maybe 30. I couldn't type a URL without stopping to think about where the colon was. Every missing key lives on a layer — you hold a thumb key and the whole board transforms. Numbers on one layer, symbols on another, navigation on a third. It sounds insane and it felt insane for those first three weeks.</p>
+    <p>But by week four something clicked. The split layout means my shoulders stay open instead of hunching inward. The columnar stagger means my fingers move straight up and down, not diagonally like on a normal staggered board. And the thumb clusters — I use my thumbs for space, enter, backspace, and layer switches now, instead of destroying my pinkies on modifiers. After a month I tried going back to a regular keyboard and my wrists immediately started hurting. That was the end of that debate.</p>
+    <p>The real revelation was the layers though. On a normal keyboard your hands are constantly leaving home row — reaching for backspace, stretching for brackets, moving to arrow keys. On the Corne everything is within one key of where your fingers already are. I have numbers, symbols, navigation, media controls, all accessible without moving my hands. The firmware is QMK and I've iterated on the layout for months. Every key does exactly what I want because I defined every single mapping.</p>
+    <p>I soldered this one myself. Mill-Max hot-swap sockets, Gateron silent switches, custom caps. I solder things that don't need to exist — LED gauntlets, lightning clouds, keyboards. 42 keys sounds like a constraint. It's actually a design principle: every key should earn its place.</p>
+  </div>
+  <div data-blog-content="awkward-middle">
+    <p>We're past the point of needing to directly watch a single thread of LLM work. That level of babysitting isn't necessary anymore. But I've been noticing something about where we've landed instead.</p>
+    <p>Right now I'm comfortable letting a model run for about ten minutes — that's roughly the amount of work I can review thoroughly and catch mistakes in. To stay efficient I'll have three to five active sessions going, plus another five to ten waiting for responses or in various stages of progress. Which means I'm context-switching every one to three minutes.</p>
+    <p>The thing is, human brains don't really multitask. We just context-switch and process things incrementally. And when the time between switches is this short, the overhead of loading working memory for each task starts to feel significant relative to the actual focused work being done. It's this weird middle state of feeling inefficient even though things are technically getting done.</p>
+    <p>I've noticed it bleeding into other parts of my life too — personal tasks get interleaved with agent work, things partially complete before something else needs attention. The first-person experience is honestly a bit dissociative. Scattered. Lack of continuity. Multiple workstreams are moving forward but the felt sense is fragmented.</p>
+    <p>I think this gets better over time. As models can do more work per stretch, the context-switching frequency goes down, and the ratio of overhead to actual work improves. But right now we're in the awkward middle. One thing that helps: keeping each piece of review atomic — treating it as a complete unit rather than something I'll come back to.</p>
+  </div>
+  <div data-blog-content="maia-geospatial">
+    <p>The pitch for MAIA is simple: ask a question, get a map. "Show me all parcels in downtown SF that sold for over 2M in the last year and are zoned for mixed-use development." You type that in natural language, and MAIA produces a map with the parcels highlighted, the data attached, ready to explore. No GIS expertise, no SQL, no manual layer stacking.</p>
+    <p>That's the pitch. The reality of building it is a different story. The hard part is not the AI — the LLM orchestration and the agentic pipeline, while nontrivial, are at least tractable engineering problems. The hard part is the data underneath. Geospatial data is messy and inconsistent and siloed across dozens of county, state, and federal databases. Parcel boundaries don't match across jurisdictions. Zoning codes mean different things in different cities. Property records use different schemas everywhere. It's a nightmare.</p>
+    <p>Our actual job most days is normalizing all of that into a unified layer that the AI can query intelligently. The LLM is the interface. The data pipeline is the product. And every new city we add is its own special flavor of data chaos that has to be wrangled into the same schema as everything else.</p>
+    <p>I love this kind of problem though. One of the things that drew me to startups is you get to do a little of everything — I'm doing LLM orchestration and database optimization and infrastructure and product thinking all in the same week. You have to move fast and resist the urge to optimize. The discipline is always asking: is this moving the business forward? Not is this the most elegant solution, not is this the most interesting technical problem, but is this the thing a customer needs right now.</p>
+    <p>We're building for analysts who know what questions to ask but don't want to learn PostGIS. The bet is that natural language is a better interface for geospatial analysis than any tool that exists today. I think we're right.</p>
+  </div>
+  <div data-blog-content="dont-build-before-you-need-it">
+    <p>There are always a bunch of good-sounding ideas. The hard part is killing them. I learned this at MAIA and it took a while — the urge to build something elegant instead of something useful is strong, especially when you're technical enough to see all the possibilities.</p>
+    <p>The rule I keep coming back to: don't build before you need it. Don't add a cache until you've measured latency. Don't add a message queue until you actually need async processing. Don't add a service layer until the monolith is genuinely struggling. Every abstraction is a bet that the pattern will repeat, and most of those bets lose.</p>
+    <p>This is hard because building things feels like progress. Refactoring feels productive. Setting up elaborate infrastructure for a feature that doesn't exist yet feels responsible. But it's not — it's avoidance. The actual work is figuring out what the customer needs and pushing that through, ugly or not. A lot of resisting the urge to optimize. You have to move quickly and leave things ugly sometimes, and that's genuinely uncomfortable.</p>
+    <p>You gotta beat the shit out of your ideas. The ones that survive are worth building. The rest were just interesting — and interesting is not the same as valuable. Constantly prioritizing is the hard part. Not the coding, not the architecture, not the tooling. The prioritizing.</p>
+    <p>Write the obvious thing. Ship it. If it needs to change, change it then. The codebase that's easy to change beats the codebase that anticipated every change but is impossible to understand.</p>
+  </div>
+</div>
+
+<style>
+  .blog-desktop {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem 3rem 3rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  @media (min-width: 1024px) {
+    .blog-desktop { display: block; }
+  }
+
+  /* ── Header ── */
+  .blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .blog-header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .blog-title {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    text-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+  }
+
+  .blog-signal-count {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .blog-channels {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .blog-channel-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .channel-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ch-color);
+    opacity: 0.7;
+  }
+
+  /* ── Broadsheet grid ── */
+  .blog-broadsheet {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas:
+      "featured featured infra"
+      "featured featured hardware"
+      "claude   maia     maia"
+      "philosophy philosophy philosophy";
+    gap: 1px;
+  }
+
+  /* ── Transmission card ── */
+  .transmission-card {
+    background: rgba(14, 14, 16, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-left: 2px solid var(--card-accent);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease-out, border-color 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    animation: card-enter 0.4s cubic-bezier(.2, .8, .2, 1) both;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
+  }
+
+  .transmission-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--card-accent), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+
+  .transmission-card:hover {
+    background: rgba(14, 14, 16, 0.85);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .transmission-card:hover::before {
+    opacity: 0.4;
+  }
+
+  @keyframes card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Grid area assignments */
+  [data-grid-area="featured"] { grid-area: featured; }
+  [data-grid-area="infra"] { grid-area: infra; }
+  [data-grid-area="hardware"] { grid-area: hardware; }
+  [data-grid-area="claude"] { grid-area: claude; }
+  [data-grid-area="maia"] { grid-area: maia; }
+  [data-grid-area="philosophy"] { grid-area: philosophy; }
+
+  /* Featured card gets special treatment */
+  [data-grid-area="featured"] {
+    padding: 2rem;
+  }
+
+  [data-grid-area="featured"] .card-title {
+    font-size: 1.4rem;
+    line-height: 1.3;
+  }
+
+  [data-grid-area="featured"] .card-excerpt {
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Philosophy card spans full width — more compact */
+  [data-grid-area="philosophy"] {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  [data-grid-area="philosophy"] .card-chrome {
+    flex-shrink: 0;
+  }
+
+  [data-grid-area="philosophy"] .card-excerpt {
+    display: none;
+  }
+
+  [data-grid-area="philosophy"] .card-title {
+    flex: 1;
+  }
+
+  .card-chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .card-channel {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .card-date {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.04em;
+  }
+
+  .card-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.35;
+    transition: color 0.2s;
+  }
+
+  .transmission-card:hover .card-title {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .card-excerpt {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.3);
+    line-height: 1.6;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+
+  .card-duration {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .card-duration svg {
+    opacity: 0.4;
+  }
+
+  .card-status {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.15);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Reading overlay ── */
+  .reading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    background: rgba(10, 10, 11, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .reading-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .reading-chrome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: rgba(10, 10, 11, 0.9);
+    backdrop-filter: blur(12px);
+    z-index: 1;
+  }
+
+  .reading-chrome-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .reading-channel {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .reading-date,
+  .reading-duration {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.04em;
+  }
+
+  .reading-close {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.4);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .reading-close:hover {
+    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .reading-body {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+    width: 100%;
+  }
+
+  .reading-title {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.25;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .reading-content :global(p) {
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.52);
+    line-height: 1.9;
+    margin-bottom: 2rem;
+    letter-spacing: 0.005em;
+  }
+
+  .reading-content :global(p:first-child) {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.8;
+  }
+
+  .reading-content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  :global(.reading-p-enter) {
+    animation: p-fade-in 0.5s ease-out both;
+  }
+
+  @keyframes p-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

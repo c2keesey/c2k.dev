@@ -4,6 +4,7 @@ import ThemeToggle from './ThemeToggle.astro';
 const links = [
   { href: '/', label: 'Home' },
   { href: '/projects', label: 'Projects' },
+  { href: '/log', label: 'Log' },
   { href: '/about', label: 'About' },
 ];
 ---
@@ -49,7 +50,17 @@ const links = [
       </svg>
       <span class="tab-label">Systems</span>
     </button>
-    <button class="bottom-tab" data-index="2" aria-label="About">
+    <button class="bottom-tab" data-index="2" aria-label="Log">
+      <svg class="tab-icon icon-signal" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path class="signal-wave signal-wave-1" d="M2 10V8" stroke-linecap="round"></path>
+        <path class="signal-wave signal-wave-2" d="M5 10V6" stroke-linecap="round"></path>
+        <path class="signal-wave signal-wave-3" d="M8 10V4" stroke-linecap="round"></path>
+        <path class="signal-wave signal-wave-2" d="M11 10V6" stroke-linecap="round"></path>
+        <path class="signal-wave signal-wave-1" d="M14 10V8" stroke-linecap="round"></path>
+      </svg>
+      <span class="tab-label">Log</span>
+    </button>
+    <button class="bottom-tab" data-index="3" aria-label="About">
       <svg class="tab-icon icon-terminal" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
         <path class="terminal-chevron" d="M3 5l4 3-4 3" stroke-linecap="round" stroke-linejoin="round"></path>
         <line class="terminal-cursor" x1="9" y1="12" x2="13" y2="12" stroke-linecap="round"></line>
@@ -157,7 +168,7 @@ const links = [
       display: flex;
       align-items: center;
       position: relative;
-      width: 220px;
+      width: 272px;
       padding: 4px;
       background: var(--bg-glass-heavy);
       backdrop-filter: blur(12px);
@@ -271,6 +282,23 @@ const links = [
       50% { opacity: 1; }
     }
 
+    /* Signal: wave bounce on active */
+    .signal-wave { opacity: 0.4; transition: opacity 300ms ease-out; }
+    .bottom-tab[data-active="true"] .signal-wave-1 {
+      animation: signal-bounce 1.6s ease-in-out infinite;
+    }
+    .bottom-tab[data-active="true"] .signal-wave-2 {
+      animation: signal-bounce 1.6s ease-in-out 0.2s infinite;
+    }
+    .bottom-tab[data-active="true"] .signal-wave-3 {
+      animation: signal-bounce 1.6s ease-in-out 0.4s infinite;
+    }
+
+    @keyframes signal-bounce {
+      0%, 100% { opacity: 0.25; }
+      50% { opacity: 0.9; }
+    }
+
     /* Terminal: cursor blink */
     .terminal-cursor { transition: opacity 300ms ease-out; }
     .bottom-tab[data-active="true"] .terminal-cursor {
@@ -293,15 +321,16 @@ const links = [
     const highlight = document.getElementById('bottom-nav-highlight') as HTMLElement;
 
     // Pure math — no DOM measurement needed
-    // Bar: 220px, padding: 4px each side → inner: 212px
-    // Flex: inactive=1, active=2.2, total=4.2
+    // Bar: 272px, padding: 4px each side → inner: 264px
+    // Flex: inactive=1, active=2.2, total=5.2 (3 inactive + 1 active)
     const PADDING = 4;
-    const INNER = 212;
+    const INNER = 264;
     const FLEX_INACTIVE = 1;
     const FLEX_ACTIVE = 2.2;
-    const TOTAL_FLEX = FLEX_INACTIVE * 2 + FLEX_ACTIVE; // 4.2
-    const W_INACTIVE = INNER / TOTAL_FLEX * FLEX_INACTIVE; // 50px
-    const W_ACTIVE = INNER / TOTAL_FLEX * FLEX_ACTIVE;     // 110px
+    const TAB_COUNT = 4;
+    const TOTAL_FLEX = FLEX_INACTIVE * (TAB_COUNT - 1) + FLEX_ACTIVE;
+    const W_INACTIVE = INNER / TOTAL_FLEX * FLEX_INACTIVE;
+    const W_ACTIVE = INNER / TOTAL_FLEX * FLEX_ACTIVE;
 
     function moveHighlight(index: number) {
       if (!highlight) return;
@@ -319,7 +348,7 @@ const links = [
     }
 
     // Determine initial active tab from URL
-    const pages = ['/', '/projects', '/about'];
+    const pages = ['/', '/projects', '/log', '/about'];
     const path = location.pathname;
     const activeIdx = Math.max(0, pages.findIndex(p =>
       p === '/' ? path === '/' || path === '' : path.startsWith(p)

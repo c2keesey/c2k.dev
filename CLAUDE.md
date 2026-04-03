@@ -159,14 +159,37 @@ Use operational language, not generic labels:
 - **Domain**: c2k.page
 - **Hosting**: Self-hosted Astro SSR on local machine, exposed via Cloudflare Tunnel
 - **Tunnel service**: `systemctl --user status cloudflared`
-- **Site service**: `systemctl --user status c2k-website` (port 4321)
 
-### Preview (feature branches)
+### Three deployment targets
 
-- **Preview service**: `systemctl --user status c2k-preview` (port 4322)
-- **URL**: http://100.82.177.26:4322 (Tailscale only, not public)
-- **Worktree**: `/home/c2k/repos/c2k.dev-preview`
-- **To update preview**: `cd ~/repos/c2k.dev-preview && git checkout <branch> && bun run build && systemctl --user restart c2k-preview`
+| Environment | Port | Service | Worktree | Icon | Branch |
+|---|---|---|---|---|---|
+| **Production** | 4321 | `c2k-website` | `~/repos/c2k.dev` | Purple→orange | `main` |
+| **Staging** | 4322 | `c2k-preview` | `~/repos/c2k.dev-preview` | Blue→cyan | `dev-alt` (personal working branch) |
+| **Feature** | 4323 | `c2k-feature` | `~/repos/c2k.dev-feature` | Green→yellow | Any feature branch |
+
+- **Production** is public at c2k.page via Cloudflare Tunnel. Only deploy from `main`.
+- **Staging** and **Feature** are Tailscale-only (http://100.82.177.26:4322, http://100.82.177.26:4323).
+- Each has a distinct PWA icon color so they're distinguishable on mobile.
+- Branches are not locked to ports — you can deploy any branch to staging or feature by checking it out in the worktree and rebuilding.
+
+### Deploying to each
+
+```bash
+# Production (from main only)
+c2k-deploy
+
+# Staging
+cd ~/repos/c2k.dev-preview && git switch <branch> && bun run build && systemctl --user restart c2k-preview
+
+# Feature
+cd ~/repos/c2k.dev-feature && git switch <branch> && bun run build && systemctl --user restart c2k-feature
+```
+
+Or from the current working directory, copy the build output:
+```bash
+bun run build && cp -r dist/* ~/repos/c2k.dev-preview/dist/ && systemctl --user restart c2k-preview
+```
 
 ## Screenshots
 
@@ -180,7 +203,7 @@ For multi-step interactions (click sequences), use a bun script with `playwright
 
 ## Workflow
 
-- **Only deploy to production from main** — never build/deploy to `c2k-website` from feature branches. Use the preview service for testing feature branches.
+- **Only deploy to production from main** — never build/deploy to `c2k-website` from feature branches.
 - **Build, commit, and push after each unit of work** — after making a change on main, always deploy with `c2k-deploy`, commit, and push before moving on.
 - **Deploy shortcut**: `c2k-deploy` — builds and restarts the site service in one command.
 
