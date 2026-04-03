@@ -47,16 +47,10 @@ export async function POST({ request }: { request: Request }) {
     state.denied_patterns.push(body.reason);
   }
 
-  // Move current to history
-  state.history.push({
-    ...state.current,
-    outcome: 'denied',
-    feedback: body.reason || null,
-    resolved_at: new Date().toISOString(),
-  });
-
+  // Keep current intact — the script needs the branch name to clean up.
+  // Script will move current to history and clear it.
   state.status = 'denying';
-  state.current = null;
+  state.deny_reason = body.reason || null;
   writeState(state);
 
   // Spawn background process

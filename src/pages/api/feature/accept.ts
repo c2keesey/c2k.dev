@@ -42,15 +42,10 @@ export async function POST({ request }: { request: Request }) {
 
   const body = await request.json().catch(() => ({})) as { feedback?: string };
 
-  // Move current to history
-  state.history.push({
-    ...state.current,
-    outcome: 'accepted',
-    feedback: body.feedback || null,
-    resolved_at: new Date().toISOString(),
-  });
-
+  // Keep current intact — the script needs the branch name to merge.
+  // Script will move current to history and clear it.
   state.status = 'accepting';
+  state.accept_feedback = body.feedback || null;
   writeState(state);
 
   // Spawn background process
