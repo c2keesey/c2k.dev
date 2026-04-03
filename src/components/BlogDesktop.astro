@@ -21,15 +21,9 @@ const posts: Post[] = [
     channel: 'AI/ML',
     channelColor: '#06b6d4',
     date: '2026-03-28',
-    readingTime: '8 min',
-    excerpt: 'The compiler is gone. The context window is the new execution environment. What changes when your primary job is shaping what an AI knows before it acts?',
-    content: `<p>The compiler is gone. The context window is the new execution environment.</p>
-<p>I used to spend most of my time writing code. Now I spend most of it shaping context — deciding what an LLM should know before it writes a single line. The craft has shifted from "how do I express this logic" to "how do I frame this problem so the model produces the right logic on its own."</p>
-<p>This isn't prompt engineering. Prompt engineering is writing a clever sentence. Context engineering is building the information architecture around every model call — selecting which files to include, what documentation matters, how to structure the system prompt, which tools to expose, what memory to surface.</p>
-<p>At MAIA, this means our natural-language-to-map pipeline lives or dies by the context we assemble. The model doesn't need to know everything about geospatial analysis. It needs to know exactly the right things at exactly the right time. A well-scoped context turns a mediocre prompt into a perfect map.</p>
-<p>Claude Code is the tool that made this click for me. CLAUDE.md files, MCP servers, tool definitions — it's all context engineering. You're not configuring a text editor. You're building a workspace that shapes intelligence.</p>
-<p>The compounding effect is real. Better context → better output → better context for next time. The feedback loop is tighter than any I've experienced in traditional programming. Every session teaches the system something new, and that knowledge persists.</p>
-<p>If you're still thinking of AI as "autocomplete but bigger," you're surfing yesterday's wave. The swell has moved. The new skill is knowing what to put in the window.</p>`,
+    readingTime: '4 min',
+    excerpt: 'I used to spend most of my time writing code. Now I spend most of it deciding what the model should know before it writes a single line.',
+    content: '',
     gridArea: 'featured',
   },
   {
@@ -38,14 +32,9 @@ const posts: Post[] = [
     channel: 'INFRA',
     channelColor: '#22c55e',
     date: '2026-03-21',
-    readingTime: '6 min',
-    excerpt: 'An OptiPlex micro, a Cloudflare Tunnel, and a philosophy: own your compute, expose only what matters.',
-    content: `<p>Everything I run sits on a Dell OptiPlex micro in my apartment. Ubuntu server, 32GB RAM, a 1TB NVMe. It draws 15 watts at idle. My cloud bill is zero.</p>
-<p>The stack is simple: Cloudflare Tunnel exposes public services (this site, MAIA staging). Tailscale handles private access (dashboards, dev tools, SSH). systemd manages everything — no Docker, no Kubernetes, no orchestration layer pretending to be simple.</p>
-<p>This site is an Astro SSR app running on port 4321, fronted by Cloudflare's edge. The OptiPlex Dashboard is a Next.js PWA on port 3001, accessible only over Tailscale. My morning news digest, tech release monitor, concert ticket scraper — all cron jobs managed by systemd timers.</p>
-<p>Why not just use Vercel? Because I want to understand every layer. When something breaks at 2am, I want to know exactly where to look. And because running your own infrastructure teaches you things that managed services deliberately hide.</p>
-<p>The real unlock was Tailscale + Cloudflare Tunnel together. Tailscale gives me a private mesh network across all my devices. Cloudflare Tunnel gives me public ingress without opening ports. Between them, I have zero exposed ports on the machine, but I can reach anything from anywhere.</p>
-<p>It's not about saving money (though it does). It's about the feeling of typing a URL and knowing exactly which process on which machine will handle that request, because you set it all up yourself.</p>`,
+    readingTime: '4 min',
+    excerpt: 'A Dell OptiPlex micro, zero open ports, and the feeling of knowing exactly which process handles every request.',
+    content: '',
     gridArea: 'infra',
   },
   {
@@ -54,63 +43,42 @@ const posts: Post[] = [
     channel: 'HARDWARE',
     channelColor: '#f97316',
     date: '2026-03-14',
-    readingTime: '5 min',
-    excerpt: 'A split ortholinear keyboard with no number row. It sounds insane. It changed how I think about input.',
-    content: `<p>The Corne is a 42-key split ortholinear keyboard. No number row. No function row. No dedicated arrow keys. Every missing key lives on a layer, accessed by holding a thumb key.</p>
-<p>It took three weeks of genuine suffering to learn. My typing speed dropped from 100 WPM to 30. I couldn't type a URL without stopping to think. But by week four, something clicked — literally and figuratively.</p>
-<p>The split layout means my shoulders stay open. The columnar stagger means my fingers move vertically, not diagonally. The thumb clusters replace pinkies for modifiers. After a month, I couldn't go back to a standard keyboard without my wrists aching.</p>
-<p>But the real revelation was layers. On a normal keyboard, your hands move constantly — reaching for backspace, stretching for brackets, leaving home row for arrows. On the Corne, everything is within one key of home position. Numbers, symbols, navigation, media — all accessible without moving your hands.</p>
-<p>I soldered this one myself. Hand-wired with Mill-Max hot-swap sockets, Gateron silent switches, and custom keycaps. The firmware is QMK with a layout I've iterated on for months. Every key does exactly what I want, because I defined every single mapping.</p>
-<p>42 keys sounds like a constraint. It's actually a design principle: every key should earn its place.</p>`,
+    readingTime: '4 min',
+    excerpt: 'Three weeks of genuine suffering, then something clicked. Constraints are a design principle.',
+    content: '',
     gridArea: 'hardware',
   },
   {
-    id: 'shipping-claude-code',
-    title: 'Shipping with Claude Code',
+    id: 'awkward-middle',
+    title: 'The Awkward Middle of Working with AI',
     channel: 'AI/ML',
     channelColor: '#06b6d4',
     date: '2026-03-07',
-    readingTime: '7 min',
-    excerpt: 'Hooks, skills, MCP servers, CLAUDE.md files — how I turned an AI assistant into a development environment.',
-    content: `<p>Claude Code isn't an AI assistant that lives in my terminal. It is my terminal. I write code through it, deploy through it, review through it. The distinction between "me coding" and "AI coding" dissolved months ago.</p>
-<p>The setup starts with CLAUDE.md — a file that tells Claude who I am, what I'm working on, and how I want to work. It's like an extremely detailed onboarding doc for a new team member, except the team member reads it every single time we pair.</p>
-<p>Then there are hooks: shell commands that fire before or after Claude takes an action. My PreToolUse hooks validate file edits (no writing to production configs), gate dangerous bash commands (anything with rm -rf gets flagged), and enforce project conventions (no new dependencies without approval).</p>
-<p>MCP servers connect Claude to external systems. Linear for issue tracking, GitHub for PR management, my OptiPlex dashboard for system health. Claude doesn't just write code — it checks if the deploy target is healthy, pulls the latest issue context, and pushes the finished PR.</p>
-<p>The workflow is: describe what I want, let Claude plan the approach, review the plan, let it execute, review the result. For a simple bug fix, this takes 2 minutes. For a complex feature, maybe 20 minutes of collaborative iteration.</p>
-<p>The compounding effect is real. My CLAUDE.md has grown to include hundreds of lines of project context, coding preferences, and past decisions. Every session builds on the last. The AI gets "smarter" about my specific codebase not because the model improves, but because the context improves.</p>
-<p>This is what context engineering looks like in practice. The tool is only as good as the context you feed it.</p>`,
+    readingTime: '4 min',
+    excerpt: 'Five sessions running, context-switching every two minutes. Things get done but the felt sense is fragmented.',
+    content: '',
     gridArea: 'claude',
   },
   {
     id: 'maia-geospatial',
-    title: 'Building MAIA: AI-Native Geospatial',
+    title: 'Ask a Question, Get a Map',
     channel: 'PRODUCT',
     channelColor: '#3b82f6',
     date: '2026-02-28',
-    readingTime: '6 min',
-    excerpt: 'Ask a question, get a map. The technical challenge of turning natural language into geospatial intelligence.',
-    content: `<p>"Show me all parcels in downtown SF that sold for over $2M in the last year and are zoned for mixed-use development."</p>
-<p>That's a natural language query. MAIA turns it into a map — with the parcels highlighted, the data attached, and the analysis ready to explore. No GIS expertise required. No SQL. No manual layer stacking.</p>
-<p>The pipeline is: natural language → intent extraction → query planning → data retrieval → map generation → interactive visualization. Each step is an LLM call with carefully engineered context. The model doesn't just parse the query; it reasons about what data sources to consult, how to join them, and how to present the result.</p>
-<p>The hard part isn't the AI. It's the data. Geospatial data is messy, inconsistent, and siloed across dozens of county, state, and federal databases. Parcel boundaries don't match across jurisdictions. Zoning codes vary by city. Property records use different schemas everywhere.</p>
-<p>Our job is to normalize all of that into a unified data layer, then give the AI enough context to query it intelligently. The LLM is the interface; the data pipeline is the product.</p>
-<p>We're building for analysts who know what questions to ask but don't want to learn PostGIS. The bet is that natural language is a better interface for geospatial analysis than any GIS tool ever built. Early results say yes.</p>`,
+    readingTime: '4 min',
+    excerpt: 'The hard part of building MAIA isn\'t the AI. It\'s the data underneath.',
+    content: '',
     gridArea: 'maia',
   },
   {
-    id: 'minimal-abstraction',
-    title: 'Minimal Abstraction, Maximum Output',
+    id: 'dont-build-before-you-need-it',
+    title: 'Don\'t Build Before You Need It',
     channel: 'PHILOSOPHY',
     channelColor: '#a855f7',
     date: '2026-02-21',
     readingTime: '3 min',
-    excerpt: 'Three similar lines of code is better than a premature abstraction. A case for radical simplicity.',
-    content: `<p>Every abstraction is a bet that the pattern will repeat. Most bets lose.</p>
-<p>I've watched codebases drown in premature abstractions — generic factories for one-off objects, plugin systems for two plugins, dependency injection frameworks in applications with three dependencies. Each one added in service of "flexibility" that was never exercised.</p>
-<p>My rule: don't abstract until the third occurrence, and only if the abstraction makes the code shorter. If your helper function is longer than the code it replaces, it's not helping.</p>
-<p>This applies to architecture too. Don't add a message queue until you need async processing. Don't add a cache until you've measured latency. Don't add a service layer until your monolith is actually struggling.</p>
-<p>The cost of simplicity is repetition. The cost of abstraction is comprehension. Repetition is cheaper.</p>
-<p>Write the obvious thing. Ship it. If it needs to change, change it. The codebase that's easy to change beats the codebase that anticipated every change but is impossible to understand.</p>`,
+    excerpt: 'There are always a bunch of good sounding ideas. The hard part is killing them.',
+    content: '',
     gridArea: 'philosophy',
   },
 ];
@@ -331,54 +299,46 @@ const channels = [...new Set(posts.map(p => p.channel))].map(ch => {
 <!-- Hidden content blocks for reading overlay -->
 <div style="display:none">
   <div data-blog-content="context-engineering">
-    <p>The compiler is gone. The context window is the new execution environment.</p>
-    <p>I used to spend most of my time writing code. Now I spend most of it shaping context — deciding what an LLM should know before it writes a single line. The craft has shifted from "how do I express this logic" to "how do I frame this problem so the model produces the right logic on its own."</p>
-    <p>This isn't prompt engineering. Prompt engineering is writing a clever sentence. Context engineering is building the information architecture around every model call — selecting which files to include, what documentation matters, how to structure the system prompt, which tools to expose, what memory to surface.</p>
-    <p>At MAIA, this means our natural-language-to-map pipeline lives or dies by the context we assemble. The model doesn't need to know everything about geospatial analysis. It needs to know exactly the right things at exactly the right time. A well-scoped context turns a mediocre prompt into a perfect map.</p>
-    <p>Claude Code is the tool that made this click for me. CLAUDE.md files, MCP servers, tool definitions — it's all context engineering. You're not configuring a text editor. You're building a workspace that shapes intelligence.</p>
-    <p>The compounding effect is real. Better context → better output → better context for next time. The feedback loop is tighter than any I've experienced in traditional programming. Every session teaches the system something new, and that knowledge persists.</p>
-    <p>If you're still thinking of AI as "autocomplete but bigger," you're surfing yesterday's wave. The swell has moved. The new skill is knowing what to put in the window.</p>
+    <p>I used to spend most of my time writing code. Now I spend most of it deciding what the model should know before it writes a single line. The shift happened gradually and then all at once — one day I realized the thing I was actually getting good at wasn't TypeScript or Python, it was assembling the right information at the right time for a model to do its job.</p>
+    <p>I've been calling this context engineering, and I think it's genuinely a new skill. Not prompt engineering — that's writing a clever sentence. This is more like building the information architecture around every model call. Which files go in the context? What documentation matters right now? How do you structure the system prompt so the model has the right mental model of your codebase? What tools does it need access to, and what memory should it surface from past sessions?</p>
+    <p>At MAIA this is everything. Our natural-language-to-map pipeline lives or dies by the context we assemble before the model even starts reasoning. The model doesn't need to know everything about geospatial analysis. It needs to know exactly the right things for this specific query. A well-scoped context turns a mediocre prompt into a perfect map. A sloppy one produces garbage regardless of how smart the model is.</p>
+    <p>Claude Code is where this really clicked for me. The CLAUDE.md file, hooks, MCP servers — it's all context engineering. You're not configuring a text editor. You're building a workspace that shapes how an intelligence interacts with your code. And the compounding effect is real. Better context produces better output, which teaches you what context matters, which produces even better output next time. The feedback loop is tighter than anything I've experienced in traditional programming.</p>
+    <p>I think in a few years we'll look back and realize the people who got really good at this early had a massive advantage. Not because they were better programmers, but because they understood that the new bottleneck isn't writing code — it's shaping what the model knows.</p>
   </div>
   <div data-blog-content="self-hosted-stack">
-    <p>Everything I run sits on a Dell OptiPlex micro in my apartment. Ubuntu server, 32GB RAM, a 1TB NVMe. It draws 15 watts at idle. My cloud bill is zero.</p>
-    <p>The stack is simple: Cloudflare Tunnel exposes public services (this site, MAIA staging). Tailscale handles private access (dashboards, dev tools, SSH). systemd manages everything — no Docker, no Kubernetes, no orchestration layer pretending to be simple.</p>
-    <p>This site is an Astro SSR app running on port 4321, fronted by Cloudflare's edge. The OptiPlex Dashboard is a Next.js PWA on port 3001, accessible only over Tailscale. My morning news digest, tech release monitor, concert ticket scraper — all cron jobs managed by systemd timers.</p>
-    <p>Why not just use Vercel? Because I want to understand every layer. When something breaks at 2am, I want to know exactly where to look. And because running your own infrastructure teaches you things that managed services deliberately hide.</p>
-    <p>The real unlock was Tailscale + Cloudflare Tunnel together. Tailscale gives me a private mesh network across all my devices. Cloudflare Tunnel gives me public ingress without opening ports. Between them, I have zero exposed ports on the machine, but I can reach anything from anywhere.</p>
-    <p>It's not about saving money (though it does). It's about the feeling of typing a URL and knowing exactly which process on which machine will handle that request, because you set it all up yourself.</p>
+    <p>Everything I run sits on a Dell OptiPlex micro in my apartment in the Outer Sunset. Ubuntu, 32 gigs of RAM, a 1TB NVMe. It draws maybe 15 watts at idle. My cloud bill is zero.</p>
+    <p>I know the obvious question is why not just use Vercel or Railway or whatever. And the honest answer is that I want to understand every layer. When something breaks I want to know exactly where to look. Not in some abstract "it's good to understand things" way — I mean I've been burned enough times by managed services hiding complexity that I'd rather just own it. Running your own infrastructure teaches you things that platforms deliberately abstract away, and those things matter when you're debugging at 2am.</p>
+    <p>The stack is simple. Cloudflare Tunnel exposes public stuff — this site, MAIA staging. Tailscale handles everything private — dashboards, dev tools, SSH from my phone. systemd manages all the services. No Docker, no Kubernetes, no orchestration layer pretending to be simple. Just unit files and timers.</p>
+    <p>The real unlock was Tailscale and Cloudflare Tunnel together. Tailscale gives me a private mesh network across every device I own. Cloudflare Tunnel gives me public ingress without opening a single port. Between the two I have zero exposed ports on the machine but can reach anything from anywhere. My morning news digest, tech release monitor, concert ticket scraper, this website — all running on the same box, all accessible exactly where they need to be and nowhere else.</p>
+    <p>There's a specific feeling I'm chasing here. Typing a URL and knowing exactly which process on which machine on which port will handle that request, because I set all of it up myself. That's the feeling.</p>
   </div>
   <div data-blog-content="42-keys">
-    <p>The Corne is a 42-key split ortholinear keyboard. No number row. No function row. No dedicated arrow keys. Every missing key lives on a layer, accessed by holding a thumb key.</p>
-    <p>It took three weeks of genuine suffering to learn. My typing speed dropped from 100 WPM to 30. I couldn't type a URL without stopping to think. But by week four, something clicked — literally and figuratively.</p>
-    <p>The split layout means my shoulders stay open. The columnar stagger means my fingers move vertically, not diagonally. The thumb clusters replace pinkies for modifiers. After a month, I couldn't go back to a standard keyboard without my wrists aching.</p>
-    <p>But the real revelation was layers. On a normal keyboard, your hands move constantly — reaching for backspace, stretching for brackets, leaving home row for arrows. On the Corne, everything is within one key of home position. Numbers, symbols, navigation, media — all accessible without moving your hands.</p>
-    <p>I soldered this one myself. Hand-wired with Mill-Max hot-swap sockets, Gateron silent switches, and custom keycaps. The firmware is QMK with a layout I've iterated on for months. Every key does exactly what I want, because I defined every single mapping.</p>
-    <p>42 keys sounds like a constraint. It's actually a design principle: every key should earn its place.</p>
+    <p>I type on a Corne. 42 keys, split in half, no number row. When people see it they usually ask if it's a joke. It's not a joke but I understand the reaction.</p>
+    <p>It took three weeks of genuine suffering to learn. My typing speed dropped from around 100 WPM to maybe 30. I couldn't type a URL without stopping to think about where the colon was. Every missing key lives on a layer — you hold a thumb key and the whole board transforms. Numbers on one layer, symbols on another, navigation on a third. It sounds insane and it felt insane for those first three weeks.</p>
+    <p>But by week four something clicked. The split layout means my shoulders stay open instead of hunching inward. The columnar stagger means my fingers move straight up and down, not diagonally like on a normal staggered board. And the thumb clusters — I use my thumbs for space, enter, backspace, and layer switches now, instead of destroying my pinkies on modifiers. After a month I tried going back to a regular keyboard and my wrists immediately started hurting. That was the end of that debate.</p>
+    <p>The real revelation was the layers though. On a normal keyboard your hands are constantly leaving home row — reaching for backspace, stretching for brackets, moving to arrow keys. On the Corne everything is within one key of where your fingers already are. I have numbers, symbols, navigation, media controls, all accessible without moving my hands. The firmware is QMK and I've iterated on the layout for months. Every key does exactly what I want because I defined every single mapping.</p>
+    <p>I soldered this one myself. Mill-Max hot-swap sockets, Gateron silent switches, custom caps. I solder things that don't need to exist — LED gauntlets, lightning clouds, keyboards. 42 keys sounds like a constraint. It's actually a design principle: every key should earn its place.</p>
   </div>
-  <div data-blog-content="shipping-claude-code">
-    <p>Claude Code isn't an AI assistant that lives in my terminal. It is my terminal. I write code through it, deploy through it, review through it. The distinction between "me coding" and "AI coding" dissolved months ago.</p>
-    <p>The setup starts with CLAUDE.md — a file that tells Claude who I am, what I'm working on, and how I want to work. It's like an extremely detailed onboarding doc for a new team member, except the team member reads it every single time we pair.</p>
-    <p>Then there are hooks: shell commands that fire before or after Claude takes an action. My PreToolUse hooks validate file edits (no writing to production configs), gate dangerous bash commands (anything with rm -rf gets flagged), and enforce project conventions (no new dependencies without approval).</p>
-    <p>MCP servers connect Claude to external systems. Linear for issue tracking, GitHub for PR management, my OptiPlex dashboard for system health. Claude doesn't just write code — it checks if the deploy target is healthy, pulls the latest issue context, and pushes the finished PR.</p>
-    <p>The workflow is: describe what I want, let Claude plan the approach, review the plan, let it execute, review the result. For a simple bug fix, this takes 2 minutes. For a complex feature, maybe 20 minutes of collaborative iteration.</p>
-    <p>The compounding effect is real. My CLAUDE.md has grown to include hundreds of lines of project context, coding preferences, and past decisions. Every session builds on the last. The AI gets "smarter" about my specific codebase not because the model improves, but because the context improves.</p>
-    <p>This is what context engineering looks like in practice. The tool is only as good as the context you feed it.</p>
+  <div data-blog-content="awkward-middle">
+    <p>We're past the point of needing to directly watch a single thread of LLM work. That level of babysitting isn't necessary anymore. But I've been noticing something about where we've landed instead.</p>
+    <p>Right now I'm comfortable letting a model run for about ten minutes — that's roughly the amount of work I can review thoroughly and catch mistakes in. To stay efficient I'll have three to five active sessions going, plus another five to ten waiting for responses or in various stages of progress. Which means I'm context-switching every one to three minutes.</p>
+    <p>The thing is, human brains don't really multitask. We just context-switch and process things incrementally. And when the time between switches is this short, the overhead of loading working memory for each task starts to feel significant relative to the actual focused work being done. It's this weird middle state of feeling inefficient even though things are technically getting done.</p>
+    <p>I've noticed it bleeding into other parts of my life too — personal tasks get interleaved with agent work, things partially complete before something else needs attention. The first-person experience is honestly a bit dissociative. Scattered. Lack of continuity. Multiple workstreams are moving forward but the felt sense is fragmented.</p>
+    <p>I think this gets better over time. As models can do more work per stretch, the context-switching frequency goes down, and the ratio of overhead to actual work improves. But right now we're in the awkward middle. One thing that helps: keeping each piece of review atomic — treating it as a complete unit rather than something I'll come back to.</p>
   </div>
   <div data-blog-content="maia-geospatial">
-    <p>"Show me all parcels in downtown SF that sold for over $2M in the last year and are zoned for mixed-use development."</p>
-    <p>That's a natural language query. MAIA turns it into a map — with the parcels highlighted, the data attached, and the analysis ready to explore. No GIS expertise required. No SQL. No manual layer stacking.</p>
-    <p>The pipeline is: natural language → intent extraction → query planning → data retrieval → map generation → interactive visualization. Each step is an LLM call with carefully engineered context. The model doesn't just parse the query; it reasons about what data sources to consult, how to join them, and how to present the result.</p>
-    <p>The hard part isn't the AI. It's the data. Geospatial data is messy, inconsistent, and siloed across dozens of county, state, and federal databases. Parcel boundaries don't match across jurisdictions. Zoning codes vary by city. Property records use different schemas everywhere.</p>
-    <p>Our job is to normalize all of that into a unified data layer, then give the AI enough context to query it intelligently. The LLM is the interface; the data pipeline is the product.</p>
-    <p>We're building for analysts who know what questions to ask but don't want to learn PostGIS. The bet is that natural language is a better interface for geospatial analysis than any GIS tool ever built. Early results say yes.</p>
+    <p>The pitch for MAIA is simple: ask a question, get a map. "Show me all parcels in downtown SF that sold for over 2M in the last year and are zoned for mixed-use development." You type that in natural language, and MAIA produces a map with the parcels highlighted, the data attached, ready to explore. No GIS expertise, no SQL, no manual layer stacking.</p>
+    <p>That's the pitch. The reality of building it is a different story. The hard part is not the AI — the LLM orchestration and the agentic pipeline, while nontrivial, are at least tractable engineering problems. The hard part is the data underneath. Geospatial data is messy and inconsistent and siloed across dozens of county, state, and federal databases. Parcel boundaries don't match across jurisdictions. Zoning codes mean different things in different cities. Property records use different schemas everywhere. It's a nightmare.</p>
+    <p>Our actual job most days is normalizing all of that into a unified layer that the AI can query intelligently. The LLM is the interface. The data pipeline is the product. And every new city we add is its own special flavor of data chaos that has to be wrangled into the same schema as everything else.</p>
+    <p>I love this kind of problem though. One of the things that drew me to startups is you get to do a little of everything — I'm doing LLM orchestration and database optimization and infrastructure and product thinking all in the same week. You have to move fast and resist the urge to optimize. The discipline is always asking: is this moving the business forward? Not is this the most elegant solution, not is this the most interesting technical problem, but is this the thing a customer needs right now.</p>
+    <p>We're building for analysts who know what questions to ask but don't want to learn PostGIS. The bet is that natural language is a better interface for geospatial analysis than any tool that exists today. I think we're right.</p>
   </div>
-  <div data-blog-content="minimal-abstraction">
-    <p>Every abstraction is a bet that the pattern will repeat. Most bets lose.</p>
-    <p>I've watched codebases drown in premature abstractions — generic factories for one-off objects, plugin systems for two plugins, dependency injection frameworks in applications with three dependencies. Each one added in service of "flexibility" that was never exercised.</p>
-    <p>My rule: don't abstract until the third occurrence, and only if the abstraction makes the code shorter. If your helper function is longer than the code it replaces, it's not helping.</p>
-    <p>This applies to architecture too. Don't add a message queue until you need async processing. Don't add a cache until you've measured latency. Don't add a service layer until your monolith is actually struggling.</p>
-    <p>The cost of simplicity is repetition. The cost of abstraction is comprehension. Repetition is cheaper.</p>
-    <p>Write the obvious thing. Ship it. If it needs to change, change it. The codebase that's easy to change beats the codebase that anticipated every change but is impossible to understand.</p>
+  <div data-blog-content="dont-build-before-you-need-it">
+    <p>There are always a bunch of good-sounding ideas. The hard part is killing them. I learned this at MAIA and it took a while — the urge to build something elegant instead of something useful is strong, especially when you're technical enough to see all the possibilities.</p>
+    <p>The rule I keep coming back to: don't build before you need it. Don't add a cache until you've measured latency. Don't add a message queue until you actually need async processing. Don't add a service layer until the monolith is genuinely struggling. Every abstraction is a bet that the pattern will repeat, and most of those bets lose.</p>
+    <p>This is hard because building things feels like progress. Refactoring feels productive. Setting up elaborate infrastructure for a feature that doesn't exist yet feels responsible. But it's not — it's avoidance. The actual work is figuring out what the customer needs and pushing that through, ugly or not. A lot of resisting the urge to optimize. You have to move quickly and leave things ugly sometimes, and that's genuinely uncomfortable.</p>
+    <p>You gotta beat the shit out of your ideas. The ones that survive are worth building. The rest were just interesting — and interesting is not the same as valuable. Constantly prioritizing is the hard part. Not the coding, not the architecture, not the tooling. The prioritizing.</p>
+    <p>Write the obvious thing. Ship it. If it needs to change, change it then. The codebase that's easy to change beats the codebase that anticipated every change but is impossible to understand.</p>
   </div>
 </div>
 
