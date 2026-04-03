@@ -166,10 +166,10 @@ Use operational language, not generic labels:
 |---|---|---|---|---|---|
 | **Production** | 4321 | `c2k-website` | `~/repos/c2k.dev` | Purple→orange | `main` |
 | **Staging** | 4322 | `c2k-preview` | `~/repos/c2k.dev-preview` | Blue→cyan | `dev-alt` (personal working branch) |
-| **Feature** | 4323 | `c2k-feature` | `~/repos/c2k.dev-feature` | Green→yellow | Any feature branch |
+| **Feature** | 4325 | `c2k-feature` | `~/repos/c2k.dev-feature` | Green→yellow | Any feature branch |
 
 - **Production** is public at c2k.page via Cloudflare Tunnel. Only deploy from `main`.
-- **Staging** and **Feature** are Tailscale-only (http://100.82.177.26:4322, http://100.82.177.26:4323).
+- **Staging** and **Feature** are Tailscale-only (http://100.82.177.26:4322, http://100.82.177.26:4325).
 - Each has a distinct PWA icon color so they're distinguishable on mobile.
 - Branches are not locked to ports — you can deploy any branch to staging or feature by checking it out in the worktree and rebuilding.
 
