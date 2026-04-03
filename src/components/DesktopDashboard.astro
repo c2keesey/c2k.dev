@@ -880,13 +880,13 @@ const edgeMidpoints = edges.map(edge => {
       function updateMeshHeat(dt: number) {
         // Smooth the speed signal — snappy rise, immediate cooldown start
         const rampUp = 1 - Math.pow(0.0001, dt);   // ~150ms rise
-        const rampDown = 1 - Math.pow(0.06, dt);    // ~350ms fade
+        const rampDown = 1 - Math.pow(0.005, dt);   // ~200ms fade
         const lerpRate = mouseSpeed > smoothSpeed ? rampUp : rampDown;
         smoothSpeed += (mouseSpeed - smoothSpeed) * lerpRate;
         mouseSpeed = 0; // reset each frame — only mousemove sets it
 
         // Decay heat — moderate fade
-        const decay = Math.pow(0.1, dt); // ~0.5s fade
+        const decay = Math.pow(0.05, dt); // ~0.35s fade
         for (let i = 0; i < triHeat.length; i++) {
           triHeat[i] *= decay;
           if (triHeat[i] < 0.001) triHeat[i] = 0;
