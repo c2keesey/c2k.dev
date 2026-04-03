@@ -12,6 +12,8 @@ import MiniProjectCard from '../components/MiniProjectCard.astro';
 import RotatingQuote from '../components/RotatingQuote.astro';
 import DesktopDashboard from '../components/DesktopDashboard.astro';
 import MobileNetworkView from '../components/MobileNetworkView.astro';
+import BlogDesktop from '../components/BlogDesktop.astro';
+import BlogMobile from '../components/BlogMobile.astro';
 import '../styles/global.css';
 ---
 
@@ -162,6 +164,12 @@ import '../styles/global.css';
             accentColor="249, 115, 22"
           />
         </div>
+      </section>
+
+      <!-- Panel: Log (Blog) -->
+      <section class="swipe-panel" data-page="/log">
+        <BlogDesktop />
+        <BlogMobile />
       </section>
 
       <!-- Panel: About -->
@@ -355,7 +363,7 @@ import '../styles/global.css';
   })();
 
   const container = document.getElementById('swipe-container')!
-  const pages = ['/', '/projects', '/about'];
+  const pages = ['/', '/projects', '/log', '/about'];
 
   // Scroll to correct panel on load based on URL
   function scrollToCurrentPage() {
@@ -753,7 +761,8 @@ import '../styles/global.css';
 
   @media (min-width: 1024px) {
     [data-page="/"] > .panel-content,
-    [data-page="/about"] > .panel-content {
+    [data-page="/about"] > .panel-content,
+    [data-page="/log"] > .panel-content {
       max-width: min(1100px, 85%);
     }
   }

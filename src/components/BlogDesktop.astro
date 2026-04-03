@@ -1,0 +1,769 @@
+---
+// Desktop blog: spatial broadsheet layout with reading overlay
+// Visible at >= 1024px, hidden on mobile
+
+interface Post {
+  id: string;
+  title: string;
+  channel: string;
+  channelColor: string;
+  date: string;
+  readingTime: string;
+  excerpt: string;
+  content: string;
+  gridArea: string;
+}
+
+const posts: Post[] = [
+  {
+    id: 'context-engineering',
+    title: 'Context Engineering is the New Programming',
+    channel: 'AI/ML',
+    channelColor: '#06b6d4',
+    date: '2026-03-28',
+    readingTime: '8 min',
+    excerpt: 'The compiler is gone. The context window is the new execution environment. What changes when your primary job is shaping what an AI knows before it acts?',
+    content: `<p>The compiler is gone. The context window is the new execution environment.</p>
+<p>I used to spend most of my time writing code. Now I spend most of it shaping context — deciding what an LLM should know before it writes a single line. The craft has shifted from "how do I express this logic" to "how do I frame this problem so the model produces the right logic on its own."</p>
+<p>This isn't prompt engineering. Prompt engineering is writing a clever sentence. Context engineering is building the information architecture around every model call — selecting which files to include, what documentation matters, how to structure the system prompt, which tools to expose, what memory to surface.</p>
+<p>At MAIA, this means our natural-language-to-map pipeline lives or dies by the context we assemble. The model doesn't need to know everything about geospatial analysis. It needs to know exactly the right things at exactly the right time. A well-scoped context turns a mediocre prompt into a perfect map.</p>
+<p>Claude Code is the tool that made this click for me. CLAUDE.md files, MCP servers, tool definitions — it's all context engineering. You're not configuring a text editor. You're building a workspace that shapes intelligence.</p>
+<p>The compounding effect is real. Better context → better output → better context for next time. The feedback loop is tighter than any I've experienced in traditional programming. Every session teaches the system something new, and that knowledge persists.</p>
+<p>If you're still thinking of AI as "autocomplete but bigger," you're surfing yesterday's wave. The swell has moved. The new skill is knowing what to put in the window.</p>`,
+    gridArea: 'featured',
+  },
+  {
+    id: 'self-hosted-stack',
+    title: 'The Self-Hosted Stack',
+    channel: 'INFRA',
+    channelColor: '#22c55e',
+    date: '2026-03-21',
+    readingTime: '6 min',
+    excerpt: 'An OptiPlex micro, a Cloudflare Tunnel, and a philosophy: own your compute, expose only what matters.',
+    content: `<p>Everything I run sits on a Dell OptiPlex micro in my apartment. Ubuntu server, 32GB RAM, a 1TB NVMe. It draws 15 watts at idle. My cloud bill is zero.</p>
+<p>The stack is simple: Cloudflare Tunnel exposes public services (this site, MAIA staging). Tailscale handles private access (dashboards, dev tools, SSH). systemd manages everything — no Docker, no Kubernetes, no orchestration layer pretending to be simple.</p>
+<p>This site is an Astro SSR app running on port 4321, fronted by Cloudflare's edge. The OptiPlex Dashboard is a Next.js PWA on port 3001, accessible only over Tailscale. My morning news digest, tech release monitor, concert ticket scraper — all cron jobs managed by systemd timers.</p>
+<p>Why not just use Vercel? Because I want to understand every layer. When something breaks at 2am, I want to know exactly where to look. And because running your own infrastructure teaches you things that managed services deliberately hide.</p>
+<p>The real unlock was Tailscale + Cloudflare Tunnel together. Tailscale gives me a private mesh network across all my devices. Cloudflare Tunnel gives me public ingress without opening ports. Between them, I have zero exposed ports on the machine, but I can reach anything from anywhere.</p>
+<p>It's not about saving money (though it does). It's about the feeling of typing a URL and knowing exactly which process on which machine will handle that request, because you set it all up yourself.</p>`,
+    gridArea: 'infra',
+  },
+  {
+    id: '42-keys',
+    title: 'Why I Type on 42 Keys',
+    channel: 'HARDWARE',
+    channelColor: '#f97316',
+    date: '2026-03-14',
+    readingTime: '5 min',
+    excerpt: 'A split ortholinear keyboard with no number row. It sounds insane. It changed how I think about input.',
+    content: `<p>The Corne is a 42-key split ortholinear keyboard. No number row. No function row. No dedicated arrow keys. Every missing key lives on a layer, accessed by holding a thumb key.</p>
+<p>It took three weeks of genuine suffering to learn. My typing speed dropped from 100 WPM to 30. I couldn't type a URL without stopping to think. But by week four, something clicked — literally and figuratively.</p>
+<p>The split layout means my shoulders stay open. The columnar stagger means my fingers move vertically, not diagonally. The thumb clusters replace pinkies for modifiers. After a month, I couldn't go back to a standard keyboard without my wrists aching.</p>
+<p>But the real revelation was layers. On a normal keyboard, your hands move constantly — reaching for backspace, stretching for brackets, leaving home row for arrows. On the Corne, everything is within one key of home position. Numbers, symbols, navigation, media — all accessible without moving your hands.</p>
+<p>I soldered this one myself. Hand-wired with Mill-Max hot-swap sockets, Gateron silent switches, and custom keycaps. The firmware is QMK with a layout I've iterated on for months. Every key does exactly what I want, because I defined every single mapping.</p>
+<p>42 keys sounds like a constraint. It's actually a design principle: every key should earn its place.</p>`,
+    gridArea: 'hardware',
+  },
+  {
+    id: 'shipping-claude-code',
+    title: 'Shipping with Claude Code',
+    channel: 'AI/ML',
+    channelColor: '#06b6d4',
+    date: '2026-03-07',
+    readingTime: '7 min',
+    excerpt: 'Hooks, skills, MCP servers, CLAUDE.md files — how I turned an AI assistant into a development environment.',
+    content: `<p>Claude Code isn't an AI assistant that lives in my terminal. It is my terminal. I write code through it, deploy through it, review through it. The distinction between "me coding" and "AI coding" dissolved months ago.</p>
+<p>The setup starts with CLAUDE.md — a file that tells Claude who I am, what I'm working on, and how I want to work. It's like an extremely detailed onboarding doc for a new team member, except the team member reads it every single time we pair.</p>
+<p>Then there are hooks: shell commands that fire before or after Claude takes an action. My PreToolUse hooks validate file edits (no writing to production configs), gate dangerous bash commands (anything with rm -rf gets flagged), and enforce project conventions (no new dependencies without approval).</p>
+<p>MCP servers connect Claude to external systems. Linear for issue tracking, GitHub for PR management, my OptiPlex dashboard for system health. Claude doesn't just write code — it checks if the deploy target is healthy, pulls the latest issue context, and pushes the finished PR.</p>
+<p>The workflow is: describe what I want, let Claude plan the approach, review the plan, let it execute, review the result. For a simple bug fix, this takes 2 minutes. For a complex feature, maybe 20 minutes of collaborative iteration.</p>
+<p>The compounding effect is real. My CLAUDE.md has grown to include hundreds of lines of project context, coding preferences, and past decisions. Every session builds on the last. The AI gets "smarter" about my specific codebase not because the model improves, but because the context improves.</p>
+<p>This is what context engineering looks like in practice. The tool is only as good as the context you feed it.</p>`,
+    gridArea: 'claude',
+  },
+  {
+    id: 'maia-geospatial',
+    title: 'Building MAIA: AI-Native Geospatial',
+    channel: 'PRODUCT',
+    channelColor: '#3b82f6',
+    date: '2026-02-28',
+    readingTime: '6 min',
+    excerpt: 'Ask a question, get a map. The technical challenge of turning natural language into geospatial intelligence.',
+    content: `<p>"Show me all parcels in downtown SF that sold for over $2M in the last year and are zoned for mixed-use development."</p>
+<p>That's a natural language query. MAIA turns it into a map — with the parcels highlighted, the data attached, and the analysis ready to explore. No GIS expertise required. No SQL. No manual layer stacking.</p>
+<p>The pipeline is: natural language → intent extraction → query planning → data retrieval → map generation → interactive visualization. Each step is an LLM call with carefully engineered context. The model doesn't just parse the query; it reasons about what data sources to consult, how to join them, and how to present the result.</p>
+<p>The hard part isn't the AI. It's the data. Geospatial data is messy, inconsistent, and siloed across dozens of county, state, and federal databases. Parcel boundaries don't match across jurisdictions. Zoning codes vary by city. Property records use different schemas everywhere.</p>
+<p>Our job is to normalize all of that into a unified data layer, then give the AI enough context to query it intelligently. The LLM is the interface; the data pipeline is the product.</p>
+<p>We're building for analysts who know what questions to ask but don't want to learn PostGIS. The bet is that natural language is a better interface for geospatial analysis than any GIS tool ever built. Early results say yes.</p>`,
+    gridArea: 'maia',
+  },
+  {
+    id: 'minimal-abstraction',
+    title: 'Minimal Abstraction, Maximum Output',
+    channel: 'PHILOSOPHY',
+    channelColor: '#a855f7',
+    date: '2026-02-21',
+    readingTime: '3 min',
+    excerpt: 'Three similar lines of code is better than a premature abstraction. A case for radical simplicity.',
+    content: `<p>Every abstraction is a bet that the pattern will repeat. Most bets lose.</p>
+<p>I've watched codebases drown in premature abstractions — generic factories for one-off objects, plugin systems for two plugins, dependency injection frameworks in applications with three dependencies. Each one added in service of "flexibility" that was never exercised.</p>
+<p>My rule: don't abstract until the third occurrence, and only if the abstraction makes the code shorter. If your helper function is longer than the code it replaces, it's not helping.</p>
+<p>This applies to architecture too. Don't add a message queue until you need async processing. Don't add a cache until you've measured latency. Don't add a service layer until your monolith is actually struggling.</p>
+<p>The cost of simplicity is repetition. The cost of abstraction is comprehension. Repetition is cheaper.</p>
+<p>Write the obvious thing. Ship it. If it needs to change, change it. The codebase that's easy to change beats the codebase that anticipated every change but is impossible to understand.</p>`,
+    gridArea: 'philosophy',
+  },
+];
+
+const channels = [...new Set(posts.map(p => p.channel))].map(ch => {
+  const post = posts.find(p => p.channel === ch)!;
+  return { name: ch, color: post.channelColor };
+});
+---
+
+<div class="blog-desktop">
+  <!-- Header -->
+  <div class="blog-header">
+    <div class="blog-header-left">
+      <h1 class="blog-title text-scramble" data-text="TRANSMISSIONS" data-delay="100" data-always="false">–––––––––––––</h1>
+      <span class="blog-signal-count">{posts.length} SIGNALS RECEIVED</span>
+    </div>
+    <div class="blog-header-right">
+      <div class="blog-channels">
+        {channels.map(ch => (
+          <span class="blog-channel-tag" style={`--ch-color: ${ch.color}`}>
+            <span class="channel-dot"></span>
+            {ch.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Spatial broadsheet grid -->
+  <div class="blog-broadsheet" id="blog-broadsheet">
+    {posts.map((post, i) => (
+      <article
+        class="transmission-card"
+        data-post-id={post.id}
+        data-grid-area={post.gridArea}
+        style={`--card-accent: ${post.channelColor}; animation-delay: ${i * 60}ms`}
+      >
+        <div class="card-chrome">
+          <span class="card-channel" style={`color: ${post.channelColor}`}>{post.channel}</span>
+          <span class="card-date">{post.date}</span>
+        </div>
+        <h2 class="card-title">{post.title}</h2>
+        <p class="card-excerpt">{post.excerpt}</p>
+        <div class="card-footer">
+          <span class="card-duration">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="5" cy="5" r="4" />
+              <path d="M5 2.5V5.5L7 6.5" stroke-linecap="round" />
+            </svg>
+            {post.readingTime}
+          </span>
+          <span class="card-status">DECODED</span>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <!-- Reading overlay -->
+  <div class="reading-overlay" id="reading-overlay">
+    <div class="reading-chrome">
+      <div class="reading-chrome-left">
+        <span class="reading-channel" id="reading-channel"></span>
+        <span class="reading-date" id="reading-date"></span>
+        <span class="reading-duration" id="reading-duration"></span>
+      </div>
+      <button class="reading-close" id="reading-close" aria-label="Close transmission">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round" />
+        </svg>
+        CLOSE
+      </button>
+    </div>
+    <div class="reading-body" id="reading-body">
+      <h1 class="reading-title" id="reading-title"></h1>
+      <div class="reading-content" id="reading-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initBlogDesktop() {
+    const broadsheet = document.getElementById('blog-broadsheet');
+    const overlay = document.getElementById('reading-overlay');
+    const readingTitle = document.getElementById('reading-title');
+    const readingContent = document.getElementById('reading-content');
+    const readingChannel = document.getElementById('reading-channel');
+    const readingDate = document.getElementById('reading-date');
+    const readingDuration = document.getElementById('reading-duration');
+    const readingClose = document.getElementById('reading-close');
+
+    if (!broadsheet || !overlay) return;
+
+    // Post data stored in data attributes
+    const postData: Record<string, { title: string; content: string; channel: string; channelColor: string; date: string; duration: string }> = {};
+
+    // Build post data map from the server-rendered elements
+    const cards = broadsheet.querySelectorAll<HTMLElement>('.transmission-card');
+
+    cards.forEach(card => {
+      const id = card.dataset.postId || '';
+      const title = card.querySelector('.card-title')?.textContent || '';
+      const channel = card.querySelector('.card-channel')?.textContent || '';
+      const date = card.querySelector('.card-date')?.textContent || '';
+      const duration = card.querySelector('.card-duration')?.textContent?.trim() || '';
+      const accentColor = card.style.getPropertyValue('--card-accent');
+
+      postData[id] = { title, content: '', channel, channelColor: accentColor, date, duration };
+
+      card.addEventListener('click', () => openPost(id));
+    });
+
+    function openPost(id: string) {
+      const data = postData[id];
+      if (!data || !readingTitle || !readingContent || !readingChannel || !readingDate || !readingDuration) return;
+
+      // Get content from hidden data
+      const contentEl = document.querySelector(`[data-blog-content="${id}"]`);
+      const content = contentEl?.innerHTML || '';
+
+      readingChannel.textContent = data.channel;
+      readingChannel.style.color = data.channelColor;
+      readingDate.textContent = data.date;
+      readingDuration.textContent = data.duration;
+
+      // Scramble title decode
+      scrambleTitle(readingTitle, data.title);
+      readingContent.innerHTML = content;
+
+      // Stagger paragraph fade-in
+      readingContent.querySelectorAll('p').forEach((p, i) => {
+        (p as HTMLElement).style.animationDelay = `${200 + i * 80}ms`;
+        p.classList.add('reading-p-enter');
+      });
+
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function scrambleTitle(el: HTMLElement, target: string) {
+      const chars = '0123456789ABCDEF~!@#$%^&*()+=_';
+      const duration = 600;
+      const birthOffsets: number[] = [];
+      const resolveOffsets: number[] = [];
+      const bw = duration * 0.3;
+      const rw = duration * 0.7;
+
+      for (let i = 0; i < target.length; i++) {
+        const bias = (i / target.length) * bw * 0.5;
+        birthOffsets[i] = bias + Math.random() * bw * 0.5;
+        resolveOffsets[i] = bw + bias + Math.random() * rw * 0.4;
+      }
+
+      el.textContent = target.replace(/[^ ]/g, '–');
+      let start: number | null = null;
+
+      function step(ts: number) {
+        if (!start) start = ts;
+        const elapsed = ts - start;
+
+        if (elapsed >= duration) {
+          el.textContent = target;
+          return;
+        }
+
+        el.textContent = '';
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < target.length; i++) {
+          if (target[i] === ' ') {
+            frag.appendChild(document.createTextNode(' '));
+          } else if (elapsed >= resolveOffsets[i]) {
+            frag.appendChild(document.createTextNode(target[i]));
+          } else if (elapsed >= birthOffsets[i]) {
+            const span = document.createElement('span');
+            span.style.background = 'var(--gradient-text)';
+            span.style.webkitBackgroundClip = 'text';
+            span.style.webkitTextFillColor = 'transparent';
+            span.style.backgroundClip = 'text';
+            span.textContent = chars[Math.floor(Math.random() * chars.length)];
+            frag.appendChild(span);
+          } else {
+            const span = document.createElement('span');
+            span.style.opacity = '0.15';
+            span.textContent = '–';
+            frag.appendChild(span);
+          }
+        }
+        el.appendChild(frag);
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function closeOverlay() {
+      if (!overlay) return;
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    readingClose?.addEventListener('click', closeOverlay);
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay?.classList.contains('open')) {
+        closeOverlay();
+      }
+    });
+
+    // Close on overlay background click
+    overlay?.addEventListener('click', (e) => {
+      if (e.target === overlay) closeOverlay();
+    });
+  }
+
+  initBlogDesktop();
+</script>
+
+<!-- Hidden content blocks for reading overlay -->
+<div style="display:none">
+  <div data-blog-content="context-engineering">
+    <p>The compiler is gone. The context window is the new execution environment.</p>
+    <p>I used to spend most of my time writing code. Now I spend most of it shaping context — deciding what an LLM should know before it writes a single line. The craft has shifted from "how do I express this logic" to "how do I frame this problem so the model produces the right logic on its own."</p>
+    <p>This isn't prompt engineering. Prompt engineering is writing a clever sentence. Context engineering is building the information architecture around every model call — selecting which files to include, what documentation matters, how to structure the system prompt, which tools to expose, what memory to surface.</p>
+    <p>At MAIA, this means our natural-language-to-map pipeline lives or dies by the context we assemble. The model doesn't need to know everything about geospatial analysis. It needs to know exactly the right things at exactly the right time. A well-scoped context turns a mediocre prompt into a perfect map.</p>
+    <p>Claude Code is the tool that made this click for me. CLAUDE.md files, MCP servers, tool definitions — it's all context engineering. You're not configuring a text editor. You're building a workspace that shapes intelligence.</p>
+    <p>The compounding effect is real. Better context → better output → better context for next time. The feedback loop is tighter than any I've experienced in traditional programming. Every session teaches the system something new, and that knowledge persists.</p>
+    <p>If you're still thinking of AI as "autocomplete but bigger," you're surfing yesterday's wave. The swell has moved. The new skill is knowing what to put in the window.</p>
+  </div>
+  <div data-blog-content="self-hosted-stack">
+    <p>Everything I run sits on a Dell OptiPlex micro in my apartment. Ubuntu server, 32GB RAM, a 1TB NVMe. It draws 15 watts at idle. My cloud bill is zero.</p>
+    <p>The stack is simple: Cloudflare Tunnel exposes public services (this site, MAIA staging). Tailscale handles private access (dashboards, dev tools, SSH). systemd manages everything — no Docker, no Kubernetes, no orchestration layer pretending to be simple.</p>
+    <p>This site is an Astro SSR app running on port 4321, fronted by Cloudflare's edge. The OptiPlex Dashboard is a Next.js PWA on port 3001, accessible only over Tailscale. My morning news digest, tech release monitor, concert ticket scraper — all cron jobs managed by systemd timers.</p>
+    <p>Why not just use Vercel? Because I want to understand every layer. When something breaks at 2am, I want to know exactly where to look. And because running your own infrastructure teaches you things that managed services deliberately hide.</p>
+    <p>The real unlock was Tailscale + Cloudflare Tunnel together. Tailscale gives me a private mesh network across all my devices. Cloudflare Tunnel gives me public ingress without opening ports. Between them, I have zero exposed ports on the machine, but I can reach anything from anywhere.</p>
+    <p>It's not about saving money (though it does). It's about the feeling of typing a URL and knowing exactly which process on which machine will handle that request, because you set it all up yourself.</p>
+  </div>
+  <div data-blog-content="42-keys">
+    <p>The Corne is a 42-key split ortholinear keyboard. No number row. No function row. No dedicated arrow keys. Every missing key lives on a layer, accessed by holding a thumb key.</p>
+    <p>It took three weeks of genuine suffering to learn. My typing speed dropped from 100 WPM to 30. I couldn't type a URL without stopping to think. But by week four, something clicked — literally and figuratively.</p>
+    <p>The split layout means my shoulders stay open. The columnar stagger means my fingers move vertically, not diagonally. The thumb clusters replace pinkies for modifiers. After a month, I couldn't go back to a standard keyboard without my wrists aching.</p>
+    <p>But the real revelation was layers. On a normal keyboard, your hands move constantly — reaching for backspace, stretching for brackets, leaving home row for arrows. On the Corne, everything is within one key of home position. Numbers, symbols, navigation, media — all accessible without moving your hands.</p>
+    <p>I soldered this one myself. Hand-wired with Mill-Max hot-swap sockets, Gateron silent switches, and custom keycaps. The firmware is QMK with a layout I've iterated on for months. Every key does exactly what I want, because I defined every single mapping.</p>
+    <p>42 keys sounds like a constraint. It's actually a design principle: every key should earn its place.</p>
+  </div>
+  <div data-blog-content="shipping-claude-code">
+    <p>Claude Code isn't an AI assistant that lives in my terminal. It is my terminal. I write code through it, deploy through it, review through it. The distinction between "me coding" and "AI coding" dissolved months ago.</p>
+    <p>The setup starts with CLAUDE.md — a file that tells Claude who I am, what I'm working on, and how I want to work. It's like an extremely detailed onboarding doc for a new team member, except the team member reads it every single time we pair.</p>
+    <p>Then there are hooks: shell commands that fire before or after Claude takes an action. My PreToolUse hooks validate file edits (no writing to production configs), gate dangerous bash commands (anything with rm -rf gets flagged), and enforce project conventions (no new dependencies without approval).</p>
+    <p>MCP servers connect Claude to external systems. Linear for issue tracking, GitHub for PR management, my OptiPlex dashboard for system health. Claude doesn't just write code — it checks if the deploy target is healthy, pulls the latest issue context, and pushes the finished PR.</p>
+    <p>The workflow is: describe what I want, let Claude plan the approach, review the plan, let it execute, review the result. For a simple bug fix, this takes 2 minutes. For a complex feature, maybe 20 minutes of collaborative iteration.</p>
+    <p>The compounding effect is real. My CLAUDE.md has grown to include hundreds of lines of project context, coding preferences, and past decisions. Every session builds on the last. The AI gets "smarter" about my specific codebase not because the model improves, but because the context improves.</p>
+    <p>This is what context engineering looks like in practice. The tool is only as good as the context you feed it.</p>
+  </div>
+  <div data-blog-content="maia-geospatial">
+    <p>"Show me all parcels in downtown SF that sold for over $2M in the last year and are zoned for mixed-use development."</p>
+    <p>That's a natural language query. MAIA turns it into a map — with the parcels highlighted, the data attached, and the analysis ready to explore. No GIS expertise required. No SQL. No manual layer stacking.</p>
+    <p>The pipeline is: natural language → intent extraction → query planning → data retrieval → map generation → interactive visualization. Each step is an LLM call with carefully engineered context. The model doesn't just parse the query; it reasons about what data sources to consult, how to join them, and how to present the result.</p>
+    <p>The hard part isn't the AI. It's the data. Geospatial data is messy, inconsistent, and siloed across dozens of county, state, and federal databases. Parcel boundaries don't match across jurisdictions. Zoning codes vary by city. Property records use different schemas everywhere.</p>
+    <p>Our job is to normalize all of that into a unified data layer, then give the AI enough context to query it intelligently. The LLM is the interface; the data pipeline is the product.</p>
+    <p>We're building for analysts who know what questions to ask but don't want to learn PostGIS. The bet is that natural language is a better interface for geospatial analysis than any GIS tool ever built. Early results say yes.</p>
+  </div>
+  <div data-blog-content="minimal-abstraction">
+    <p>Every abstraction is a bet that the pattern will repeat. Most bets lose.</p>
+    <p>I've watched codebases drown in premature abstractions — generic factories for one-off objects, plugin systems for two plugins, dependency injection frameworks in applications with three dependencies. Each one added in service of "flexibility" that was never exercised.</p>
+    <p>My rule: don't abstract until the third occurrence, and only if the abstraction makes the code shorter. If your helper function is longer than the code it replaces, it's not helping.</p>
+    <p>This applies to architecture too. Don't add a message queue until you need async processing. Don't add a cache until you've measured latency. Don't add a service layer until your monolith is actually struggling.</p>
+    <p>The cost of simplicity is repetition. The cost of abstraction is comprehension. Repetition is cheaper.</p>
+    <p>Write the obvious thing. Ship it. If it needs to change, change it. The codebase that's easy to change beats the codebase that anticipated every change but is impossible to understand.</p>
+  </div>
+</div>
+
+<style>
+  .blog-desktop {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem 3rem 3rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  @media (min-width: 1024px) {
+    .blog-desktop { display: block; }
+  }
+
+  /* ── Header ── */
+  .blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .blog-header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .blog-title {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    text-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+  }
+
+  .blog-signal-count {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .blog-channels {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .blog-channel-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .channel-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ch-color);
+    opacity: 0.7;
+  }
+
+  /* ── Broadsheet grid ── */
+  .blog-broadsheet {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas:
+      "featured featured infra"
+      "featured featured hardware"
+      "claude   maia     maia"
+      "philosophy philosophy philosophy";
+    gap: 1px;
+  }
+
+  /* ── Transmission card ── */
+  .transmission-card {
+    background: rgba(14, 14, 16, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-left: 2px solid var(--card-accent);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease-out, border-color 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    animation: card-enter 0.4s cubic-bezier(.2, .8, .2, 1) both;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
+  }
+
+  .transmission-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--card-accent), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+
+  .transmission-card:hover {
+    background: rgba(14, 14, 16, 0.85);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .transmission-card:hover::before {
+    opacity: 0.4;
+  }
+
+  @keyframes card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Grid area assignments */
+  [data-grid-area="featured"] { grid-area: featured; }
+  [data-grid-area="infra"] { grid-area: infra; }
+  [data-grid-area="hardware"] { grid-area: hardware; }
+  [data-grid-area="claude"] { grid-area: claude; }
+  [data-grid-area="maia"] { grid-area: maia; }
+  [data-grid-area="philosophy"] { grid-area: philosophy; }
+
+  /* Featured card gets special treatment */
+  [data-grid-area="featured"] {
+    padding: 2rem;
+  }
+
+  [data-grid-area="featured"] .card-title {
+    font-size: 1.4rem;
+    line-height: 1.3;
+  }
+
+  [data-grid-area="featured"] .card-excerpt {
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Philosophy card spans full width — more compact */
+  [data-grid-area="philosophy"] {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  [data-grid-area="philosophy"] .card-chrome {
+    flex-shrink: 0;
+  }
+
+  [data-grid-area="philosophy"] .card-excerpt {
+    display: none;
+  }
+
+  [data-grid-area="philosophy"] .card-title {
+    flex: 1;
+  }
+
+  .card-chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .card-channel {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .card-date {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.04em;
+  }
+
+  .card-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.35;
+    transition: color 0.2s;
+  }
+
+  .transmission-card:hover .card-title {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .card-excerpt {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.3);
+    line-height: 1.6;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+
+  .card-duration {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .card-duration svg {
+    opacity: 0.4;
+  }
+
+  .card-status {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.15);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Reading overlay ── */
+  .reading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    background: rgba(10, 10, 11, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .reading-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .reading-chrome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: rgba(10, 10, 11, 0.9);
+    backdrop-filter: blur(12px);
+    z-index: 1;
+  }
+
+  .reading-chrome-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .reading-channel {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .reading-date,
+  .reading-duration {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.04em;
+  }
+
+  .reading-close {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.4);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .reading-close:hover {
+    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .reading-body {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+    width: 100%;
+  }
+
+  .reading-title {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.25;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .reading-content :global(p) {
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.52);
+    line-height: 1.9;
+    margin-bottom: 2rem;
+    letter-spacing: 0.005em;
+  }
+
+  .reading-content :global(p:first-child) {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.8;
+  }
+
+  .reading-content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  :global(.reading-p-enter) {
+    animation: p-fade-in 0.5s ease-out both;
+  }
+
+  @keyframes p-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

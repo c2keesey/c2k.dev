@@ -1,0 +1,333 @@
+---
+// Mobile blog: card stack with tap-to-expand
+// Visible at < 1024px, hidden on desktop
+
+interface Post {
+  id: string;
+  title: string;
+  channel: string;
+  channelColor: string;
+  date: string;
+  readingTime: string;
+  excerpt: string;
+}
+
+const posts: Post[] = [
+  {
+    id: 'context-engineering',
+    title: 'Context Engineering is the New Programming',
+    channel: 'AI/ML',
+    channelColor: '#06b6d4',
+    date: '2026-03-28',
+    readingTime: '8 min',
+    excerpt: 'The compiler is gone. The context window is the new execution environment.',
+  },
+  {
+    id: 'self-hosted-stack',
+    title: 'The Self-Hosted Stack',
+    channel: 'INFRA',
+    channelColor: '#22c55e',
+    date: '2026-03-21',
+    readingTime: '6 min',
+    excerpt: 'An OptiPlex micro, a Cloudflare Tunnel, and a philosophy: own your compute.',
+  },
+  {
+    id: '42-keys',
+    title: 'Why I Type on 42 Keys',
+    channel: 'HARDWARE',
+    channelColor: '#f97316',
+    date: '2026-03-14',
+    readingTime: '5 min',
+    excerpt: 'A split ortholinear keyboard with no number row. It sounds insane.',
+  },
+  {
+    id: 'shipping-claude-code',
+    title: 'Shipping with Claude Code',
+    channel: 'AI/ML',
+    channelColor: '#06b6d4',
+    date: '2026-03-07',
+    readingTime: '7 min',
+    excerpt: 'Hooks, skills, MCP servers — how I turned an AI assistant into a dev environment.',
+  },
+  {
+    id: 'maia-geospatial',
+    title: 'Building MAIA: AI-Native Geospatial',
+    channel: 'PRODUCT',
+    channelColor: '#3b82f6',
+    date: '2026-02-28',
+    readingTime: '6 min',
+    excerpt: 'Ask a question, get a map. Natural language to geospatial intelligence.',
+  },
+  {
+    id: 'minimal-abstraction',
+    title: 'Minimal Abstraction, Maximum Output',
+    channel: 'PHILOSOPHY',
+    channelColor: '#a855f7',
+    date: '2026-02-21',
+    readingTime: '3 min',
+    excerpt: 'Three similar lines of code is better than a premature abstraction.',
+  },
+];
+---
+
+<div class="blog-mobile">
+  <div class="blog-mobile-inner">
+    <!-- Header -->
+    <div class="blog-mobile-header">
+      <h1 class="blog-mobile-title text-scramble" data-text="Transmissions" data-delay="100" data-always="false">–––––––––––––</h1>
+      <span class="blog-mobile-count">{posts.length} signals</span>
+    </div>
+
+    <!-- Card stack -->
+    <div class="blog-card-stack">
+      {posts.map((post, i) => (
+        <article
+          class="blog-mobile-card"
+          data-post-id={post.id}
+          style={`--card-accent: ${post.channelColor}; animation-delay: ${i * 80}ms`}
+        >
+          <div class="mobile-card-chrome">
+            <span class="mobile-card-channel" style={`color: ${post.channelColor}`}>{post.channel}</span>
+            <span class="mobile-card-meta">{post.date} · {post.readingTime}</span>
+          </div>
+          <h2 class="mobile-card-title">{post.title}</h2>
+          <p class="mobile-card-excerpt">{post.excerpt}</p>
+          <div class="mobile-card-expand">
+            <span class="mobile-card-status">DECODED</span>
+          </div>
+
+          <!-- Expanded content (hidden by default) -->
+          <div class="mobile-card-content" data-expanded="false">
+            <!-- Content will be injected from BlogDesktop hidden blocks -->
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  function initBlogMobile() {
+    const cards = document.querySelectorAll<HTMLElement>('.blog-mobile-card');
+
+    cards.forEach(card => {
+      const contentEl = card.querySelector('.mobile-card-content') as HTMLElement;
+      if (!contentEl) return;
+
+      // Load content from the hidden desktop content blocks
+      const postId = card.dataset.postId;
+      const sourceContent = document.querySelector(`[data-blog-content="${postId}"]`);
+      if (sourceContent) {
+        contentEl.innerHTML = sourceContent.innerHTML;
+      }
+
+      card.addEventListener('click', () => {
+        const isExpanded = contentEl.dataset.expanded === 'true';
+
+        if (isExpanded) {
+          contentEl.dataset.expanded = 'false';
+          contentEl.style.maxHeight = '0';
+          card.classList.remove('expanded');
+        } else {
+          // Close other expanded cards
+          cards.forEach(other => {
+            const otherContent = other.querySelector('.mobile-card-content') as HTMLElement;
+            if (otherContent && other !== card) {
+              otherContent.dataset.expanded = 'false';
+              otherContent.style.maxHeight = '0';
+              other.classList.remove('expanded');
+            }
+          });
+
+          contentEl.dataset.expanded = 'true';
+          contentEl.style.maxHeight = contentEl.scrollHeight + 'px';
+          card.classList.add('expanded');
+
+          // Stagger paragraph fade-in
+          contentEl.querySelectorAll('p').forEach((p, i) => {
+            (p as HTMLElement).style.animationDelay = `${150 + i * 60}ms`;
+            p.classList.add('mobile-p-enter');
+          });
+        }
+      });
+    });
+  }
+
+  initBlogMobile();
+</script>
+
+<style>
+  .blog-mobile {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .blog-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .blog-mobile { display: none; }
+  }
+
+  .blog-mobile-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 6rem;
+  }
+
+  /* ── Header ── */
+  .blog-mobile-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .blog-mobile-title {
+    font-family: var(--font-mono);
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    text-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+  }
+
+  .blog-mobile-count {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── Card stack ── */
+  .blog-card-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .blog-mobile-card {
+    background: rgba(14, 14, 16, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-left: 2px solid var(--card-accent);
+    border-radius: 8px;
+    padding: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    animation: mobile-card-enter 0.4s cubic-bezier(.2, .8, .2, 1) both;
+    transition: background 0.2s, border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .blog-mobile-card.expanded {
+    background: rgba(14, 14, 16, 0.85);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  @keyframes mobile-card-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .mobile-card-chrome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mobile-card-channel {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .mobile-card-meta {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.04em;
+  }
+
+  .mobile-card-title {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.3;
+  }
+
+  .mobile-card-excerpt {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.3);
+    line-height: 1.5;
+  }
+
+  .mobile-card-expand {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .mobile-card-status {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.12);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Expanded content ── */
+  .mobile-card-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .mobile-card-content[data-expanded="true"] {
+    margin-top: 0.75rem;
+  }
+
+  .mobile-card-content :global(p) {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.48);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.005em;
+  }
+
+  .mobile-card-content :global(p:first-child) {
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.88rem;
+    line-height: 1.8;
+  }
+
+  .mobile-card-content :global(p:last-child) {
+    margin-bottom: 0.5rem;
+  }
+
+  :global(.mobile-p-enter) {
+    animation: mobile-p-in 0.4s ease-out both;
+  }
+
+  @keyframes mobile-p-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
