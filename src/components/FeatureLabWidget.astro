@@ -1,0 +1,413 @@
+---
+// Feature Lab: floating review widget for preview environment (port 4322)
+// Polls /api/feature/current and shows accept/deny UI for AI-proposed features
+---
+
+<div id="feature-lab" class="fl-widget">
+  <!-- Collapsed pill -->
+  <button class="fl-pill" id="fl-pill">
+    <span class="fl-dot" id="fl-dot"></span>
+    <span class="fl-pill-text" id="fl-pill-text">FEATURE LAB</span>
+  </button>
+
+  <!-- Expanded card -->
+  <div class="fl-card" id="fl-card">
+    <div class="fl-card-header">
+      <span class="fl-source-badge" id="fl-source"></span>
+      <button class="fl-close" id="fl-close">&times;</button>
+    </div>
+    <h3 class="fl-title" id="fl-title"></h3>
+    <p class="fl-description" id="fl-description"></p>
+    <div class="fl-files" id="fl-files"></div>
+
+    <div class="fl-actions" id="fl-actions">
+      <button class="fl-btn fl-btn-accept" id="fl-accept">Keep</button>
+      <button class="fl-btn fl-btn-deny" id="fl-deny">Remove</button>
+    </div>
+
+    <div class="fl-feedback-section" id="fl-feedback-section" style="display:none">
+      <textarea class="fl-textarea" id="fl-textarea" rows="3" placeholder="Describe improvements you want..."></textarea>
+      <button class="fl-btn fl-btn-submit" id="fl-submit">Submit</button>
+    </div>
+
+    <!-- Status messages -->
+    <div class="fl-status-msg" id="fl-status-msg" style="display:none"></div>
+  </div>
+</div>
+
+<style>
+  .fl-widget {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    font-family: var(--font-mono);
+    display: none; /* hidden until JS confirms preview port */
+  }
+
+  /* ── Pill ── */
+  .fl-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    white-space: nowrap;
+  }
+  .fl-pill:hover {
+    border-color: var(--purple-dim);
+    color: var(--text);
+  }
+
+  .fl-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .fl-dot[data-status="idle"] { background: var(--text-muted); }
+  .fl-dot[data-status="proposing"] {
+    background: var(--orange);
+    animation: fl-pulse 1.5s ease-in-out infinite;
+  }
+  .fl-dot[data-status="pending_review"] { background: var(--green); }
+  .fl-dot[data-status="accepting"] {
+    background: var(--green);
+    animation: fl-pulse 1s ease-in-out infinite;
+  }
+  .fl-dot[data-status="denying"] {
+    background: var(--red);
+    animation: fl-pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes fl-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ── Card ── */
+  .fl-card {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 0.75rem);
+    right: 0;
+    width: 340px;
+    max-width: 90vw;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    color: var(--text);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  .fl-card.open { display: block; }
+
+  .fl-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .fl-source-badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: var(--purple-bg);
+    color: var(--purple);
+    border: 1px solid var(--glass-border);
+  }
+
+  .fl-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  .fl-close:hover { color: var(--text); }
+
+  .fl-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: var(--text);
+  }
+
+  .fl-description {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin: 0 0 0.75rem;
+  }
+
+  .fl-files {
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+  .fl-files code {
+    background: var(--bg-code);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.6rem;
+  }
+
+  /* ── Buttons ── */
+  .fl-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .fl-btn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.15s ease-out;
+    border: 1px solid transparent;
+  }
+
+  .fl-btn-accept {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--green);
+    border-color: var(--green-border);
+  }
+  .fl-btn-accept:hover {
+    background: rgba(34, 197, 94, 0.25);
+    box-shadow: 0 0 12px var(--green-glow);
+  }
+
+  .fl-btn-deny {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--red);
+    border-color: rgba(239, 68, 68, 0.15);
+  }
+  .fl-btn-deny:hover {
+    background: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+  }
+
+  .fl-btn-submit {
+    background: var(--purple-bg);
+    color: var(--purple);
+    border-color: var(--glass-border);
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .fl-btn-submit:hover {
+    background: rgba(168, 85, 247, 0.25);
+    box-shadow: 0 0 12px var(--purple-glow);
+  }
+
+  /* ── Feedback textarea ── */
+  .fl-feedback-section {
+    margin-top: 0.75rem;
+  }
+
+  .fl-textarea {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    padding: 0.6rem;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .fl-textarea:focus {
+    outline: none;
+    border-color: var(--purple-dim);
+  }
+  .fl-textarea::placeholder {
+    color: var(--text-quaternary);
+  }
+
+  /* ── Status message ── */
+  .fl-status-msg {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 1rem 0 0.25rem;
+  }
+</style>
+
+<script>
+  function initFeatureLab() {
+    // Only show on preview port
+    if (location.port !== '4322') {
+      const el = document.getElementById('feature-lab');
+      if (el) el.remove();
+      return;
+    }
+
+    const widget = document.getElementById('feature-lab') as HTMLDivElement;
+    const pill = document.getElementById('fl-pill') as HTMLButtonElement;
+    const pillText = document.getElementById('fl-pill-text') as HTMLSpanElement;
+    const dot = document.getElementById('fl-dot') as HTMLSpanElement;
+    const card = document.getElementById('fl-card') as HTMLDivElement;
+    const closeBtn = document.getElementById('fl-close') as HTMLButtonElement;
+    const title = document.getElementById('fl-title') as HTMLHeadingElement;
+    const desc = document.getElementById('fl-description') as HTMLParagraphElement;
+    const source = document.getElementById('fl-source') as HTMLSpanElement;
+    const files = document.getElementById('fl-files') as HTMLDivElement;
+    const actions = document.getElementById('fl-actions') as HTMLDivElement;
+    const acceptBtn = document.getElementById('fl-accept') as HTMLButtonElement;
+    const denyBtn = document.getElementById('fl-deny') as HTMLButtonElement;
+    const feedbackSection = document.getElementById('fl-feedback-section') as HTMLDivElement;
+    const textarea = document.getElementById('fl-textarea') as HTMLTextAreaElement;
+    const submitBtn = document.getElementById('fl-submit') as HTMLButtonElement;
+    const statusMsg = document.getElementById('fl-status-msg') as HTMLDivElement;
+
+    if (!widget) return;
+    widget.style.display = 'block';
+
+    let currentStatus = '';
+    let pendingAction: 'accept' | 'deny' | null = null;
+
+    const STATUS_LABELS: Record<string, string> = {
+      idle: 'FEATURE LAB',
+      proposing: 'PROPOSING...',
+      pending_review: 'NEW FEATURE',
+      accepting: 'MERGING...',
+      denying: 'REVERTING...',
+    };
+
+    function updatePill(status: string) {
+      dot.setAttribute('data-status', status);
+      pillText.textContent = STATUS_LABELS[status] || 'FEATURE LAB';
+    }
+
+    function showCard() { card.classList.add('open'); }
+    function hideCard() {
+      card.classList.remove('open');
+      feedbackSection.style.display = 'none';
+      pendingAction = null;
+      textarea.value = '';
+    }
+
+    function showStatus(msg: string) {
+      actions.style.display = 'none';
+      feedbackSection.style.display = 'none';
+      statusMsg.style.display = 'block';
+      statusMsg.textContent = msg;
+    }
+
+    pill.addEventListener('click', () => {
+      if (card.classList.contains('open')) {
+        hideCard();
+      } else if (currentStatus === 'pending_review') {
+        showCard();
+      }
+    });
+    closeBtn.addEventListener('click', hideCard);
+
+    acceptBtn.addEventListener('click', () => {
+      pendingAction = 'accept';
+      feedbackSection.style.display = 'block';
+      textarea.placeholder = 'Describe improvements you want (or leave empty to accept as-is)...';
+      textarea.focus();
+    });
+
+    denyBtn.addEventListener('click', () => {
+      pendingAction = 'deny';
+      feedbackSection.style.display = 'block';
+      textarea.placeholder = 'Why are you removing this? (helps avoid similar proposals)...';
+      textarea.focus();
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      if (!pendingAction) return;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      const endpoint = `/api/feature/${pendingAction}`;
+      const bodyKey = pendingAction === 'accept' ? 'feedback' : 'reason';
+      const payload = textarea.value.trim() ? { [bodyKey]: textarea.value.trim() } : {};
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          const msg = pendingAction === 'accept'
+            ? 'Accepted! Merging to main and proposing next...'
+            : 'Denied. Proposing something new...';
+          showStatus(msg);
+          // After a moment, collapse the card
+          setTimeout(() => {
+            hideCard();
+            statusMsg.style.display = 'none';
+            actions.style.display = 'flex';
+          }, 3000);
+        } else {
+          const data = await res.json();
+          showStatus(`Error: ${data.error || 'Unknown error'}`);
+        }
+      } catch {
+        showStatus('Network error — is the server running?');
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit';
+    });
+
+    async function poll() {
+      try {
+        const res = await fetch('/api/feature/current');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        currentStatus = data.status;
+        updatePill(data.status);
+
+        if (data.status === 'pending_review' && data.current) {
+          title.textContent = data.current.title || 'Untitled';
+          desc.textContent = data.current.description || '';
+          source.textContent = data.current.source || '';
+
+          if (data.current.files_changed?.length) {
+            files.innerHTML = data.current.files_changed
+              .map((f: string) => `<code>${f}</code>`)
+              .join(' ');
+          } else {
+            files.innerHTML = '';
+          }
+        }
+      } catch { /* silent */ }
+    }
+
+    // Initial poll + interval
+    poll();
+    setInterval(poll, 5000);
+  }
+
+  initFeatureLab();
+  document.addEventListener('astro:after-swap', initFeatureLab);
+</script>
