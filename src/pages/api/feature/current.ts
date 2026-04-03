@@ -46,6 +46,7 @@ export async function GET({ request }: { request: Request }) {
   return new Response(JSON.stringify({
     status: state.status,
     current: state.current,
+    history: state.history || [],
   }), {
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
   });

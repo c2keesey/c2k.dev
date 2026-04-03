@@ -1,11 +1,18 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
 
+interface Props {
+  showLab?: boolean;
+}
+
+const { showLab = false } = Astro.props;
+
 const links = [
   { href: '/', label: 'Home' },
   { href: '/projects', label: 'Projects' },
   { href: '/log', label: 'Log' },
   { href: '/about', label: 'About' },
+  ...(showLab ? [{ href: '/lab', label: 'Lab' }] : []),
 ];
 ---
 
@@ -67,6 +74,17 @@ const links = [
       </svg>
       <span class="tab-label">About</span>
     </button>
+    {showLab && (
+      <button class="bottom-tab" data-index="4" aria-label="Lab">
+        <svg class="tab-icon icon-lab" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M6 2v4L3 12a1 1 0 001 1h8a1 1 0 001-1l-3-6V2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <line x1="5" y1="2" x2="11" y2="2" stroke-linecap="round"></line>
+          <circle class="lab-bubble lab-bubble-1" cx="7" cy="10" r="1" fill="currentColor" stroke="none"></circle>
+          <circle class="lab-bubble lab-bubble-2" cx="9.5" cy="11" r="0.7" fill="currentColor" stroke="none"></circle>
+        </svg>
+        <span class="tab-label">Lab</span>
+      </button>
+    )}
   </div>
 </nav>
 
@@ -321,16 +339,20 @@ const links = [
     const highlight = document.getElementById('bottom-nav-highlight') as HTMLElement;
 
     // Pure math — no DOM measurement needed
-    // Bar: 272px, padding: 4px each side → inner: 264px
-    // Flex: inactive=1, active=2.2, total=5.2 (3 inactive + 1 active)
+    // Dynamically compute based on actual tab count (4 or 5)
     const PADDING = 4;
-    const INNER = 264;
+    const TAB_COUNT = tabs.length;
+    const BAR_WIDTH = TAB_COUNT === 5 ? 320 : 272;
+    const INNER = BAR_WIDTH - PADDING * 2;
     const FLEX_INACTIVE = 1;
     const FLEX_ACTIVE = 2.2;
-    const TAB_COUNT = 4;
     const TOTAL_FLEX = FLEX_INACTIVE * (TAB_COUNT - 1) + FLEX_ACTIVE;
     const W_INACTIVE = INNER / TOTAL_FLEX * FLEX_INACTIVE;
     const W_ACTIVE = INNER / TOTAL_FLEX * FLEX_ACTIVE;
+
+    // Update bar width if we have 5 tabs
+    const bar = document.getElementById('bottom-nav-pill') as HTMLElement;
+    if (bar && TAB_COUNT === 5) bar.style.width = `${BAR_WIDTH}px`;
 
     function moveHighlight(index: number) {
       if (!highlight) return;
@@ -348,7 +370,9 @@ const links = [
     }
 
     // Determine initial active tab from URL
-    const pages = ['/', '/projects', '/log', '/about'];
+    const pages = TAB_COUNT === 5
+      ? ['/', '/projects', '/log', '/about', '/lab']
+      : ['/', '/projects', '/log', '/about'];
     const path = location.pathname;
     const activeIdx = Math.max(0, pages.findIndex(p =>
       p === '/' ? path === '/' || path === '' : path.startsWith(p)

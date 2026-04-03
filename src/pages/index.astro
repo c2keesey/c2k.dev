@@ -14,7 +14,7 @@ import DesktopDashboard from '../components/DesktopDashboard.astro';
 import MobileNetworkView from '../components/MobileNetworkView.astro';
 import BlogDesktop from '../components/BlogDesktop.astro';
 import BlogMobile from '../components/BlogMobile.astro';
-import FeatureLabWidget from '../components/FeatureLabWidget.astro';
+import FeatureLabPage from '../components/FeatureLabPage.astro';
 const showFeatureLab = !!process.env.FEATURE_LAB;
 import '../styles/global.css';
 ---
@@ -42,7 +42,7 @@ import '../styles/global.css';
     </script>
   </head>
   <body>
-    <Nav />
+    <Nav showLab={showFeatureLab} />
 
     <div class="swipe-container" id="swipe-container">
       <!-- Panel: Home -->
@@ -306,6 +306,14 @@ import '../styles/global.css';
           </div>
         </div>
       </section>
+
+      {showFeatureLab && (
+        <section class="swipe-panel" data-page="/lab">
+          <div class="panel-content">
+            <FeatureLabPage />
+          </div>
+        </section>
+      )}
     </div>
     <footer class="global-footer">
       <div class="status-row">
@@ -313,7 +321,6 @@ import '../styles/global.css';
         <span class="status-text" id="status-text">AWAITING TELEMETRY</span>
       </div>
     </footer>
-    {showFeatureLab && <FeatureLabWidget />}
   </body>
 </html>
 
@@ -772,7 +779,8 @@ import '../styles/global.css';
   @media (min-width: 1024px) {
     [data-page="/"] > .panel-content,
     [data-page="/about"] > .panel-content,
-    [data-page="/log"] > .panel-content {
+    [data-page="/log"] > .panel-content,
+    [data-page="/lab"] > .panel-content {
       max-width: min(1100px, 85%);
     }
   }

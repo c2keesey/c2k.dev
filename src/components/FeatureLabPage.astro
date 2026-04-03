@@ -1,0 +1,535 @@
+---
+// Feature Lab page: full-panel review UI for AI-proposed features
+// Only rendered when FEATURE_LAB=true (preview builds)
+---
+
+<div class="lab-container" id="lab-container">
+  <div class="lab-header">
+    <h1 class="lab-title">Feature Lab</h1>
+    <div class="lab-status-row">
+      <span class="lab-dot" id="lab-dot"></span>
+      <span class="lab-status-text" id="lab-status-text">INITIALIZING</span>
+    </div>
+  </div>
+
+  <!-- Idle state -->
+  <div class="lab-state" id="lab-idle" style="display:none">
+    <div class="lab-empty">
+      <p class="lab-empty-text">No feature proposal pending.</p>
+      <p class="lab-empty-sub">A new feature will appear here when one is proposed.</p>
+    </div>
+  </div>
+
+  <!-- Proposing state -->
+  <div class="lab-state" id="lab-proposing" style="display:none">
+    <div class="lab-proposing-card">
+      <div class="lab-spinner"></div>
+      <p class="lab-proposing-text">Claude is building something...</p>
+      <p class="lab-proposing-sub">This usually takes a few minutes.</p>
+    </div>
+  </div>
+
+  <!-- Review state -->
+  <div class="lab-state" id="lab-review" style="display:none">
+    <div class="lab-review-card">
+      <div class="lab-review-header">
+        <span class="lab-source-badge" id="lab-source"></span>
+        <span class="lab-timestamp" id="lab-timestamp"></span>
+      </div>
+      <h2 class="lab-feature-title" id="lab-feature-title"></h2>
+      <p class="lab-feature-desc" id="lab-feature-desc"></p>
+
+      <div class="lab-files" id="lab-files"></div>
+
+      <div class="lab-actions">
+        <button class="lab-btn lab-btn-keep" id="lab-keep">Keep</button>
+        <button class="lab-btn lab-btn-remove" id="lab-remove">Remove</button>
+      </div>
+
+      <div class="lab-feedback" id="lab-feedback" style="display:none">
+        <textarea class="lab-textarea" id="lab-textarea" rows="3"></textarea>
+        <button class="lab-btn lab-btn-submit" id="lab-submit">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Processing state (accepting/denying) -->
+  <div class="lab-state" id="lab-processing" style="display:none">
+    <div class="lab-proposing-card">
+      <div class="lab-spinner"></div>
+      <p class="lab-proposing-text" id="lab-processing-text">Processing...</p>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="lab-history" id="lab-history">
+    <h3 class="lab-history-title">History</h3>
+    <div class="lab-history-list" id="lab-history-list"></div>
+  </div>
+</div>
+
+<style>
+  .lab-container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .lab-header {
+    margin-bottom: 2rem;
+  }
+
+  .lab-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 0.5rem;
+  }
+
+  .lab-status-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .lab-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .lab-dot[data-status="idle"] { background: var(--text-muted); }
+  .lab-dot[data-status="proposing"] {
+    background: var(--orange);
+    animation: lab-pulse 1.5s ease-in-out infinite;
+  }
+  .lab-dot[data-status="pending_review"] { background: var(--green); }
+  .lab-dot[data-status="accepting"] {
+    background: var(--green);
+    animation: lab-pulse 1s ease-in-out infinite;
+  }
+  .lab-dot[data-status="denying"] {
+    background: var(--red);
+    animation: lab-pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes lab-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .lab-status-text {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  /* ── States ── */
+  .lab-state { margin-bottom: 2rem; }
+
+  .lab-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  .lab-empty-text {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0 0 0.5rem;
+  }
+  .lab-empty-sub {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    margin: 0;
+  }
+
+  /* ── Proposing ── */
+  .lab-proposing-card {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .lab-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--purple);
+    border-radius: 50%;
+    animation: lab-spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  @keyframes lab-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .lab-proposing-text {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0 0 0.25rem;
+  }
+  .lab-proposing-sub {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    margin: 0;
+  }
+
+  /* ── Review card ── */
+  .lab-review-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .lab-review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .lab-source-badge {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: var(--purple-bg);
+    color: var(--purple);
+    border: 1px solid var(--glass-border);
+  }
+
+  .lab-timestamp {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-quaternary);
+  }
+
+  .lab-feature-title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.75rem;
+  }
+
+  .lab-feature-desc {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0 0 1rem;
+  }
+
+  .lab-files {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .lab-files code {
+    background: var(--bg-code);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  /* ── Actions ── */
+  .lab-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .lab-btn {
+    flex: 1;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.15s ease-out;
+    border: 1px solid transparent;
+  }
+
+  .lab-btn-keep {
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--green);
+    border-color: var(--green-border);
+  }
+  .lab-btn-keep:hover {
+    background: rgba(34, 197, 94, 0.22);
+    box-shadow: 0 0 16px var(--green-glow);
+  }
+
+  .lab-btn-remove {
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--red);
+    border-color: rgba(239, 68, 68, 0.12);
+  }
+  .lab-btn-remove:hover {
+    background: rgba(239, 68, 68, 0.18);
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.25);
+  }
+
+  .lab-btn-submit {
+    background: var(--purple-bg);
+    color: var(--purple);
+    border-color: var(--glass-border);
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .lab-btn-submit:hover {
+    background: rgba(168, 85, 247, 0.22);
+    box-shadow: 0 0 16px var(--purple-glow);
+  }
+
+  /* ── Feedback ── */
+  .lab-feedback {
+    margin-top: 1rem;
+  }
+
+  .lab-textarea {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    padding: 0.75rem;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .lab-textarea:focus {
+    outline: none;
+    border-color: var(--purple-dim);
+  }
+  .lab-textarea::placeholder {
+    color: var(--text-quaternary);
+  }
+
+  /* ── History ── */
+  .lab-history {
+    margin-top: 2rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+  }
+
+  .lab-history-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--text-quaternary);
+    text-transform: uppercase;
+    margin: 0 0 1rem;
+  }
+
+  .lab-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .lab-history-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    font-size: 0.8rem;
+  }
+
+  .lab-history-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .lab-history-dot.accepted { background: var(--green); }
+  .lab-history-dot.denied { background: var(--red); }
+
+  .lab-history-name {
+    font-family: var(--font-sans);
+    color: var(--text-muted);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .lab-history-outcome {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+    color: var(--text-quaternary);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .lab-history-empty {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-quaternary);
+  }
+</style>
+
+<script>
+  function initFeatureLabPage() {
+    const container = document.getElementById('lab-container');
+    if (!container) return;
+
+    const dot = document.getElementById('lab-dot') as HTMLSpanElement;
+    const statusText = document.getElementById('lab-status-text') as HTMLSpanElement;
+    const stateIdle = document.getElementById('lab-idle') as HTMLDivElement;
+    const stateProposing = document.getElementById('lab-proposing') as HTMLDivElement;
+    const stateReview = document.getElementById('lab-review') as HTMLDivElement;
+    const stateProcessing = document.getElementById('lab-processing') as HTMLDivElement;
+    const processingText = document.getElementById('lab-processing-text') as HTMLParagraphElement;
+    const featureTitle = document.getElementById('lab-feature-title') as HTMLHeadingElement;
+    const featureDesc = document.getElementById('lab-feature-desc') as HTMLParagraphElement;
+    const source = document.getElementById('lab-source') as HTMLSpanElement;
+    const timestamp = document.getElementById('lab-timestamp') as HTMLSpanElement;
+    const files = document.getElementById('lab-files') as HTMLDivElement;
+    const keepBtn = document.getElementById('lab-keep') as HTMLButtonElement;
+    const removeBtn = document.getElementById('lab-remove') as HTMLButtonElement;
+    const feedbackSection = document.getElementById('lab-feedback') as HTMLDivElement;
+    const textarea = document.getElementById('lab-textarea') as HTMLTextAreaElement;
+    const submitBtn = document.getElementById('lab-submit') as HTMLButtonElement;
+    const historyList = document.getElementById('lab-history-list') as HTMLDivElement;
+
+    let pendingAction: 'accept' | 'deny' | null = null;
+
+    const STATUS_LABELS: Record<string, string> = {
+      idle: 'IDLE',
+      proposing: 'PROPOSING',
+      pending_review: 'READY FOR REVIEW',
+      accepting: 'MERGING TO MAIN',
+      denying: 'REVERTING',
+    };
+
+    function showState(status: string) {
+      stateIdle.style.display = status === 'idle' ? 'block' : 'none';
+      stateProposing.style.display = status === 'proposing' ? 'block' : 'none';
+      stateReview.style.display = status === 'pending_review' ? 'block' : 'none';
+      stateProcessing.style.display = (status === 'accepting' || status === 'denying') ? 'block' : 'none';
+
+      if (status === 'accepting') processingText.textContent = 'Merging to main and deploying...';
+      if (status === 'denying') processingText.textContent = 'Reverting and proposing next...';
+
+      dot.setAttribute('data-status', status);
+      statusText.textContent = STATUS_LABELS[status] || status.toUpperCase();
+    }
+
+    keepBtn.addEventListener('click', () => {
+      pendingAction = 'accept';
+      feedbackSection.style.display = 'block';
+      textarea.placeholder = 'Describe improvements you want (or leave empty to accept as-is)...';
+      textarea.focus();
+    });
+
+    removeBtn.addEventListener('click', () => {
+      pendingAction = 'deny';
+      feedbackSection.style.display = 'block';
+      textarea.placeholder = 'Why are you removing this? (helps avoid similar proposals)...';
+      textarea.focus();
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      if (!pendingAction) return;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      const endpoint = `/api/feature/${pendingAction}`;
+      const bodyKey = pendingAction === 'accept' ? 'feedback' : 'reason';
+      const payload = textarea.value.trim() ? { [bodyKey]: textarea.value.trim() } : {};
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          showState(pendingAction === 'accept' ? 'accepting' : 'denying');
+          feedbackSection.style.display = 'none';
+          textarea.value = '';
+          pendingAction = null;
+        }
+      } catch { /* silent */ }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit';
+    });
+
+    function renderHistory(history: Array<{title: string; outcome: string; feedback?: string}>) {
+      if (!history || history.length === 0) {
+        historyList.innerHTML = '<p class="lab-history-empty">No proposals yet.</p>';
+        return;
+      }
+      historyList.innerHTML = history.slice().reverse().slice(0, 10).map(h => `
+        <div class="lab-history-item">
+          <span class="lab-history-dot ${h.outcome}"></span>
+          <span class="lab-history-name">${h.title || 'Untitled'}</span>
+          <span class="lab-history-outcome">${h.outcome}</span>
+        </div>
+      `).join('');
+    }
+
+    function timeAgo(iso: string): string {
+      const diff = Date.now() - new Date(iso).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return `${mins}m ago`;
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return `${hrs}h ago`;
+      return `${Math.floor(hrs / 24)}d ago`;
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch('/api/feature/current');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        showState(data.status);
+
+        if (data.status === 'pending_review' && data.current) {
+          featureTitle.textContent = data.current.title || 'Untitled';
+          featureDesc.textContent = data.current.description || '';
+          source.textContent = data.current.source || '';
+          timestamp.textContent = data.current.proposed_at ? timeAgo(data.current.proposed_at) : '';
+
+          if (data.current.files_changed?.length) {
+            files.innerHTML = data.current.files_changed
+              .map((f: string) => `<code>${f}</code>`)
+              .join('');
+          } else {
+            files.innerHTML = '';
+          }
+        }
+
+        if (data.history) {
+          renderHistory(data.history);
+        }
+      } catch { /* silent */ }
+    }
+
+    poll();
+    setInterval(poll, 5000);
+  }
+
+  initFeatureLabPage();
+  document.addEventListener('astro:after-swap', initFeatureLabPage);
+</script>
