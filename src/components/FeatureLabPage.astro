@@ -26,6 +26,7 @@
       <div class="lab-spinner"></div>
       <p class="lab-proposing-text">Claude is building something...</p>
       <p class="lab-proposing-sub">This usually takes a few minutes.</p>
+      <pre class="lab-log" id="lab-log"></pre>
     </div>
   </div>
 
@@ -179,6 +180,24 @@
     color: var(--text-tertiary);
     margin: 0;
   }
+
+  .lab-log {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    line-height: 1.6;
+    color: var(--text-tertiary);
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    text-align: left;
+  }
+  .lab-log:empty { display: none; }
 
   /* ── Review card ── */
   .lab-review-card {
@@ -504,6 +523,15 @@
         const data = await res.json();
 
         showState(data.status);
+
+        // Show log tail during proposing
+        const logEl = document.getElementById('lab-log') as HTMLPreElement;
+        if (data.status === 'proposing' && data.log_tail?.length && logEl) {
+          logEl.textContent = data.log_tail.join('\n');
+          logEl.scrollTop = logEl.scrollHeight;
+        } else if (logEl) {
+          logEl.textContent = '';
+        }
 
         if (data.status === 'pending_review' && data.current) {
           featureTitle.textContent = data.current.title || 'Untitled';

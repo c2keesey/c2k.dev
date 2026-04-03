@@ -43,10 +43,21 @@ export async function GET({ request }: { request: Request }) {
 
   const state = readState();
 
+  // Surface last lines of the proposing log so the UI can show progress
+  let logTail: string[] = [];
+  if (state.status === 'proposing' && state.log_file) {
+    try {
+      const logContent = readFileSync(state.log_file, 'utf-8');
+      const lines = logContent.split('\n').filter((l: string) => l.trim());
+      logTail = lines.slice(-8);
+    } catch { /* file may not exist yet */ }
+  }
+
   return new Response(JSON.stringify({
     status: state.status,
     current: state.current,
     history: state.history || [],
+    log_tail: logTail,
   }), {
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
   });
