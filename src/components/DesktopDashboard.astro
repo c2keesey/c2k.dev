@@ -556,6 +556,7 @@ const edgeMidpoints = edges.map(edge => {
       const dpr = window.devicePixelRatio || 1;
       let mw = 0, mh = 0;
       let mouseX = -1000, mouseY = -1000;
+      let mouseSpeed = 0; // pixels/frame, smoothed
 
       // ── Simplex noise (inlined, public domain) ──
       const F2 = 0.5 * (Math.sqrt(3) - 1), G2 = (3 - Math.sqrt(3)) / 6;
@@ -883,18 +884,21 @@ const edgeMidpoints = edges.map(edge => {
           if (triHeat[i] < 0.001) triHeat[i] = 0;
         }
 
-        // Boost heat near cursor
+        // Boost heat near cursor — movement amplifies the effect
         if (mouseX < -500) return;
-        const radius = 180;
+        const speedBoost = Math.min(mouseSpeed / 12, 1); // 0 = still, 1 = fast
+        const radius = 140 + speedBoost * 80; // wider radius when moving fast
         const radiusSq = radius * radius;
+        const heatMul = 0.3 + speedBoost * 0.7; // still hover = 0.3x, moving = up to 1x
         for (let i = 0; i < meshTris.length; i++) {
           const hcx = triHomeCX[i] - mouseX, hcy = triHomeCY[i] - mouseY;
           const dSq = hcx * hcx + hcy * hcy;
           if (dSq > radiusSq) continue;
           const proximity = 1 - Math.sqrt(dSq) / radius;
-          const target = proximity * proximity;
+          const target = proximity * proximity * heatMul;
           if (target > triHeat[i]) triHeat[i] = target;
         }
+        mouseSpeed *= 0.95; // gradual decay when not moving
 
         // Cap: if too many triangles are hot, aggressively fade the coldest ones
         const MAX_HOT = 120;
@@ -916,8 +920,8 @@ const edgeMidpoints = edges.map(edge => {
         const warm = isWarmTheme();
         // Warm theme: show all triangles with a base tone, heat boosts them
         // Dark theme: only show heated triangles (original behavior)
-        const baseFill = warm ? 0.03 : 0;
-        const baseStroke = warm ? 0.05 : 0;
+        const baseFill = warm ? 0.03 : 0.015;
+        const baseStroke = warm ? 0.05 : 0.025;
 
         for (let i = 0; i < meshTris.length; i++) {
           const heat = triHeat[i];
@@ -1024,10 +1028,17 @@ const edgeMidpoints = edges.map(edge => {
 
       dashboard.addEventListener('mousemove', (e) => {
         const rect = dashboard.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
+        const nx = e.clientX - rect.left;
+        const ny = e.clientY - rect.top;
+        if (mouseX > -500) {
+          const dx = nx - mouseX, dy = ny - mouseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          mouseSpeed = mouseSpeed * 0.6 + dist * 0.4; // smooth
+        }
+        mouseX = nx;
+        mouseY = ny;
       });
-      dashboard.addEventListener('mouseleave', () => { mouseX = -1000; mouseY = -1000; });
+      dashboard.addEventListener('mouseleave', () => { mouseX = -1000; mouseY = -1000; mouseSpeed = 0; });
       window.addEventListener('resize', () => { initMesh(); });
     }
 
