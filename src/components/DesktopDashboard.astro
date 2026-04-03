@@ -878,32 +878,32 @@ const edgeMidpoints = edges.map(edge => {
       }
 
       function updateMeshHeat(dt: number) {
-        // Smooth the speed signal — slow ramp up, slower ramp down
-        const rampUp = 1 - Math.pow(0.0001, dt);   // ~0.15 per frame — snappy rise
-        const rampDown = 1 - Math.pow(0.3, dt);     // ~0.02 per frame — gentle fade
+        // Smooth the speed signal — snappy rise, moderate fade
+        const rampUp = 1 - Math.pow(0.0001, dt);   // ~150ms rise
+        const rampDown = 1 - Math.pow(0.08, dt);    // ~400ms fade
         const lerpRate = mouseSpeed > smoothSpeed ? rampUp : rampDown;
         smoothSpeed += (mouseSpeed - smoothSpeed) * lerpRate;
-        mouseSpeed *= Math.pow(0.001, dt); // raw speed decays fast between move events
+        mouseSpeed *= Math.pow(0.001, dt);
 
-        // Decay all heat — gentler than before for smoother fade-out
-        const decay = Math.pow(0.15, dt); // ~0.7s fade (was 0.4s)
+        // Decay heat — moderate fade
+        const decay = Math.pow(0.1, dt); // ~0.5s fade
         for (let i = 0; i < triHeat.length; i++) {
           triHeat[i] *= decay;
           if (triHeat[i] < 0.001) triHeat[i] = 0;
         }
 
-        // Boost heat near cursor — movement amplifies the effect
+        // Boost heat near cursor — speed scales radius, intensity, AND max heat
         if (mouseX < -500) return;
-        const speedBoost = Math.min(smoothSpeed / 10, 1); // 0 = still, 1 = fast
-        const radius = 140 + speedBoost * 80;
+        const speedBoost = Math.min(smoothSpeed / 8, 1);
+        const radius = 130 + speedBoost * 100;
         const radiusSq = radius * radius;
-        const heatMul = 0.25 + speedBoost * 0.75; // still = 0.25x, moving = up to 1x
+        const heatMul = 0.2 + speedBoost * 1.3; // still=0.2x, fast=up to 1.5x (superheat)
         for (let i = 0; i < meshTris.length; i++) {
           const hcx = triHomeCX[i] - mouseX, hcy = triHomeCY[i] - mouseY;
           const dSq = hcx * hcx + hcy * hcy;
           if (dSq > radiusSq) continue;
           const proximity = 1 - Math.sqrt(dSq) / radius;
-          const target = proximity * proximity * heatMul;
+          const target = Math.min(proximity * proximity * heatMul, 1.5);
           if (target > triHeat[i]) triHeat[i] = target;
         }
 
@@ -927,17 +927,13 @@ const edgeMidpoints = edges.map(edge => {
         const warm = isWarmTheme();
         // Warm theme: show all triangles with a base tone, heat boosts them
         // Dark theme: only show heated triangles (original behavior)
-        const baseFill = warm ? 0.03 : 0.025;
-        const baseStroke = warm ? 0.05 : 0.04;
+        const baseFill = warm ? 0.03 : 0.04;
+        const baseStroke = warm ? 0.05 : 0.07;
 
         for (let i = 0; i < meshTris.length; i++) {
           const heat = triHeat[i];
-          const fillA = warm
-            ? baseFill + heat * 0.12
-            : heat * 0.09;
-          const strokeA = warm
-            ? baseStroke + heat * 0.18
-            : heat * 0.14;
+          const fillA = baseFill + heat * (warm ? 0.12 : 0.15);
+          const strokeA = baseStroke + heat * (warm ? 0.18 : 0.2);
 
           if (fillA < 0.003 && strokeA < 0.003) continue;
 
