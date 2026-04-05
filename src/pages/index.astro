@@ -530,6 +530,32 @@ import '../styles/global.css';
     statusDot.className = 'status-dot ' + className;
   }
 
+  // Scramble a stat value from noise into the real value
+  function scrambleStat(el: HTMLElement, target: string, duration = 550) {
+    const digits = '0123456789';
+    const noise = '░▒╳·';
+    function randomChar(c: string) {
+      if (/[0-9]/.test(c)) return digits[Math.floor(Math.random() * digits.length)];
+      if (c === '%' || c === '/') return c;
+      return noise[Math.floor(Math.random() * noise.length)];
+    }
+    const start = Date.now();
+    const len = target.length;
+    function frame() {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      let result = '';
+      for (let i = 0; i < len; i++) {
+        const charProgress = Math.max(0, progress * 1.4 - (i / len) * 0.4);
+        result += charProgress >= 1 ? target[i] : randomChar(target[i]);
+      }
+      el.textContent = result;
+      if (progress < 1) requestAnimationFrame(frame);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(frame);
+  }
+
   async function updateStatus() {
     try {
       const res = await fetch('/api/status');
@@ -601,10 +627,10 @@ import '../styles/global.css';
       const sysCrons = document.getElementById('sys-crons');
       const sysCpu = document.getElementById('sys-cpu');
       const sysMem = document.getElementById('sys-mem');
-      if (sysServices) sysServices.textContent = `${data.services.running}/${data.services.total}`;
-      if (sysCrons) sysCrons.textContent = `${data.crons.ok}/${data.crons.total}`;
-      if (sysCpu) sysCpu.textContent = data.cpu !== null ? `${data.cpu}%` : '--';
-      if (sysMem) sysMem.textContent = data.memory !== null ? `${data.memory}%` : '--';
+      if (sysServices) scrambleStat(sysServices, `${data.services.running}/${data.services.total}`);
+      if (sysCrons) scrambleStat(sysCrons, `${data.crons.ok}/${data.crons.total}`);
+      if (sysCpu) scrambleStat(sysCpu, data.cpu !== null ? `${data.cpu}%` : '--');
+      if (sysMem) scrambleStat(sysMem, data.memory !== null ? `${data.memory}%` : '--');
     } catch {
       setStatusState(STATUS_COLORS.offline, 'offline');
       statusText.textContent = 'SIGNAL LOST';

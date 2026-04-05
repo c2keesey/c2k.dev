@@ -1,0 +1,6 @@
+{
+  "title": "Systems Widget Stat Scramble",
+  "description": "The systems widget stats (services, crons, cpu, mem) now scramble-resolve from noise into real values on load — consistent with the site's data-resolving animation philosophy.",
+  "files_changed": ["src/pages/index.astro"],
+  "viewport": "both"
+}
