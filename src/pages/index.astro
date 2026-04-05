@@ -539,6 +539,9 @@ import '../styles/global.css';
       if (c === '%' || c === '/') return c;
       return noise[Math.floor(Math.random() * noise.length)];
     }
+    // Dim during decode, flash on resolve
+    el.style.color = 'var(--text-quaternary)';
+    el.style.transition = 'none';
     const start = Date.now();
     const len = target.length;
     function frame() {
@@ -550,8 +553,18 @@ import '../styles/global.css';
         result += charProgress >= 1 ? target[i] : randomChar(target[i]);
       }
       el.textContent = result;
-      if (progress < 1) requestAnimationFrame(frame);
-      else el.textContent = target;
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        el.textContent = target;
+        // Resolve flash — bright accent then settle
+        el.style.transition = 'color 0.12s ease-out';
+        el.style.color = 'var(--green)';
+        setTimeout(() => {
+          el.style.transition = 'color 0.4s ease-out';
+          el.style.color = 'var(--text-secondary)';
+        }, 120);
+      }
     }
     requestAnimationFrame(frame);
   }
@@ -622,15 +635,20 @@ import '../styles/global.css';
 
       statusText.textContent = visibleSegments.map(s => s.text).join(' \u00b7 ');
 
-      // Populate systems widget
+      // Populate systems widget — staggered cascade like data packets arriving
       const sysServices = document.getElementById('sys-services');
       const sysCrons = document.getElementById('sys-crons');
       const sysCpu = document.getElementById('sys-cpu');
       const sysMem = document.getElementById('sys-mem');
-      if (sysServices) scrambleStat(sysServices, `${data.services.running}/${data.services.total}`);
-      if (sysCrons) scrambleStat(sysCrons, `${data.crons.ok}/${data.crons.total}`);
-      if (sysCpu) scrambleStat(sysCpu, data.cpu !== null ? `${data.cpu}%` : '--');
-      if (sysMem) scrambleStat(sysMem, data.memory !== null ? `${data.memory}%` : '--');
+      const statsToScramble: [HTMLElement | null, string][] = [
+        [sysServices, `${data.services.running}/${data.services.total}`],
+        [sysCrons, `${data.crons.ok}/${data.crons.total}`],
+        [sysCpu, data.cpu !== null ? `${data.cpu}%` : '--'],
+        [sysMem, data.memory !== null ? `${data.memory}%` : '--'],
+      ];
+      statsToScramble.forEach(([el, val], i) => {
+        if (el) setTimeout(() => scrambleStat(el, val), i * 90);
+      });
     } catch {
       setStatusState(STATUS_COLORS.offline, 'offline');
       statusText.textContent = 'SIGNAL LOST';
