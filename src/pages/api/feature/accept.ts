@@ -8,9 +8,9 @@ import { spawn } from 'node:child_process';
 const STATE_DIR = join(homedir(), '.config', 'c2k-feature-lab');
 const STATE_PATH = join(STATE_DIR, 'state.json');
 
-function isPreviewPort(request: Request): boolean {
+function isLocalAccess(request: Request): boolean {
   const host = request.headers.get('host') || '';
-  return host.includes(':4322') || host.startsWith('localhost');
+  return !host.includes('c2k.page');
 }
 
 function readState() {
@@ -28,7 +28,7 @@ function writeState(state: Record<string, unknown>) {
 }
 
 export async function POST({ request }: { request: Request }) {
-  if (!isPreviewPort(request)) {
+  if (!isLocalAccess(request)) {
     return new Response('Not found', { status: 404 });
   }
 

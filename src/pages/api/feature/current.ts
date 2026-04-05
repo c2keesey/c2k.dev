@@ -1,6 +1,6 @@
 export const prerender = false;
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 
@@ -22,9 +22,10 @@ const DEFAULT_STATE = {
   ],
 };
 
-function isPreviewPort(request: Request): boolean {
+function isLocalAccess(request: Request): boolean {
   const host = request.headers.get('host') || '';
-  return host.includes(':4322') || host.startsWith('localhost');
+  // Block public production domain; allow localhost and Tailscale IPs
+  return !host.includes('c2k.page');
 }
 
 function readState() {
@@ -37,11 +38,24 @@ function readState() {
 }
 
 export async function GET({ request }: { request: Request }) {
-  if (!isPreviewPort(request)) {
+  if (!isLocalAccess(request)) {
     return new Response('Not found', { status: 404 });
   }
 
   const state = readState();
+
+  // Auto-recover from stuck accepting/denying/proposing states (10 min timeout)
+  const STUCK_STATES = ['accepting', 'denying', 'proposing'];
+  if (STUCK_STATES.includes(state.status)) {
+    try {
+      const mtime = statSync(STATE_PATH).mtimeMs;
+      if (Date.now() - mtime > 10 * 60 * 1000) {
+        state.status = 'idle';
+        state.current = null;
+        writeFileSync(STATE_PATH, JSON.stringify(state, null, 2));
+      }
+    } catch { /* best effort */ }
+  }
 
   // Surface last lines of the proposing log so the UI can show progress
   let logTail: string[] = [];
