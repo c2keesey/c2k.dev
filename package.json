@@ -9,10 +9,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "9",
-    "astro": "^5.17.1"
+    "@astrojs/node": "^9.5.5",
+    "astro": "^5.18.1"
   },
   "devDependencies": {
-    "playwright": "^1.58.2"
+    "playwright": "^1.59.1"
   }
 }
