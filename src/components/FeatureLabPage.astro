@@ -1,6 +1,6 @@
 ---
 // Feature Lab page: full-panel review UI for AI-proposed features
-// Only rendered when FEATURE_LAB=true (preview builds)
+// Visible on all environments; interaction controls only on staging/feature
 ---
 
 <div class="lab-container" id="lab-container">
@@ -429,6 +429,8 @@
     const historyList = document.getElementById('lab-history-list') as HTMLDivElement;
 
     let pendingAction: 'accept' | 'deny' | null = null;
+    let interactive = false;
+    const actionsEl = document.querySelector('.lab-actions') as HTMLDivElement;
 
     const STATUS_LABELS: Record<string, string> = {
       idle: 'IDLE',
@@ -523,6 +525,8 @@
         const data = await res.json();
 
         showState(data.status);
+        interactive = !!data.interactive;
+        if (actionsEl) actionsEl.style.display = interactive ? 'flex' : 'none';
 
         // Show log tail during proposing
         const logEl = document.getElementById('lab-log') as HTMLPreElement;

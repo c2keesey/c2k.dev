@@ -3,6 +3,7 @@ export const prerender = false;
 import { readFileSync, writeFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { isProduction, isPrivate } from '../../../lib/env';
 
 const STATE_PATH = join(homedir(), '.config', 'c2k-feature-lab', 'state.json');
 
@@ -22,12 +23,6 @@ const DEFAULT_STATE = {
   ],
 };
 
-function isLocalAccess(request: Request): boolean {
-  const host = request.headers.get('host') || '';
-  // Block public production domain; allow localhost and Tailscale IPs
-  return !host.includes('c2k.page');
-}
-
 function readState() {
   if (!existsSync(STATE_PATH)) return DEFAULT_STATE;
   try {
@@ -38,10 +33,6 @@ function readState() {
 }
 
 export async function GET({ request }: { request: Request }) {
-  if (!isLocalAccess(request)) {
-    return new Response('Not found', { status: 404 });
-  }
-
   const state = readState();
 
   // Auto-recover from stuck accepting/denying/proposing states (10 min timeout)
@@ -72,6 +63,7 @@ export async function GET({ request }: { request: Request }) {
     current: state.current,
     history: state.history || [],
     log_tail: logTail,
+    interactive: isPrivate,
   }), {
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
   });
