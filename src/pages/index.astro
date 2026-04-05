@@ -15,7 +15,8 @@ import MobileNetworkView from '../components/MobileNetworkView.astro';
 import BlogDesktop from '../components/BlogDesktop.astro';
 import BlogMobile from '../components/BlogMobile.astro';
 import FeatureLabPage from '../components/FeatureLabPage.astro';
-const showFeatureLab = !!process.env.FEATURE_LAB;
+import { env, isPrivate } from '../lib/env';
+const showFeatureLab = true;
 import '../styles/global.css';
 ---
 

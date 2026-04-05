@@ -4,14 +4,10 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { spawn } from 'node:child_process';
+import { isPrivate } from '../../../lib/env';
 
 const STATE_DIR = join(homedir(), '.config', 'c2k-feature-lab');
 const STATE_PATH = join(STATE_DIR, 'state.json');
-
-function isLocalAccess(request: Request): boolean {
-  const host = request.headers.get('host') || '';
-  return !host.includes('c2k.page');
-}
 
 function readState() {
   if (!existsSync(STATE_PATH)) return null;
@@ -28,7 +24,7 @@ function writeState(state: Record<string, unknown>) {
 }
 
 export async function POST({ request }: { request: Request }) {
-  if (!isLocalAccess(request)) {
+  if (!isPrivate) {
     return new Response('Not found', { status: 404 });
   }
 
