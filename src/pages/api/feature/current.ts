@@ -3,6 +3,7 @@ export const prerender = false;
 import { readFileSync, writeFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { spawn } from 'node:child_process';
 import { isProduction, isPrivate } from '../../../lib/env';
 
 const STATE_PATH = join(homedir(), '.config', 'c2k-feature-lab', 'state.json');
@@ -41,9 +42,25 @@ export async function GET({ request }: { request: Request }) {
     try {
       const mtime = statSync(STATE_PATH).mtimeMs;
       if (Date.now() - mtime > 10 * 60 * 1000) {
+        // Move current to history as error before clearing
+        if (state.current) {
+          const entry = { ...state.current, outcome: 'error', feedback: `timeout: stuck in ${state.status}`, resolved_at: new Date().toISOString() };
+          state.history = [...(state.history || []), entry];
+        }
         state.status = 'idle';
         state.current = null;
         writeFileSync(STATE_PATH, JSON.stringify(state, null, 2));
+
+        // Kick off a new proposal so the chain doesn't break
+        if (isPrivate) {
+          const labScript = join(homedir(), '.local', 'bin', 'c2k-feature-lab');
+          const child = spawn(labScript, ['propose'], {
+            detached: true,
+            stdio: 'ignore',
+            env: { ...process.env, PATH: `${homedir()}/.local/bin:${homedir()}/.cargo/bin:/usr/local/bin:/usr/bin:/bin:${process.env.PATH}` },
+          });
+          child.unref();
+        }
       }
     } catch { /* best effort */ }
   }
