@@ -42,6 +42,10 @@
         <span class="sl-segment" data-label="model" data-desc="Shows model name for 1M context or non-default models. Warm brown color.">
           <span class="sl-model">Opus 4.6 (1M)</span>
         </span>
+        <span class="sl-sep">│</span>
+        <span class="sl-segment" data-label="MAIA port" data-desc="Client dev port in MAIA worktrees. White when docker backend is running, grey when down.">
+          <span class="sl-port">:5173</span>
+        </span>
       </div>
     </div>
   </div>
@@ -97,6 +101,10 @@
         <div class="detail-item">
           <span class="detail-key">Model</span>
           <span class="detail-val">Shows "Opus 4.6 (1M)" for 1M context models. For other non-default models, shows the display name. Hidden when using the default model.</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-key">:PORT</span>
+          <span class="detail-val">MAIA client dev port. Only appears in MAIA worktrees. White when the docker backend is running, grey when it's down.</span>
         </div>
       </div>
     </div>
@@ -344,6 +352,11 @@
   .sl-stats {
     color: #0a5c0a;
     margin-left: 4px;
+  }
+
+  .sl-port {
+    color: #e4e4e7;
+    font-size: 0.8rem;
   }
 
   .tooltip {
