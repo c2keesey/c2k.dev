@@ -32,14 +32,15 @@
         </span>
       </div>
       <div class="sl-line2" id="sl-line2">
-        <span class="sl-segment" data-label="context usage" data-desc="Context window %. Green 0-60, yellow 60-100, red 100+">
+        <span class="sl-segment" data-label="context usage" data-desc="Context window %. Green 0-60, yellow 60-100, red 100+. For 1M models, scales so 500K personal limit = 100%.">
           <span class="sl-ctx" id="sl-ctx">0%</span>
-        </span>
-        <span class="sl-segment sl-extended" id="sl-extended" data-label="extended pricing" data-desc="Appears when context exceeds 200K tokens (extended pricing tier)">
-          <span class="sl-dot-indicator"></span>
         </span>
         <span class="sl-segment" data-label="system stats" data-desc="CPU load and memory usage, cached every second">
           <span class="sl-stats">↯12 ⛁43</span>
+        </span>
+        <span class="sl-sep">│</span>
+        <span class="sl-segment" data-label="model" data-desc="Shows model name for 1M context or non-default models. Warm brown color.">
+          <span class="sl-model">Opus 4.6 (1M)</span>
         </span>
       </div>
     </div>
@@ -56,7 +57,7 @@
     <div class="detail-section">
       <h3 class="detail-title">What is this?</h3>
       <p class="detail-text">
-        A 198-line bash script that replaces Claude Code's default statusline. It runs on every prompt, parsing JSON input from Claude Code and rendering a two-line display with ANSI colors.
+        A 221-line bash script that replaces Claude Code's default statusline. It runs on every prompt, parsing JSON input from Claude Code and rendering a two-line display with ANSI colors.
       </p>
     </div>
 
@@ -83,19 +84,19 @@
     </div>
 
     <div class="detail-section">
-      <h3 class="detail-title">Line 2 — Context + System</h3>
+      <h3 class="detail-title">Line 2 — Context + System + Model</h3>
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-key">Context %</span>
-          <span class="detail-val">Color-coded: green (0-60%), yellow (60-100%), red (100%+). For Opus 1M, scales to show 500K personal limit as 100%.</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-key">• dot</span>
-          <span class="detail-val">Extended pricing indicator. Appears when context exceeds 200K tokens on the 1M model.</span>
+          <span class="detail-val">Color-coded: green (0-60%), yellow (60-100%), red (100%+). For 1M models, scales so the 500K personal limit reads as 100%.</span>
         </div>
         <div class="detail-item">
           <span class="detail-key">↯ ⛁</span>
           <span class="detail-val">CPU load and memory usage. Cached for 1 second to avoid expensive recalculation.</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-key">Model</span>
+          <span class="detail-val">Shows "Opus 4.6 (1M)" for 1M context models. For other non-default models, shows the display name. Hidden when using the default model.</span>
         </div>
       </div>
     </div>
@@ -112,7 +113,6 @@
 <script>
   function initShowcase() {
     const ctx = document.getElementById('sl-ctx');
-    const extended = document.getElementById('sl-extended');
     const tooltip = document.getElementById('sl-tooltip');
     const segments = document.querySelectorAll<HTMLElement>('.sl-segment');
     const expandBtn = document.getElementById('sl-expand-btn');
@@ -154,11 +154,6 @@
       ctx.textContent = `${displayPct}%`;
       ctx.style.color = ctxColor(displayPct);
 
-      if (displayPct > 40) {
-        extended.classList.add('visible');
-      } else {
-        extended.classList.remove('visible');
-      }
     }
 
     const interval = setInterval(tick, speed);
@@ -341,23 +336,9 @@
     transition: color 0.05s linear;
   }
 
-  .sl-extended {
-    opacity: 0;
-    transition: opacity 0.3s;
-    margin: 0 2px;
-  }
-
-  .sl-extended.visible {
-    opacity: 1;
-  }
-
-  .sl-dot-indicator {
-    display: inline-block;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #b8860b;
-    vertical-align: middle;
+  .sl-model {
+    color: rgb(168, 92, 67);
+    font-size: 0.8rem;
   }
 
   .sl-stats {
