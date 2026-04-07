@@ -383,9 +383,12 @@ const edgeMidpoints = edges.map(edge => {
       const target = desc.dataset.text || desc.textContent || '';
       if (!desc.dataset.text) desc.dataset.text = target;
 
-      const duration = 400;
-      const birthWindow = duration * 0.25;
-      const resolveWindow = duration * 0.75;
+      // Start with dashes, delay scramble to sync with CSS opacity transition
+      desc.textContent = target.replace(/[^ ]/g, '–');
+
+      const duration = 600;
+      const birthWindow = duration * 0.3;
+      const resolveWindow = duration * 0.7;
       const births: number[] = [];
       const resolves: number[] = [];
 
@@ -395,22 +398,24 @@ const edgeMidpoints = edges.map(edge => {
         resolves[i] = birthWindow + bias + Math.random() * resolveWindow * 0.4;
       }
 
-      let start: number | null = null;
-      const step = (ts: number) => {
-        if (!start) start = ts;
-        const elapsed = ts - start;
-        let out = '';
-        for (let i = 0; i < target.length; i++) {
-          if (target[i] === ' ') { out += ' '; }
-          else if (elapsed >= resolves[i]) { out += target[i]; }
-          else if (elapsed >= births[i]) { out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)]; }
-          else { out += '–'; }
-        }
-        desc.textContent = out;
-        if (elapsed < duration) requestAnimationFrame(step);
-        else desc.textContent = target;
-      };
-      requestAnimationFrame(step);
+      setTimeout(() => {
+        let start: number | null = null;
+        const step = (ts: number) => {
+          if (!start) start = ts;
+          const elapsed = ts - start;
+          let out = '';
+          for (let i = 0; i < target.length; i++) {
+            if (target[i] === ' ') { out += ' '; }
+            else if (elapsed >= resolves[i]) { out += target[i]; }
+            else if (elapsed >= births[i]) { out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)]; }
+            else { out += '–'; }
+          }
+          desc.textContent = out;
+          if (elapsed < duration) requestAnimationFrame(step);
+          else desc.textContent = target;
+        };
+        requestAnimationFrame(step);
+      }, 120);
 
       // Stagger tech pills
       const pills = node.querySelectorAll<HTMLElement>('.node-tech-pill');
