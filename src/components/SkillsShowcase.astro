@@ -363,6 +363,27 @@
     visibility: hidden;
   }
 
+  /* Blinking cursor — signals "ready to run" on hover/active */
+  .skill-row.revealed .skill-cmd::after {
+    content: '▊';
+    color: var(--purple);
+    margin-left: 2px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  @media (hover: hover) {
+    .skill-row.revealed:hover .skill-cmd::after {
+      opacity: 1;
+      animation: blink 1s step-end infinite;
+    }
+  }
+
+  .skill-row.revealed.active .skill-cmd::after {
+    opacity: 1;
+    animation: blink 1s step-end infinite;
+  }
+
   .skill-desc {
     color: var(--text-muted);
     flex: 1;
