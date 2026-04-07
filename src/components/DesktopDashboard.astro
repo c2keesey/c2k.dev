@@ -373,6 +373,67 @@ const edgeMidpoints = edges.map(edge => {
     let focusedShowcase: HTMLElement | null = null;
     let focusedShowcaseParent: HTMLElement | null = null;
 
+    // ── Node detail scramble on expand ──
+    const scrambleChars = '0123456789abcdefABCDEF~!@#$%^&*';
+
+    function scrambleNodeDetail(node: HTMLElement) {
+      const desc = node.querySelector('.node-desc') as HTMLElement;
+      if (!desc) return;
+
+      const target = desc.dataset.text || desc.textContent || '';
+      if (!desc.dataset.text) desc.dataset.text = target;
+
+      const duration = 400;
+      const birthWindow = duration * 0.25;
+      const resolveWindow = duration * 0.75;
+      const births: number[] = [];
+      const resolves: number[] = [];
+
+      for (let i = 0; i < target.length; i++) {
+        const bias = (i / target.length) * birthWindow * 0.6;
+        births[i] = bias + Math.random() * birthWindow * 0.4;
+        resolves[i] = birthWindow + bias + Math.random() * resolveWindow * 0.4;
+      }
+
+      let start: number | null = null;
+      const step = (ts: number) => {
+        if (!start) start = ts;
+        const elapsed = ts - start;
+        let out = '';
+        for (let i = 0; i < target.length; i++) {
+          if (target[i] === ' ') { out += ' '; }
+          else if (elapsed >= resolves[i]) { out += target[i]; }
+          else if (elapsed >= births[i]) { out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)]; }
+          else { out += '–'; }
+        }
+        desc.textContent = out;
+        if (elapsed < duration) requestAnimationFrame(step);
+        else desc.textContent = target;
+      };
+      requestAnimationFrame(step);
+
+      // Stagger tech pills
+      const pills = node.querySelectorAll<HTMLElement>('.node-tech-pill');
+      pills.forEach((pill, i) => {
+        pill.style.opacity = '0';
+        pill.style.transform = 'translateY(4px)';
+        setTimeout(() => {
+          pill.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
+          pill.style.opacity = '1';
+          pill.style.transform = 'translateY(0)';
+        }, 200 + i * 60);
+      });
+    }
+
+    function resetNodeDetail(node: HTMLElement) {
+      const pills = node.querySelectorAll<HTMLElement>('.node-tech-pill');
+      pills.forEach(pill => {
+        pill.style.transition = '';
+        pill.style.opacity = '';
+        pill.style.transform = '';
+      });
+    }
+
     function highlightNode(node: HTMLElement) {
       const projectId = node.dataset.project || '';
       const connectedEdges = new Set(nodeEdgeMap[projectId] || []);
@@ -513,11 +574,13 @@ const edgeMidpoints = edges.map(edge => {
         // Collapse any other expanded node
         if (expandedNode) {
           expandedNode.classList.remove('expanded');
+          resetNodeDetail(expandedNode);
         }
 
         // State 1 → State 2
         expandedNode = node;
         node.classList.add('expanded');
+        scrambleNodeDetail(node);
         highlightNode(node);
       });
     });
@@ -530,6 +593,7 @@ const edgeMidpoints = edges.map(edge => {
     dashboard.addEventListener('click', (e) => {
       if (focusedProjectId) return;
       if (expandedNode && !(e.target as HTMLElement).closest('.dashboard-node')) {
+        resetNodeDetail(expandedNode);
         expandedNode.classList.remove('expanded');
         expandedNode = null;
         clearHighlights();
@@ -541,6 +605,7 @@ const edgeMidpoints = edges.map(edge => {
         if (focusedProjectId) {
           closeFocus();
         } else if (expandedNode) {
+          resetNodeDetail(expandedNode);
           expandedNode.classList.remove('expanded');
           expandedNode = null;
           clearHighlights();
