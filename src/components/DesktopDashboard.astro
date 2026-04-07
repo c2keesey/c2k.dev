@@ -427,6 +427,73 @@ const edgeMidpoints = edges.map(edge => {
 
     // ── Focus overlay (state 3) ──
 
+    // ── Focus overlay text scramble ──
+    const scrambleChars = '0123456789abcdefABCDEF~!@#$%^&*';
+
+    function scrambleElement(el: HTMLElement, delay: number) {
+      const target = el.textContent || '';
+      if (!target.trim()) return;
+
+      // Store original text for restoration
+      if (!el.dataset.originalText) el.dataset.originalText = target;
+
+      const duration = 500;
+      const birthWindow = duration * 0.25;
+      const resolveWindow = duration * 0.75;
+      const births: number[] = [];
+      const resolves: number[] = [];
+
+      for (let i = 0; i < target.length; i++) {
+        const bias = (i / target.length) * birthWindow * 0.6;
+        births[i] = bias + Math.random() * birthWindow * 0.4;
+        resolves[i] = birthWindow + bias + Math.random() * resolveWindow * 0.4;
+      }
+
+      // Start with dashes
+      el.textContent = target.replace(/[^ ]/g, '–');
+
+      setTimeout(() => {
+        let start: number | null = null;
+        const step = (ts: number) => {
+          if (!start) start = ts;
+          const elapsed = ts - start;
+          let out = '';
+          for (let i = 0; i < target.length; i++) {
+            if (target[i] === ' ') out += ' ';
+            else if (elapsed >= resolves[i]) out += target[i];
+            else if (elapsed >= births[i]) out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+            else out += '–';
+          }
+          el.textContent = out;
+          if (elapsed < duration) requestAnimationFrame(step);
+          else el.textContent = target;
+        };
+        requestAnimationFrame(step);
+      }, delay);
+    }
+
+    function scrambleFocusContent(showcase: HTMLElement) {
+      // Target text-bearing elements — descriptions, taglines, labels, specs, tech pills
+      const selectors = [
+        'p', '.fg-spec-val', '.fg-spec-label',
+        '.maia-badge', '.fg-badge', '.crn-badge', '.lc-badge',
+        '.maia-tech', '.fg-btn', '.crn-tech', '.lc-tech',
+        'a[class*="-link"]',
+      ];
+      const textEls = showcase.querySelectorAll<HTMLElement>(selectors.join(','));
+      let staggerIndex = 0;
+
+      textEls.forEach(el => {
+        // Skip elements that are part of interactive controls (canvas, inputs)
+        if (el.closest('canvas') || el.querySelector('canvas')) return;
+        const text = el.textContent?.trim();
+        if (!text) return;
+
+        scrambleElement(el, 80 + staggerIndex * 40);
+        staggerIndex++;
+      });
+    }
+
     function openFocus(projectId: string) {
       const selector = showcaseSelectors[projectId];
       if (!selector) return;
@@ -442,6 +509,9 @@ const edgeMidpoints = edges.map(edge => {
       focusContent.appendChild(showcase);
       overlay.classList.add('visible');
       document.body.style.overflow = 'hidden';
+
+      // Scramble all text in the showcase
+      scrambleFocusContent(showcase);
 
       // Pin the top margin so the showcase starts centered but doesn't
       // re-center when content (like key detail bars) expands
