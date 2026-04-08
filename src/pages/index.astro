@@ -381,7 +381,8 @@ import '../styles/global.css';
   })();
 
   const container = document.getElementById('swipe-container')!
-  const pages = ['/', '/projects', '/log', '/about'];
+  const panels = container.querySelectorAll('.swipe-panel');
+  const pages = Array.from(panels).map(p => p.getAttribute('data-page') || '/');
 
   // Scroll to correct panel on load based on URL
   function scrollToCurrentPage() {

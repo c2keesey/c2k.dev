@@ -122,12 +122,12 @@ const Tag = tag;
   function init() {
     // Find the currently active panel
     const container = document.getElementById('swipe-container');
-    const pages = ['/', '/projects', '/log', '/about'];
+    const panels = container?.querySelectorAll('.swipe-panel');
+    const pages = panels ? Array.from(panels).map(p => p.getAttribute('data-page') || '/') : ['/', '/projects', '/log', '/about'];
     const path = location.pathname;
     const activeIndex = Math.max(0, pages.findIndex(p =>
       p === '/' ? path === '/' || path === '' : path.startsWith(p)
     ));
-    const panels = container?.querySelectorAll('.swipe-panel');
 
     document.querySelectorAll<HTMLElement>('.text-scramble').forEach(el => {
       if (!el.hasAttribute('data-scramble-init')) {

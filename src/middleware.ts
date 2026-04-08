@@ -9,10 +9,10 @@ function getIndexHtml(): string {
   if (!indexHtml) {
     indexHtml = readFileSync(join(process.cwd(), 'dist/client/index.html'), 'utf-8');
   }
-  return indexHtml;
+  return indexHtml!;
 }
 
-export const onRequest = defineMiddleware((context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
   // Serve index.html for panel routes — client JS handles panel switching
   if (panelRoutes.has(context.url.pathname)) {
     return new Response(getIndexHtml(), {
@@ -26,10 +26,9 @@ export const onRequest = defineMiddleware((context, next) => {
     });
   }
 
-  return next().then((response) => {
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-Frame-Options', 'DENY');
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    return response;
-  });
+  const response = await next();
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  return response;
 });
