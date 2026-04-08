@@ -1,18 +1,181 @@
 ---
 // C2K.page — this very website
-// System monitor aesthetic with scramble preview
+// Rich app-store-style detail view for the expanded project card
 ---
 
 <div class="c2k-showcase">
   <div class="c2k-card">
     <div class="c2k-content">
+      <!-- Header -->
       <div class="c2k-header">
         <span class="c2k-name text-scramble" data-text="C2K.page" data-delay="100" data-always="false">C2K.page</span>
         <span class="c2k-badge">this site</span>
       </div>
       <p class="c2k-tagline">System monitor for my life</p>
-      <p class="c2k-desc">Public observability layer — projects, tools, workflow, all surfaced like a well-designed dashboard. Live status, activity feed, interactive showcases.</p>
+      <p class="c2k-desc">Public observability layer for a developer's entire digital system. Self-hosted Astro SSR on an OptiPlex micro, exposed via Cloudflare Tunnel. Every page is hand-crafted — no templates, no generic cards.</p>
 
+      <!-- Mini navbar replica -->
+      <div class="c2k-mini-nav">
+        <div class="c2k-mini-nav-bar">
+          <span class="c2k-mini-logo">C2K</span>
+          <div class="c2k-mini-links">
+            <span class="c2k-mini-link" data-idx="0">Home</span>
+            <span class="c2k-mini-link" data-idx="1">Projects</span>
+            <span class="c2k-mini-link" data-idx="2">Log</span>
+            <span class="c2k-mini-link" data-idx="3">About</span>
+            <span class="c2k-mini-link" data-idx="4">Lab</span>
+            <div class="c2k-mini-indicator" id="c2k-mini-indicator"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page descriptions -->
+      <div class="c2k-pages">
+        <div class="c2k-page-item" data-page="0">
+          <div class="c2k-page-header">
+            <svg class="c2k-page-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="8" cy="8" r="2" fill="currentColor" stroke="none"></circle>
+              <path d="M4.5 4.5a5 5 0 0 1 7 0" stroke-linecap="round"></path>
+              <path d="M4.5 11.5a5 5 0 0 0 7 0" stroke-linecap="round"></path>
+            </svg>
+            <span class="c2k-page-name">Home</span>
+          </div>
+          <p class="c2k-page-desc">Landing beacon. Text-scramble hero intro, gradient identity mark, status pulse showing the system is alive.</p>
+        </div>
+        <div class="c2k-page-item" data-page="1">
+          <div class="c2k-page-header">
+            <svg class="c2k-page-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+              <line x1="8" y1="4" x2="4" y2="10"></line>
+              <line x1="8" y1="4" x2="12" y2="10"></line>
+              <line x1="4" y1="10" x2="12" y2="10"></line>
+              <circle cx="8" cy="4" r="2" fill="currentColor" stroke="none"></circle>
+              <circle cx="4" cy="10" r="2" fill="currentColor" stroke="none"></circle>
+              <circle cx="12" cy="10" r="2" fill="currentColor" stroke="none"></circle>
+            </svg>
+            <span class="c2k-page-name">Projects</span>
+          </div>
+          <p class="c2k-page-desc">Spatial network dashboard. Each project is a live node with 3 expansion states — metro-map routing lines show how everything connects.</p>
+        </div>
+        <div class="c2k-page-item" data-page="2">
+          <div class="c2k-page-header">
+            <svg class="c2k-page-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M2 10V8" stroke-linecap="round"></path>
+              <path d="M5 10V6" stroke-linecap="round"></path>
+              <path d="M8 10V4" stroke-linecap="round"></path>
+              <path d="M11 10V6" stroke-linecap="round"></path>
+              <path d="M14 10V8" stroke-linecap="round"></path>
+            </svg>
+            <span class="c2k-page-name">Log</span>
+          </div>
+          <p class="c2k-page-desc">Dev activity feed. Git commits, session notes, and build events streamed from the system — what's happening and when.</p>
+        </div>
+        <div class="c2k-page-item" data-page="3">
+          <div class="c2k-page-header">
+            <svg class="c2k-page-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M3 5l4 3-4 3" stroke-linecap="round" stroke-linejoin="round"></path>
+              <line x1="9" y1="12" x2="13" y2="12" stroke-linecap="round"></line>
+            </svg>
+            <span class="c2k-page-name">About</span>
+          </div>
+          <p class="c2k-page-desc">The operator behind the system. Background, stack, philosophy — why everything is built from scratch on a mini PC in the closet.</p>
+        </div>
+        <div class="c2k-page-item" data-page="4">
+          <div class="c2k-page-header">
+            <svg class="c2k-page-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M6 2v4L3 12a1 1 0 001 1h8a1 1 0 001-1l-3-6V2" stroke-linecap="round" stroke-linejoin="round"></path>
+              <line x1="5" y1="2" x2="11" y2="2" stroke-linecap="round"></line>
+              <circle cx="7" cy="10" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+            <span class="c2k-page-name">Lab</span>
+          </div>
+          <p class="c2k-page-desc">Experimental features. Interactive showcases, animation prototypes, statusline configurator — the testing ground before things go live.</p>
+        </div>
+      </div>
+
+      <!-- Key features -->
+      <div class="c2k-section-label">FEATURES</div>
+      <div class="c2k-features">
+        <div class="c2k-feature">
+          <span class="c2k-feature-dot" style="background: var(--purple);"></span>
+          <span class="c2k-feature-text">Text scramble/decode animations — characters resolve through random glyphs</span>
+        </div>
+        <div class="c2k-feature">
+          <span class="c2k-feature-dot" style="background: var(--purple);"></span>
+          <span class="c2k-feature-text">Glassmorphic design — frosted glass cards, radial vignette, SVG glow filters</span>
+        </div>
+        <div class="c2k-feature">
+          <span class="c2k-feature-dot" style="background: var(--purple);"></span>
+          <span class="c2k-feature-text">Statusline showcase — interactive Claude Code statusline configurator</span>
+        </div>
+        <div class="c2k-feature">
+          <span class="c2k-feature-dot" style="background: var(--purple);"></span>
+          <span class="c2k-feature-text">Feature Lab — experimental components with expand/scramble/stagger animations</span>
+        </div>
+        <div class="c2k-feature">
+          <span class="c2k-feature-dot" style="background: var(--purple);"></span>
+          <span class="c2k-feature-text">Mobile swipe nav — pill-shaped bottom bar with animated icon states</span>
+        </div>
+        <div class="c2k-feature">
+          <span class="c2k-feature-dot" style="background: var(--purple);"></span>
+          <span class="c2k-feature-text">3-environment deploy — production, staging, feature branches on separate ports</span>
+        </div>
+      </div>
+
+      <!-- System connections -->
+      <div class="c2k-section-label">SYSTEM CONNECTIONS</div>
+      <div class="c2k-connections">
+        <div class="c2k-connection">
+          <div class="c2k-conn-header">
+            <span class="c2k-conn-dot c2k-conn-online"></span>
+            <span class="c2k-conn-name">Conductor</span>
+            <span class="c2k-conn-route">CORE STACK</span>
+          </div>
+          <p class="c2k-conn-desc">Orchestrates agent-deck sessions that build and deploy this site. Every feature starts as a conductor task.</p>
+        </div>
+        <div class="c2k-connection">
+          <div class="c2k-conn-header">
+            <span class="c2k-conn-dot c2k-conn-online"></span>
+            <span class="c2k-conn-name">Agent Deck</span>
+            <span class="c2k-conn-route">AUTOMATION</span>
+          </div>
+          <p class="c2k-conn-desc">Claude Code sessions run in managed terminals — each feature branch gets its own isolated agent workspace.</p>
+        </div>
+        <div class="c2k-connection">
+          <div class="c2k-conn-header">
+            <span class="c2k-conn-dot c2k-conn-online"></span>
+            <span class="c2k-conn-name">Beads</span>
+            <span class="c2k-conn-route">AUTOMATION</span>
+          </div>
+          <p class="c2k-conn-desc">Git-backed issue tracker. Tasks, bugs, and features for this site are tracked as beads with dependency chains.</p>
+        </div>
+        <div class="c2k-connection">
+          <div class="c2k-conn-header">
+            <span class="c2k-conn-dot c2k-conn-standby"></span>
+            <span class="c2k-conn-name">OptiPlex Dashboard</span>
+            <span class="c2k-conn-route">HARDWARE</span>
+          </div>
+          <p class="c2k-conn-desc">The host machine. CPU, memory, service health — c2k.page will pull live telemetry from the OptiPlex status API.</p>
+        </div>
+        <div class="c2k-connection">
+          <div class="c2k-conn-header">
+            <span class="c2k-conn-dot c2k-conn-online"></span>
+            <span class="c2k-conn-name">Feature Lab</span>
+            <span class="c2k-conn-route">CORE STACK</span>
+          </div>
+          <p class="c2k-conn-desc">Experimental page where new components are prototyped before promoting to production pages.</p>
+        </div>
+        <div class="c2k-connection">
+          <div class="c2k-conn-header">
+            <span class="c2k-conn-dot c2k-conn-online"></span>
+            <span class="c2k-conn-name">Dotfiles</span>
+            <span class="c2k-conn-route">CONFIG</span>
+          </div>
+          <p class="c2k-conn-desc">Claude settings, skills, hooks, and shell config — symlinked from dotfiles repo, synced across machines.</p>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div class="c2k-section-label">LIVE STATUS</div>
       <div class="c2k-preview">
         <div class="c2k-preview-line">
           <span class="c2k-glyph">C2K</span>
@@ -29,13 +192,18 @@
         </div>
       </div>
 
+      <!-- Tech & footer -->
       <div class="c2k-stack">
         <span class="c2k-tech">Astro</span>
         <span class="c2k-tech">TypeScript</span>
         <span class="c2k-tech">Bun</span>
+        <span class="c2k-tech">Cloudflare</span>
+        <span class="c2k-tech">Tailscale</span>
+        <span class="c2k-tech">Canvas</span>
       </div>
 
       <div class="c2k-footer">
+        <span class="c2k-version">v3.2 · self-hosted SSR</span>
         <a class="c2k-link" href="https://c2k.page" target="_blank" rel="noopener">c2k.page ↗</a>
       </div>
     </div>
@@ -52,11 +220,72 @@
       dots.textContent = '.'.repeat(count || 1);
     }, 500);
   }
+
+  // Mini nav indicator interaction
+  function initMiniNav() {
+    const links = document.querySelectorAll<HTMLElement>('.c2k-mini-link');
+    const indicator = document.getElementById('c2k-mini-indicator');
+    const pages = document.querySelectorAll<HTMLElement>('.c2k-page-item');
+    if (!indicator || links.length === 0) return;
+
+    let activeIdx = 0;
+
+    function setActive(idx: number) {
+      activeIdx = idx;
+      links.forEach((link, i) => {
+        link.classList.toggle('active', i === idx);
+      });
+      pages.forEach((page, i) => {
+        page.classList.toggle('highlighted', i === idx);
+      });
+      // Move indicator
+      const target = links[idx];
+      if (target) {
+        indicator.style.left = `${target.offsetLeft}px`;
+        indicator.style.width = `${target.offsetWidth}px`;
+        indicator.style.opacity = '1';
+      }
+    }
+
+    links.forEach((link) => {
+      link.addEventListener('mouseenter', () => {
+        const idx = parseInt(link.dataset.idx || '0', 10);
+        setActive(idx);
+      });
+    });
+
+    // Auto-cycle through nav items
+    let cycleTimer: ReturnType<typeof setInterval>;
+    let paused = false;
+
+    function startCycle() {
+      cycleTimer = setInterval(() => {
+        if (!paused) {
+          activeIdx = (activeIdx + 1) % links.length;
+          setActive(activeIdx);
+        }
+      }, 2500);
+    }
+
+    const container = document.querySelector('.c2k-mini-nav');
+    if (container) {
+      container.addEventListener('mouseenter', () => { paused = true; });
+      container.addEventListener('mouseleave', () => {
+        paused = false;
+      });
+    }
+
+    // Initial state
+    setActive(0);
+    startCycle();
+  }
+
+  initMiniNav();
 </script>
 
 <style>
   .c2k-showcase {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
   }
 
   .c2k-card {
@@ -78,6 +307,7 @@
     z-index: 1;
   }
 
+  /* Header */
   .c2k-header {
     display: flex;
     align-items: center;
@@ -117,16 +347,254 @@
     font-size: 0.8rem;
     color: var(--text-tertiary);
     line-height: 1.5;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
   }
 
-  /* Mini site preview */
+  /* ── Mini navbar ── */
+  .c2k-mini-nav {
+    background: var(--bg-overlay);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .c2k-mini-nav-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .c2k-mini-logo {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 800;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    flex-shrink: 0;
+  }
+
+  .c2k-mini-links {
+    display: flex;
+    gap: 0;
+    position: relative;
+    flex: 1;
+  }
+
+  .c2k-mini-link {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    position: relative;
+    z-index: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .c2k-mini-link.active {
+    color: var(--text);
+  }
+
+  .c2k-mini-link:hover {
+    color: var(--text);
+  }
+
+  .c2k-mini-indicator {
+    position: absolute;
+    bottom: -2px;
+    height: 100%;
+    background: var(--purple-bg-subtle);
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition: left 0.25s cubic-bezier(.2, .8, .2, 1),
+                width 0.25s cubic-bezier(.2, .8, .2, 1),
+                opacity 0.15s ease-out;
+  }
+
+  /* ── Page descriptions ── */
+  .c2k-pages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .c2k-page-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: background 0.2s ease-out, border-color 0.2s ease-out;
+  }
+
+  .c2k-page-item.highlighted {
+    background: var(--purple-bg-subtle);
+    border-color: rgba(168, 85, 247, 0.08);
+  }
+
+  .c2k-page-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .c2k-page-icon {
+    color: var(--text-quaternary);
+    flex-shrink: 0;
+    transition: color 0.2s;
+  }
+
+  .c2k-page-item.highlighted .c2k-page-icon {
+    color: var(--purple);
+  }
+
+  .c2k-page-name {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+
+  .c2k-page-item.highlighted .c2k-page-name {
+    color: var(--text-secondary);
+  }
+
+  .c2k-page-desc {
+    font-size: 0.7rem;
+    color: var(--text-quaternary);
+    line-height: 1.45;
+    padding-left: 1.15rem;
+    transition: color 0.2s;
+  }
+
+  .c2k-page-item.highlighted .c2k-page-desc {
+    color: var(--text-tertiary);
+  }
+
+  /* ── Section labels ── */
+  .c2k-section-label {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: var(--text-quaternary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.5rem;
+    padding-left: 0.1rem;
+  }
+
+  /* ── Features ── */
+  .c2k-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .c2k-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .c2k-feature-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.35rem;
+    opacity: 0.6;
+  }
+
+  .c2k-feature-text {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+  }
+
+  /* ── System connections ── */
+  .c2k-connections {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .c2k-connection {
+    background: var(--bg-overlay);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.65rem;
+  }
+
+  .c2k-conn-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .c2k-conn-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .c2k-conn-online {
+    background: var(--green);
+    box-shadow: 0 0 4px var(--green-glow);
+  }
+
+  .c2k-conn-standby {
+    background: var(--orange);
+    box-shadow: 0 0 4px rgba(249, 115, 22, 0.4);
+  }
+
+  .c2k-conn-name {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .c2k-conn-route {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: var(--text-quaternary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-left: auto;
+    padding: 0.05rem 0.35rem;
+    background: var(--bg-code);
+    border-radius: 3px;
+  }
+
+  .c2k-conn-desc {
+    font-size: 0.65rem;
+    color: var(--text-quaternary);
+    line-height: 1.4;
+    padding-left: 0.9rem;
+  }
+
+  /* ── Live preview terminal ── */
   .c2k-preview {
     background: var(--bg-overlay);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.6rem 0.8rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
@@ -174,7 +642,7 @@
     50% { opacity: 0.4; }
   }
 
-  /* Tech stack */
+  /* ── Tech stack ── */
   .c2k-stack {
     display: flex;
     flex-wrap: wrap;
@@ -191,9 +659,17 @@
     border-radius: 3px;
   }
 
+  /* ── Footer ── */
   .c2k-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .c2k-version {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-quaternary);
   }
 
   .c2k-link {
