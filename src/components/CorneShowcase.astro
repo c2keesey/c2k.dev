@@ -209,13 +209,17 @@
 
     function scrambleKeys(container: HTMLElement) {
       const labels = container.querySelectorAll<HTMLElement>('.crn-key-label');
-      const duration = 300;
+      const duration = 350;
 
       labels.forEach((label, i) => {
         const target = label.textContent || '';
         if (!target.trim()) return;
 
-        const delay = (i % 5) * 25; // stagger by column position
+        // Stagger: top-left resolves first, bottom-right last
+        const row = Math.floor(i / 5);
+        const col = i % 5;
+        const delay = row * 30 + col * 20;
+
         label.textContent = target.replace(/[^ ]/g, '–');
 
         setTimeout(() => {
@@ -228,8 +232,9 @@
             let out = '';
             for (let c = 0; c < target.length; c++) {
               if (target[c] === ' ') out += ' ';
-              else if (progress > 0.3 + (c / target.length) * 0.5) out += target[c];
-              else if (progress > 0.1) out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+              // Resolve threshold: 0.55-0.85 range so short labels still scramble visibly
+              else if (progress > 0.55 + (c / Math.max(target.length, 1)) * 0.3) out += target[c];
+              else if (progress > 0.08) out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
               else out += '–';
             }
             label.textContent = out;
