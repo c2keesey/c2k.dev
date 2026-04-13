@@ -116,6 +116,8 @@
     let leds: { r: number; g: number; b: number }[] = Array.from({ length: numLeds }, () => ({ r: 0, g: 0, b: 0 }));
     let effect = 'firework';
     let time = 0;
+    let staticFrames = 0; // brief noise burst on effect switch
+    const STATIC_DURATION = 8; // frames of noise before new effect
 
     // Spiral arm geometry — 300 LEDs wrapping around a cylinder
     const cy = h / 2;
@@ -587,11 +589,27 @@
       twinkleActive = true; twHueOffset1 = 0; twHueOffset2 = 0;
       clear();
       time = 0;
+      staticFrames = STATIC_DURATION;
     }
 
     function draw() {
       ctx.clearRect(0, 0, w, h);
-      effects[effect]?.();
+
+      if (staticFrames > 0) {
+        // Brief noise burst: random LED colors, fading out
+        const intensity = staticFrames / STATIC_DURATION;
+        for (let i = 0; i < numLeds; i++) {
+          if (Math.random() < 0.6 * intensity) {
+            const bright = Math.floor(Math.random() * 180 * intensity);
+            leds[i] = { r: bright, g: bright, b: bright };
+          } else {
+            leds[i] = { r: 0, g: 0, b: 0 };
+          }
+        }
+        staticFrames--;
+      } else {
+        effects[effect]?.();
+      }
       time++;
 
       // Sort LEDs by z so back ones draw first (painter's algorithm)
