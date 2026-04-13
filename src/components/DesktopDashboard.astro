@@ -112,6 +112,22 @@ const projects: Project[] = [
     link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape',
     color: '249, 115, 22', x: 88, y: 50,
   },
+  {
+    id: 'panecmd', name: 'Pane Skill', tagline: 'Claude tmux side pane',
+    description: 'Claude Code skill that displays files, diffs, and command output in a managed tmux side pane. Auto-routes content through Helix, delta, or less.',
+    badge: 'claude tools', status: 'ONLINE', pulseRate: 4,
+    tech: ['Bash', 'tmux', 'Claude Code', 'Helix'],
+    link: 'https://github.com/c2keesey/claude-pane-skill', linkText: 'github/claude-pane-skill',
+    color: '239, 68, 68', x: 30, y: 28,
+  },
+  {
+    id: 'playlistai', name: 'Playlist AI', tagline: 'ML playlist sorter',
+    description: 'Classifies liked Spotify songs into existing playlists using audio features. Compares Random Forest, Gradient Boosting, SVMs, and neural networks.',
+    badge: 'ml', status: 'STANDBY', pulseRate: 6,
+    tech: ['Python', 'scikit-learn', 'Jupyter', 'Spotify API'],
+    link: 'https://github.com/c2keesey/spotify-playlist-ai', linkText: 'github/spotify-playlist-ai',
+    color: '34, 197, 94', x: 22, y: 56,
+  },
 ];
 
 // Blend two "r, g, b" color strings into a hex color
@@ -147,6 +163,9 @@ const edgesRaw: { from: string; to: string; label: string }[] = [
   { from: 'dashboard', to: 'c2k', label: 'co-hosted on optiplex' },
   { from: 'dashboard', to: 'dotfiles', label: 'monitored services' },
   { from: 'dashboard', to: 'techdigest', label: 'monitors crons' },
+  { from: 'panecmd', to: 'dotfiles', label: 'claude code skill' },
+  { from: 'panecmd', to: 'secretgate', label: 'claude tools' },
+  { from: 'playlistai', to: 'spotify', label: 'spotify api' },
 ];
 const edges: Edge[] = edgesRaw.map(e => ({ ...e, color: blendNodeColors(e.from, e.to) }));
 
@@ -373,72 +392,6 @@ const edgeMidpoints = edges.map(edge => {
     let focusedShowcase: HTMLElement | null = null;
     let focusedShowcaseParent: HTMLElement | null = null;
 
-    // ── Node detail scramble on expand ──
-    const scrambleChars = '0123456789abcdefABCDEF~!@#$%^&*';
-
-    function scrambleNodeDetail(node: HTMLElement) {
-      const desc = node.querySelector('.node-desc') as HTMLElement;
-      if (!desc) return;
-
-      const target = desc.dataset.text || desc.textContent || '';
-      if (!desc.dataset.text) desc.dataset.text = target;
-
-      // Start with dashes, delay scramble to sync with CSS opacity transition
-      desc.textContent = target.replace(/[^ ]/g, '–');
-
-      const duration = 600;
-      const birthWindow = duration * 0.3;
-      const resolveWindow = duration * 0.7;
-      const births: number[] = [];
-      const resolves: number[] = [];
-
-      for (let i = 0; i < target.length; i++) {
-        const bias = (i / target.length) * birthWindow * 0.6;
-        births[i] = bias + Math.random() * birthWindow * 0.4;
-        resolves[i] = birthWindow + bias + Math.random() * resolveWindow * 0.4;
-      }
-
-      setTimeout(() => {
-        let start: number | null = null;
-        const step = (ts: number) => {
-          if (!start) start = ts;
-          const elapsed = ts - start;
-          let out = '';
-          for (let i = 0; i < target.length; i++) {
-            if (target[i] === ' ') { out += ' '; }
-            else if (elapsed >= resolves[i]) { out += target[i]; }
-            else if (elapsed >= births[i]) { out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)]; }
-            else { out += '–'; }
-          }
-          desc.textContent = out;
-          if (elapsed < duration) requestAnimationFrame(step);
-          else desc.textContent = target;
-        };
-        requestAnimationFrame(step);
-      }, 120);
-
-      // Stagger tech pills
-      const pills = node.querySelectorAll<HTMLElement>('.node-tech-pill');
-      pills.forEach((pill, i) => {
-        pill.style.opacity = '0';
-        pill.style.transform = 'translateY(4px)';
-        setTimeout(() => {
-          pill.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
-          pill.style.opacity = '1';
-          pill.style.transform = 'translateY(0)';
-        }, 200 + i * 60);
-      });
-    }
-
-    function resetNodeDetail(node: HTMLElement) {
-      const pills = node.querySelectorAll<HTMLElement>('.node-tech-pill');
-      pills.forEach(pill => {
-        pill.style.transition = '';
-        pill.style.opacity = '';
-        pill.style.transform = '';
-      });
-    }
-
     function highlightNode(node: HTMLElement) {
       const projectId = node.dataset.project || '';
       const connectedEdges = new Set(nodeEdgeMap[projectId] || []);
@@ -493,72 +446,6 @@ const edgeMidpoints = edges.map(edge => {
 
     // ── Focus overlay (state 3) ──
 
-    // ── Focus overlay text scramble ──
-
-    function scrambleElement(el: HTMLElement, delay: number) {
-      const target = el.textContent || '';
-      if (!target.trim()) return;
-
-      // Store original text for restoration
-      if (!el.dataset.originalText) el.dataset.originalText = target;
-
-      const duration = 500;
-      const birthWindow = duration * 0.25;
-      const resolveWindow = duration * 0.75;
-      const births: number[] = [];
-      const resolves: number[] = [];
-
-      for (let i = 0; i < target.length; i++) {
-        const bias = (i / target.length) * birthWindow * 0.6;
-        births[i] = bias + Math.random() * birthWindow * 0.4;
-        resolves[i] = birthWindow + bias + Math.random() * resolveWindow * 0.4;
-      }
-
-      // Start with dashes
-      el.textContent = target.replace(/[^ ]/g, '–');
-
-      setTimeout(() => {
-        let start: number | null = null;
-        const step = (ts: number) => {
-          if (!start) start = ts;
-          const elapsed = ts - start;
-          let out = '';
-          for (let i = 0; i < target.length; i++) {
-            if (target[i] === ' ') out += ' ';
-            else if (elapsed >= resolves[i]) out += target[i];
-            else if (elapsed >= births[i]) out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-            else out += '–';
-          }
-          el.textContent = out;
-          if (elapsed < duration) requestAnimationFrame(step);
-          else el.textContent = target;
-        };
-        requestAnimationFrame(step);
-      }, delay);
-    }
-
-    function scrambleFocusContent(showcase: HTMLElement) {
-      // Target text-bearing elements — descriptions, taglines, labels, specs, tech pills
-      const selectors = [
-        'p', '.fg-spec-val', '.fg-spec-label',
-        '.maia-badge', '.fg-badge', '.crn-badge', '.lc-badge',
-        '.maia-tech', '.fg-btn', '.crn-tech', '.lc-tech',
-        'a[class*="-link"]',
-      ];
-      const textEls = showcase.querySelectorAll<HTMLElement>(selectors.join(','));
-      let staggerIndex = 0;
-
-      textEls.forEach(el => {
-        // Skip elements that are part of interactive controls (canvas, inputs)
-        if (el.closest('canvas') || el.querySelector('canvas')) return;
-        const text = el.textContent?.trim();
-        if (!text) return;
-
-        scrambleElement(el, 80 + staggerIndex * 40);
-        staggerIndex++;
-      });
-    }
-
     function openFocus(projectId: string) {
       const selector = showcaseSelectors[projectId];
       if (!selector) return;
@@ -574,9 +461,6 @@ const edgeMidpoints = edges.map(edge => {
       focusContent.appendChild(showcase);
       overlay.classList.add('visible');
       document.body.style.overflow = 'hidden';
-
-      // Scramble all text in the showcase
-      scrambleFocusContent(showcase);
 
       // Pin the top margin so the showcase starts centered but doesn't
       // re-center when content (like key detail bars) expands
@@ -648,13 +532,11 @@ const edgeMidpoints = edges.map(edge => {
         // Collapse any other expanded node
         if (expandedNode) {
           expandedNode.classList.remove('expanded');
-          resetNodeDetail(expandedNode);
         }
 
         // State 1 → State 2
         expandedNode = node;
         node.classList.add('expanded');
-        scrambleNodeDetail(node);
         highlightNode(node);
       });
     });
@@ -667,7 +549,6 @@ const edgeMidpoints = edges.map(edge => {
     dashboard.addEventListener('click', (e) => {
       if (focusedProjectId) return;
       if (expandedNode && !(e.target as HTMLElement).closest('.dashboard-node')) {
-        resetNodeDetail(expandedNode);
         expandedNode.classList.remove('expanded');
         expandedNode = null;
         clearHighlights();
@@ -679,7 +560,6 @@ const edgeMidpoints = edges.map(edge => {
         if (focusedProjectId) {
           closeFocus();
         } else if (expandedNode) {
-          resetNodeDetail(expandedNode);
           expandedNode.classList.remove('expanded');
           expandedNode = null;
           clearHighlights();
