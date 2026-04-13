@@ -204,6 +204,48 @@
 
     let currentLayer = 'base';
 
+    // ── Key label scramble on layer switch ──
+    const scrambleChars = '0123456789abcdefABCDEF~#$%&';
+
+    function scrambleKeys(container: HTMLElement) {
+      const labels = container.querySelectorAll<HTMLElement>('.crn-key-label');
+      const duration = 350;
+
+      labels.forEach((label, i) => {
+        const target = label.textContent || '';
+        if (!target.trim()) return;
+
+        // Stagger: top-left resolves first, bottom-right last
+        const row = Math.floor(i / 5);
+        const col = i % 5;
+        const delay = row * 30 + col * 20;
+
+        label.textContent = target.replace(/[^ ]/g, '–');
+
+        setTimeout(() => {
+          let start: number | null = null;
+          const step = (ts: number) => {
+            if (!start) start = ts;
+            const elapsed = ts - start;
+            const progress = Math.min(elapsed / duration, 1);
+
+            let out = '';
+            for (let c = 0; c < target.length; c++) {
+              if (target[c] === ' ') out += ' ';
+              // Resolve threshold: 0.55-0.85 range so short labels still scramble visibly
+              else if (progress > 0.55 + (c / Math.max(target.length, 1)) * 0.3) out += target[c];
+              else if (progress > 0.08) out += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+              else out += '–';
+            }
+            label.textContent = out;
+            if (elapsed < duration) requestAnimationFrame(step);
+            else label.textContent = target;
+          };
+          requestAnimationFrame(step);
+        }, delay);
+      });
+    }
+
     function renderBoard() {
       const isComboView = currentLayer === 'combos';
       const layerName = isComboView ? 'base' : currentLayer;
@@ -389,6 +431,7 @@
           btn.classList.add('active');
           detail.classList.remove('visible');
           renderBoard();
+          scrambleKeys(board);
         }
       });
     });
