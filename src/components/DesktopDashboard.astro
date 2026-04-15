@@ -376,6 +376,25 @@ const edgeMidpoints = edges.map(edge => {
     const focusContent = document.getElementById('dashboard-focus-content')!;
     const focusCloseBtn = document.getElementById('focus-close')!;
 
+    // ── Status label typewriter on load ──
+    nodes.forEach((node, i) => {
+      const label = node.querySelector('.node-status-label') as HTMLElement;
+      if (!label) return;
+      const text = label.textContent || '';
+      label.textContent = '';
+      const baseDelay = 600 + i * 120; // stagger per node, after entry animation
+      const charSpeed = 45; // ms per character
+
+      setTimeout(() => {
+        let charIdx = 0;
+        const tick = setInterval(() => {
+          charIdx++;
+          label.textContent = text.slice(0, charIdx);
+          if (charIdx >= text.length) clearInterval(tick);
+        }, charSpeed);
+      }, baseDelay);
+    });
+
     // Map project IDs to their showcase component selectors in .showcases-source
     const showcaseSelectors: Record<string, string> = {
       maia: '.showcases-source .maia-showcase',
