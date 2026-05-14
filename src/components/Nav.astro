@@ -10,7 +10,6 @@ const { showLab = false } = Astro.props;
 const links = [
   { href: '/', label: 'Home' },
   { href: '/projects', label: 'Projects' },
-  { href: '/log', label: 'Log' },
   { href: '/about', label: 'About' },
   ...(showLab ? [{ href: '/lab', label: 'Lab' }] : []),
 ];
@@ -57,17 +56,7 @@ const links = [
       </svg>
       <span class="tab-label">Systems</span>
     </button>
-    <button class="bottom-tab" data-index="2" aria-label="Log">
-      <svg class="tab-icon icon-signal" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-        <path class="signal-wave signal-wave-1" d="M2 10V8" stroke-linecap="round"></path>
-        <path class="signal-wave signal-wave-2" d="M5 10V6" stroke-linecap="round"></path>
-        <path class="signal-wave signal-wave-3" d="M8 10V4" stroke-linecap="round"></path>
-        <path class="signal-wave signal-wave-2" d="M11 10V6" stroke-linecap="round"></path>
-        <path class="signal-wave signal-wave-1" d="M14 10V8" stroke-linecap="round"></path>
-      </svg>
-      <span class="tab-label">Log</span>
-    </button>
-    <button class="bottom-tab" data-index="3" aria-label="About">
+    <button class="bottom-tab" data-index="2" aria-label="About">
       <svg class="tab-icon icon-terminal" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
         <path class="terminal-chevron" d="M3 5l4 3-4 3" stroke-linecap="round" stroke-linejoin="round"></path>
         <line class="terminal-cursor" x1="9" y1="12" x2="13" y2="12" stroke-linecap="round"></line>
@@ -75,7 +64,7 @@ const links = [
       <span class="tab-label">About</span>
     </button>
     {showLab && (
-      <button class="bottom-tab" data-index="4" aria-label="Lab">
+      <button class="bottom-tab" data-index="3" aria-label="Lab">
         <svg class="tab-icon icon-lab" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
           <path d="M6 2v4L3 12a1 1 0 001 1h8a1 1 0 001-1l-3-6V2" stroke-linecap="round" stroke-linejoin="round"></path>
           <line x1="5" y1="2" x2="11" y2="2" stroke-linecap="round"></line>
@@ -342,7 +331,7 @@ const links = [
     // Dynamically compute based on actual tab count (4 or 5)
     const PADDING = 4;
     const TAB_COUNT = tabs.length;
-    const BAR_WIDTH = TAB_COUNT === 5 ? 320 : 272;
+    const BAR_WIDTH = TAB_COUNT === 4 ? 272 : 218;
     const INNER = BAR_WIDTH - PADDING * 2;
     const FLEX_INACTIVE = 1;
     const FLEX_ACTIVE = 2.2;
@@ -352,7 +341,7 @@ const links = [
 
     // Update bar width if we have 5 tabs
     const bar = document.getElementById('bottom-nav-pill') as HTMLElement;
-    if (bar && TAB_COUNT === 5) bar.style.width = `${BAR_WIDTH}px`;
+    if (bar) bar.style.width = `${BAR_WIDTH}px`;
 
     function moveHighlight(index: number) {
       if (!highlight) return;
@@ -370,9 +359,9 @@ const links = [
     }
 
     // Determine initial active tab from URL
-    const pages = TAB_COUNT === 5
-      ? ['/', '/projects', '/log', '/about', '/lab']
-      : ['/', '/projects', '/log', '/about'];
+    const pages = TAB_COUNT === 4
+      ? ['/', '/projects', '/about', '/lab']
+      : ['/', '/projects', '/about'];
     const path = location.pathname;
     const activeIdx = Math.max(0, pages.findIndex(p =>
       p === '/' ? path === '/' || path === '' : path.startsWith(p)
