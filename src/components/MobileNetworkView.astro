@@ -114,6 +114,37 @@ const projects: Project[] = [
     link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape',
     color: '249, 115, 22',
   },
+  {
+    id: 'djtrainer', name: 'DJ Trainer', tagline: 'Learn the DDJ-FLX4',
+    description: 'Interactive trainer for new DJs — click hotspots on a Pioneer DDJ-FLX4 to learn every knob, fader, and pad. An on-device ML pipeline (SAM + CoreML) auto-detects controller components from photos.',
+    badge: 'learning', status: 'ONLINE', pulseRate: 4,
+    tech: ['JavaScript', 'Vite', 'Python', 'CoreML', 'SAM'],
+    link: 'https://github.com/c2keesey/dj-trainer', linkText: 'github/dj-trainer',
+    color: '236, 72, 153',
+  },
+  {
+    id: 'songsorter', name: 'Song Sorter', tagline: 'Pairwise library ranker',
+    description: 'React app that ranks your entire Spotify library through head-to-head matchups, turning fuzzy taste into an ordered list. Polished Radix UI with Zustand state over the Spotify Web API.',
+    badge: 'web app', status: 'STANDBY', pulseRate: 6,
+    tech: ['TypeScript', 'React', 'Zustand', 'Radix UI', 'Tailwind'],
+    link: 'https://github.com/c2keesey/spotify-song-sorter', linkText: 'github/song-sorter',
+    color: '16, 185, 129',
+  },
+  {
+    id: 'momentplayer', name: 'Moment Player', tagline: 'Podcast AI companion',
+    description: 'iOS podcast player that lets you pause and ask context-aware questions about what you just heard, then resumes where you left off. SwiftUI front end backed by a Python transcript and LLM service.',
+    badge: 'ios', status: 'STANDBY', pulseRate: 5, wip: true,
+    tech: ['Swift', 'SwiftUI', 'Python', 'FastAPI', 'LLM'],
+    color: '99, 102, 241',
+  },
+  {
+    id: 'alldifferent', name: 'All Look Different', tagline: 'Face-quiz game',
+    description: 'Browser quiz game that challenges you to guess nationalities from faces, scored on a global leaderboard. Retro arcade styling on a Cloudflare Workers backend.',
+    badge: 'game', status: 'ONLINE', pulseRate: 4,
+    tech: ['JavaScript', 'HTML/CSS', 'Cloudflare Workers'],
+    link: 'https://github.com/c2keesey/All-look-different', linkText: 'github/all-look-different',
+    color: '245, 158, 11',
+  },
 ];
 
 function blendColors(colorA: string, colorB: string): string {
@@ -144,6 +175,12 @@ const edgesRaw: { from: string; to: string; label: string }[] = [
   { from: 'dashboard', to: 'c2k', label: 'co-hosted on optiplex' },
   { from: 'dashboard', to: 'dotfiles', label: 'monitored services' },
   { from: 'dashboard', to: 'techdigest', label: 'monitors crons' },
+  { from: 'songsorter', to: 'spotify', label: 'spotify api' },
+  { from: 'djtrainer', to: 'songsorter', label: 'react web apps' },
+  { from: 'momentplayer', to: 'maia', label: 'LLM backend' },
+  { from: 'momentplayer', to: 'c2k', label: 'hand-built UI' },
+  { from: 'alldifferent', to: 'c2k', label: 'cloudflare' },
+  { from: 'alldifferent', to: 'songsorter', label: 'browser frontends' },
 ];
 
 function getColor(id: string) {
