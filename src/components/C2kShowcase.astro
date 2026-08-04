@@ -12,7 +12,7 @@
         <span class="c2k-badge">this site</span>
       </div>
       <p class="c2k-tagline">System monitor for my life</p>
-      <p class="c2k-desc">Public observability layer for a developer's entire digital system. Self-hosted Astro SSR on an OptiPlex micro, exposed via Cloudflare Tunnel. Every page is hand-crafted — no templates, no generic cards.</p>
+      <p class="c2k-desc">The public readout of everything I run. Astro SSR on an OptiPlex micro, out through a Cloudflare Tunnel. No templates and no generic project cards: every showcase on this page is its own component.</p>
 
       <!-- Mini navbar replica -->
       <div class="c2k-mini-nav">
@@ -21,9 +21,8 @@
           <div class="c2k-mini-links">
             <span class="c2k-mini-link" data-idx="0">Home</span>
             <span class="c2k-mini-link" data-idx="1">Projects</span>
-            <span class="c2k-mini-link" data-idx="2">Log</span>
-            <span class="c2k-mini-link" data-idx="3">About</span>
-            <span class="c2k-mini-link" data-idx="4">Lab</span>
+            <span class="c2k-mini-link" data-idx="2">About</span>
+            <span class="c2k-mini-link" data-idx="3">Lab</span>
             <div class="c2k-mini-indicator" id="c2k-mini-indicator"></div>
           </div>
         </div>
@@ -40,7 +39,7 @@
             </svg>
             <span class="c2k-page-name">Home</span>
           </div>
-          <p class="c2k-page-desc">Landing beacon. Text-scramble hero intro, gradient identity mark, status pulse showing the system is alive.</p>
+          <p class="c2k-page-desc">My name decodes in on load, then whatever I pushed most recently and how the box is holding up.</p>
         </div>
         <div class="c2k-page-item" data-page="1">
           <div class="c2k-page-header">
@@ -54,22 +53,9 @@
             </svg>
             <span class="c2k-page-name">Projects</span>
           </div>
-          <p class="c2k-page-desc">Spatial network dashboard. Each project is a live node with 3 expansion states — metro-map routing lines show how everything connects.</p>
+          <p class="c2k-page-desc">Every project as a node on a map. Click one to open it, click again for the full thing. The lines between them are real dependencies.</p>
         </div>
         <div class="c2k-page-item" data-page="2">
-          <div class="c2k-page-header">
-            <svg class="c2k-page-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-              <path d="M2 10V8" stroke-linecap="round"></path>
-              <path d="M5 10V6" stroke-linecap="round"></path>
-              <path d="M8 10V4" stroke-linecap="round"></path>
-              <path d="M11 10V6" stroke-linecap="round"></path>
-              <path d="M14 10V8" stroke-linecap="round"></path>
-            </svg>
-            <span class="c2k-page-name">Log</span>
-          </div>
-          <p class="c2k-page-desc">Dev activity feed. Git commits, session notes, and build events streamed from the system — what's happening and when.</p>
-        </div>
-        <div class="c2k-page-item" data-page="3">
           <div class="c2k-page-header">
             <svg class="c2k-page-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
               <path d="M3 5l4 3-4 3" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -77,9 +63,9 @@
             </svg>
             <span class="c2k-page-name">About</span>
           </div>
-          <p class="c2k-page-desc">The operator behind the system. Background, stack, philosophy — why everything is built from scratch on a mini PC in the closet.</p>
+          <p class="c2k-page-desc">Who is running all this. The stack, the hardware, and why it lives on a mini PC instead of somewhere sensible.</p>
         </div>
-        <div class="c2k-page-item" data-page="4">
+        <div class="c2k-page-item" data-page="3">
           <div class="c2k-page-header">
             <svg class="c2k-page-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
               <path d="M6 2v4L3 12a1 1 0 001 1h8a1 1 0 001-1l-3-6V2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -88,7 +74,7 @@
             </svg>
             <span class="c2k-page-name">Lab</span>
           </div>
-          <p class="c2k-page-desc">Experimental features. Interactive showcases, animation prototypes, statusline configurator — the testing ground before things go live.</p>
+          <p class="c2k-page-desc">Where a feature gets tried before it is allowed onto a real page. Accept or deny it; the survivors get merged.</p>
         </div>
       </div>
 
@@ -138,7 +124,7 @@
             <span class="c2k-conn-name">Agent Deck</span>
             <span class="c2k-conn-route">AUTOMATION</span>
           </div>
-          <p class="c2k-conn-desc">Claude Code sessions run in managed terminals — each feature branch gets its own isolated agent workspace.</p>
+          <p class="c2k-conn-desc">Claude Code sessions in managed terminals. Each feature branch gets its own worktree so nothing steps on anything.</p>
         </div>
         <div class="c2k-connection">
           <div class="c2k-conn-header">
@@ -154,7 +140,7 @@
             <span class="c2k-conn-name">OptiPlex Dashboard</span>
             <span class="c2k-conn-route">HARDWARE</span>
           </div>
-          <p class="c2k-conn-desc">The host machine. CPU, memory, service health — c2k.page will pull live telemetry from the OptiPlex status API.</p>
+          <p class="c2k-conn-desc">The host machine. CPU, memory, service health. This page reads its status API for the footer telemetry.</p>
         </div>
         <div class="c2k-connection">
           <div class="c2k-conn-header">
@@ -162,7 +148,7 @@
             <span class="c2k-conn-name">Feature Lab</span>
             <span class="c2k-conn-route">CORE STACK</span>
           </div>
-          <p class="c2k-conn-desc">Experimental page where new components are prototyped before promoting to production pages.</p>
+          <p class="c2k-conn-desc">Where new components live until they earn a spot on a real page.</p>
         </div>
         <div class="c2k-connection">
           <div class="c2k-conn-header">
@@ -170,7 +156,7 @@
             <span class="c2k-conn-name">Dotfiles</span>
             <span class="c2k-conn-route">CONFIG</span>
           </div>
-          <p class="c2k-conn-desc">Claude settings, skills, hooks, and shell config — symlinked from dotfiles repo, synced across machines.</p>
+          <p class="c2k-conn-desc">Claude settings, skills, hooks, shell config. Symlinked out of one repo so every machine matches.</p>
         </div>
       </div>
 
