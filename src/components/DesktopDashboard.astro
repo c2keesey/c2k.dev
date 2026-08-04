@@ -502,6 +502,61 @@ const edgeMidpoints = edges.map(edge => {
       nodes.forEach(n => { n.classList.remove('dimmed'); });
     }
 
+    // ── Expand / collapse (state 2) ──
+
+    // Nodes sit at fixed % coordinates and grow to 320px when expanded, so ones
+    // near an edge used to spill outside .dashboard (overflow: hidden) and get
+    // clipped. Measure the expanded box once with transitions off, then commit
+    // the offset that pulls it back inside — width and margin animate together.
+    const CLAMP_PAD = 14;
+
+    function expandNode(node: HTMLElement) {
+      node.style.setProperty('--clamp-x', '0px');
+      node.style.setProperty('--clamp-y', '0px');
+
+      node.classList.add('measuring', 'expanded');
+      const r = node.getBoundingClientRect();
+      const d = dashboard.getBoundingClientRect();
+
+      // How far the box would have to move to clear each edge. Positive
+      // push* means it hangs off that edge. A box bigger than the dashboard
+      // overflows both ways, so the leading edge wins and it stays pinned.
+      const pushRight = d.left + CLAMP_PAD - r.left;
+      const pushLeft = r.right - (d.right - CLAMP_PAD);
+      const pushDown = d.top + CLAMP_PAD - r.top;
+      const pushUp = r.bottom - (d.bottom - CLAMP_PAD);
+      const dx = Math.round(pushRight > 0 ? pushRight : pushLeft > 0 ? -pushLeft : 0);
+      const dy = Math.round(pushDown > 0 ? pushDown : pushUp > 0 ? -pushUp : 0);
+
+      // Snap back to collapsed while still untransitioned, then replay the
+      // expansion with the clamp applied so the whole move is one animation.
+      node.classList.remove('expanded');
+      void node.offsetWidth;
+      node.classList.remove('measuring');
+
+      node.style.setProperty('--clamp-x', `${dx}px`);
+      node.style.setProperty('--clamp-y', `${dy}px`);
+      node.classList.add('expanded');
+      dashboard.classList.add('has-expanded');
+    }
+
+    function collapseNode(node: HTMLElement) {
+      node.classList.remove('expanded');
+      node.style.setProperty('--clamp-x', '0px');
+      node.style.setProperty('--clamp-y', '0px');
+      dashboard.classList.remove('has-expanded');
+    }
+
+    // Re-clamp on resize — the dashboard is percentage-positioned, so the
+    // offset that fit at 1440px is wrong at 1100px.
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (expandedNode) expandNode(expandedNode);
+      }, 120);
+    });
+
     // ── Focus overlay (state 3) ──
 
     function openFocus(projectId: string) {
@@ -546,7 +601,7 @@ const edgeMidpoints = edges.map(edge => {
 
       // Also close expanded state
       if (expandedNode) {
-        expandedNode.classList.remove('expanded');
+        collapseNode(expandedNode);
         expandedNode = null;
       }
       clearHighlights();
@@ -589,12 +644,12 @@ const edgeMidpoints = edges.map(edge => {
 
         // Collapse any other expanded node
         if (expandedNode) {
-          expandedNode.classList.remove('expanded');
+          collapseNode(expandedNode);
         }
 
         // State 1 → State 2
         expandedNode = node;
-        node.classList.add('expanded');
+        expandNode(node);
         highlightNode(node);
       });
     });
@@ -607,7 +662,7 @@ const edgeMidpoints = edges.map(edge => {
     dashboard.addEventListener('click', (e) => {
       if (focusedProjectId) return;
       if (expandedNode && !(e.target as HTMLElement).closest('.dashboard-node')) {
-        expandedNode.classList.remove('expanded');
+        collapseNode(expandedNode);
         expandedNode = null;
         clearHighlights();
       }
@@ -618,7 +673,7 @@ const edgeMidpoints = edges.map(edge => {
         if (focusedProjectId) {
           closeFocus();
         } else if (expandedNode) {
-          expandedNode.classList.remove('expanded');
+          collapseNode(expandedNode);
           expandedNode = null;
           clearHighlights();
         }
@@ -1607,8 +1662,14 @@ const edgeMidpoints = edges.map(edge => {
     border-radius: 10px;
     box-shadow: inset 0 1px 0 var(--dash-dot-grid), var(--card-shadow);
     cursor: pointer;
-    min-width: 185px;
-    max-width: 185px;
+    /* Explicit width, not min/max — absolutely positioned boxes shrink-to-fit
+       against the right edge, so nodes near x=90% could never reach 320px and
+       expanded into a tall narrow column instead. */
+    width: 185px;
+    /* Viewport clamp offsets, set by JS on expand. Margins rather than transform
+       so they survive the node-enter animation's fill-mode. */
+    margin-left: var(--clamp-x, 0px);
+    margin-top: var(--clamp-y, 0px);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     transition:
@@ -1616,11 +1677,23 @@ const edgeMidpoints = edges.map(edge => {
       transform 0.2s cubic-bezier(.2, .8, .2, 1),
       box-shadow 0.2s ease-out,
       opacity 0.15s ease-out,
-      max-width 0.3s cubic-bezier(.2, .8, .2, 1);
+      width 0.3s cubic-bezier(.2, .8, .2, 1),
+      margin 0.3s cubic-bezier(.2, .8, .2, 1);
     text-align: left;
     color: inherit;
-    animation: node-enter 0.4s cubic-bezier(.2, .8, .2, 1) both;
+    /* `backwards`, not `both` — a filled-forwards animation keeps applying its
+       last keyframe, which outranks normal declarations and silently killed
+       .dimmed's opacity and the hover scale. */
+    animation: node-enter 0.4s cubic-bezier(.2, .8, .2, 1) backwards;
     animation-delay: var(--node-delay, 0ms);
+  }
+
+  /* Used for a single synchronous measure of the expanded size before we commit
+     the clamp. Descendants included — .node-detail animates its own max-height,
+     so without this we'd measure the card at its collapsed height. */
+  .dashboard-node.measuring,
+  .dashboard-node.measuring * {
+    transition: none !important;
   }
 
   @keyframes node-enter {
@@ -1640,7 +1713,7 @@ const edgeMidpoints = edges.map(edge => {
 
   .dashboard-node.expanded {
     border-color: rgba(var(--node-color), 0.35);
-    max-width: 320px;
+    width: 320px;
     background: var(--dash-node-expanded);
     transform: translate(-50%, -50%) scale(1);
     box-shadow:
@@ -1654,6 +1727,16 @@ const edgeMidpoints = edges.map(edge => {
   .dashboard-node.dimmed {
     opacity: 0.2;
     pointer-events: none;
+  }
+
+  /* An expanded card is 320px wide and overlaps its neighbours by design.
+     Fade every other card so nothing legible sits underneath it. */
+  .dashboard.has-expanded .dashboard-node:not(.expanded) {
+    opacity: 0.28;
+  }
+
+  .dashboard.has-expanded .dashboard-node.dimmed {
+    opacity: 0.12;
   }
 
   /* ── Hero project flair ── */
