@@ -1,8 +1,12 @@
 import { defineMiddleware } from 'astro:middleware';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { isPrivate } from './lib/env';
 
-const panelRoutes = new Set(['/projects', '/about', '/lab']);
+const panelRoutes = new Set([
+  '/projects',
+  ...(isPrivate ? ['/about', '/lab'] : []),
+]);
 let indexHtml: string | null = null;
 
 function getIndexHtml(): string {

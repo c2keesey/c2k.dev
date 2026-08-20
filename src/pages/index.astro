@@ -13,8 +13,9 @@ import RotatingQuote from '../components/RotatingQuote.astro';
 import DesktopDashboard from '../components/DesktopDashboard.astro';
 import MobileNetworkView from '../components/MobileNetworkView.astro';
 import FeatureLabPage from '../components/FeatureLabPage.astro';
-import { env, isPrivate } from '../lib/env';
-const showFeatureLab = true;
+import { isPrivate } from '../lib/env';
+const showAbout = isPrivate;
+const showFeatureLab = isPrivate;
 import '../styles/global.css';
 ---
 
@@ -41,7 +42,7 @@ import '../styles/global.css';
     </script>
   </head>
   <body>
-    <Nav showLab={showFeatureLab} />
+    <Nav showAbout={showAbout} showLab={showFeatureLab} />
 
     <div class="swipe-container" id="swipe-container">
       <!-- Panel: Home -->
@@ -174,8 +175,9 @@ import '../styles/global.css';
         </div>
       </section>
 
-      <!-- Panel: About -->
-      <section class="swipe-panel" data-page="/about">
+      {showAbout && (
+        <!-- Panel: About -->
+        <section class="swipe-panel" data-page="/about">
         <div class="panel-content">
           <section class="page-header">
             <TextScramble text="About" tag="h1" class="page-title" always />
@@ -299,7 +301,8 @@ import '../styles/global.css';
             </div>
           </div>
         </div>
-      </section>
+        </section>
+      )}
 
       {showFeatureLab && (
         <section class="swipe-panel" data-page="/lab">

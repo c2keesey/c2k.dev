@@ -2,15 +2,16 @@
 import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
+  showAbout?: boolean;
   showLab?: boolean;
 }
 
-const { showLab = false } = Astro.props;
+const { showAbout = true, showLab = false } = Astro.props;
 
 const links = [
   { href: '/', label: 'Home' },
   { href: '/projects', label: 'Projects' },
-  { href: '/about', label: 'About' },
+  ...(showAbout ? [{ href: '/about', label: 'About' }] : []),
   ...(showLab ? [{ href: '/lab', label: 'Lab' }] : []),
 ];
 ---
@@ -35,7 +36,7 @@ const links = [
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-bar" id="bottom-nav-pill">
     <div class="bottom-nav-highlight" id="bottom-nav-highlight"></div>
-    <button class="bottom-tab" data-index="0" aria-label="Home">
+    <button class="bottom-tab" data-index="0" data-page="/" aria-label="Home">
       <svg class="tab-icon icon-beacon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
         <circle cx="8" cy="8" r="2" fill="currentColor" stroke="none" class="beacon-core"></circle>
         <path class="beacon-wave beacon-wave-1" d="M4.5 4.5a5 5 0 0 1 7 0" stroke-linecap="round"></path>
@@ -45,7 +46,7 @@ const links = [
       </svg>
       <span class="tab-label">Home</span>
     </button>
-    <button class="bottom-tab" data-index="1" aria-label="Projects">
+    <button class="bottom-tab" data-index="1" data-page="/projects" aria-label="Projects">
       <svg class="tab-icon icon-nodes" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
         <line class="node-edge" x1="8" y1="4" x2="4" y2="10"></line>
         <line class="node-edge" x1="8" y1="4" x2="12" y2="10"></line>
@@ -56,15 +57,17 @@ const links = [
       </svg>
       <span class="tab-label">Systems</span>
     </button>
-    <button class="bottom-tab" data-index="2" aria-label="About">
-      <svg class="tab-icon icon-terminal" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-        <path class="terminal-chevron" d="M3 5l4 3-4 3" stroke-linecap="round" stroke-linejoin="round"></path>
-        <line class="terminal-cursor" x1="9" y1="12" x2="13" y2="12" stroke-linecap="round"></line>
-      </svg>
-      <span class="tab-label">About</span>
-    </button>
+    {showAbout && (
+      <button class="bottom-tab" data-index="2" data-page="/about" aria-label="About">
+        <svg class="tab-icon icon-terminal" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path class="terminal-chevron" d="M3 5l4 3-4 3" stroke-linecap="round" stroke-linejoin="round"></path>
+          <line class="terminal-cursor" x1="9" y1="12" x2="13" y2="12" stroke-linecap="round"></line>
+        </svg>
+        <span class="tab-label">About</span>
+      </button>
+    )}
     {showLab && (
-      <button class="bottom-tab" data-index="3" aria-label="Lab">
+      <button class="bottom-tab" data-index={showAbout ? 3 : 2} data-page="/lab" aria-label="Lab">
         <svg class="tab-icon icon-lab" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
           <path d="M6 2v4L3 12a1 1 0 001 1h8a1 1 0 001-1l-3-6V2" stroke-linecap="round" stroke-linejoin="round"></path>
           <line x1="5" y1="2" x2="11" y2="2" stroke-linecap="round"></line>
@@ -328,7 +331,7 @@ const links = [
     const highlight = document.getElementById('bottom-nav-highlight') as HTMLElement;
 
     // Pure math — no DOM measurement needed
-    // Dynamically compute based on actual tab count (4 or 5)
+    // Dynamically compute based on the actual tab count.
     const PADDING = 4;
     const TAB_COUNT = tabs.length;
     const BAR_WIDTH = TAB_COUNT === 4 ? 272 : 218;
@@ -339,7 +342,7 @@ const links = [
     const W_INACTIVE = INNER / TOTAL_FLEX * FLEX_INACTIVE;
     const W_ACTIVE = INNER / TOTAL_FLEX * FLEX_ACTIVE;
 
-    // Update bar width if we have 5 tabs
+    // Keep the compact width when private-only tabs are absent.
     const bar = document.getElementById('bottom-nav-pill') as HTMLElement;
     if (bar) bar.style.width = `${BAR_WIDTH}px`;
 
@@ -359,9 +362,7 @@ const links = [
     }
 
     // Determine initial active tab from URL
-    const pages = TAB_COUNT === 4
-      ? ['/', '/projects', '/about', '/lab']
-      : ['/', '/projects', '/about'];
+    const pages = Array.from(tabs).map(tab => tab.dataset.page || '/');
     const path = location.pathname;
     const activeIdx = Math.max(0, pages.findIndex(p =>
       p === '/' ? path === '/' || path === '' : path.startsWith(p)
