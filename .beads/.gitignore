@@ -1,6 +1,7 @@
 # Dolt database (managed by Dolt, not git)
 dolt/
 embeddeddolt/
+embeddeddolt
 proxieddb/
 
 # Runtime files
