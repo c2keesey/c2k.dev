@@ -165,6 +165,14 @@ const projects: Project[] = [
     tech: ['Python', 'Google Calendar API', 'AppleScript', 'launchd'],
     color: '132, 204, 22',
   },
+  {
+    id: 'parley', name: 'Parley', tagline: 'Two-way voice for coding agents',
+    description: 'Turns terminal coding agents into a real voice loop: replies are spoken as they land, long jobs can narrate themselves, and a wake phrase lets me answer hands-free. One queue keeps every session from talking over the others.',
+    badge: 'open source', status: 'ONLINE', pulseRate: 2.5,
+    tech: ['Python', 'Claude Code', 'Codex', 'OpenAI', 'whisper.cpp', 'tmux'],
+    link: 'https://github.com/c2keesey/parley', linkText: 'github/parley',
+    color: '59, 130, 246',
+  },
 ];
 
 function blendColors(colorA: string, colorB: string): string {
@@ -208,6 +216,8 @@ const edgesRaw: { from: string; to: string; label: string }[] = [
   { from: 'polymarket', to: 'propeller', label: 'public api scrapers' },
   { from: 'calsync', to: 'dotfiles', label: 'launchd plist in dotfiles' },
   { from: 'calsync', to: 'spotify', label: 'launchd on the mac' },
+  { from: 'parley', to: 'dotfiles', label: 'agent skills + hooks' },
+  { from: 'parley', to: 'secretgate', label: 'agent hooks' },
 ];
 
 function getColor(id: string) {
