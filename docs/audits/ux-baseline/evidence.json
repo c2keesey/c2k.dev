@@ -1,0 +1,5207 @@
+{
+  "generatedAt": "2026-08-30T23:13:35.805Z",
+  "baseURL": "http://127.0.0.1:4518",
+  "browser": {
+    "name": "chromium",
+    "version": "147.0.7727.15"
+  },
+  "desktop": {
+    "console": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      }
+    ],
+    "pageErrors": [],
+    "requestFailures": [],
+    "httpFailures": [
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      }
+    ],
+    "homeNavigation": {
+      "status": 200,
+      "url": "http://127.0.0.1:4518/"
+    },
+    "homeMetrics": {
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "devicePixelRatio": 1
+      },
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "clientHeight": 900,
+        "scrollHeight": 900
+      },
+      "horizontalOverflow": 0,
+      "focusableCount": 24,
+      "focusables": [
+        {
+          "tag": "a",
+          "text": "C2K",
+          "href": "/",
+          "id": null,
+          "class": "logo"
+        },
+        {
+          "tag": "a",
+          "text": "Home",
+          "href": "/",
+          "id": null,
+          "class": "nav-link"
+        },
+        {
+          "tag": "a",
+          "text": "Projects",
+          "href": "/projects",
+          "id": null,
+          "class": "nav-link"
+        },
+        {
+          "tag": "button",
+          "text": "Toggle theme",
+          "href": null,
+          "id": "theme-toggle",
+          "class": "theme-toggle"
+        },
+        {
+          "tag": "a",
+          "text": "@maia_analytics",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "github",
+          "href": "https://github.com/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "x",
+          "href": "https://x.com/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "linkedin",
+          "href": "https://linkedin.com/in/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "parleydolt remote info2d ago",
+          "href": "https://github.com/c2keesey/parley",
+          "id": null,
+          "class": "building-row"
+        },
+        {
+          "tag": "a",
+          "text": "c2k.devAdd Parley to project network (#10)3d ago",
+          "href": "https://github.com/c2keesey/c2k.dev",
+          "id": null,
+          "class": "building-row"
+        },
+        {
+          "tag": "a",
+          "text": "maia-analytics.com ↗",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "maia-link"
+        },
+        {
+          "tag": "a",
+          "text": "maia-analytics.com ↗",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "c2k.page ↗",
+          "href": "https://c2k.page",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/dotfiles ↗",
+          "href": "https://github.com/c2keesey/dotfiles",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/secret-gate ↗",
+          "href": "https://github.com/c2keesey/secret-gate",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/tech-digest ↗",
+          "href": "https://github.com/c2keesey/tech-digest",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/propeller-scrape ↗",
+          "href": "https://github.com/c2keesey/propeller-scrape",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/claude-pane-skill ↗",
+          "href": "https://github.com/c2keesey/claude-pane-skill",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/spotify-playlist-ai ↗",
+          "href": "https://github.com/c2keesey/spotify-playlist-ai",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/song-sorter ↗",
+          "href": "https://github.com/c2keesey/spotify-song-sorter",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/all-look-different ↗",
+          "href": "https://github.com/c2keesey/All-look-different",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/parley ↗",
+          "href": "https://github.com/c2keesey/parley",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "button",
+          "text": "UPGRADE",
+          "href": null,
+          "id": "upgrade-popup-btn",
+          "class": "upgrade-popup-btn"
+        },
+        {
+          "tag": "button",
+          "text": "Close",
+          "href": null,
+          "id": "focus-close",
+          "class": "focus-close"
+        }
+      ],
+      "projectSemantics": [
+        {
+          "project": "maia",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "c2k",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "flux",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "corne",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "spotify",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "dashboard",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "dotfiles",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "secretgate",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "techdigest",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "lightning",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "propeller",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "panecmd",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "playlistai",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "djtrainer",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "songsorter",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "momentplayer",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "alldifferent",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "vibe",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "polymarket",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "calsync",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "parley",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        }
+      ],
+      "animationCount": 74,
+      "runningAnimationCount": 72
+    },
+    "homeContrast": [
+      {
+        "text": "UPGRADE",
+        "selector": "#upgrade-popup-btn",
+        "foreground": "rgba(168, 85, 247, 0.4)",
+        "estimatedBackground": "rgb(21, 16, 28)",
+        "fontSize": 8.8,
+        "fontWeight": 400,
+        "ratio": 1.73,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "// — Atisha",
+        "selector": "#quote-author",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.77,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "dolt remote info",
+        "selector": "span.building-commit",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.88,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "2d ago",
+        "selector": "span.building-time",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Add Parley to project network (#10)",
+        "selector": "span.building-commit",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.88,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "3d ago",
+        "selector": "span.building-time",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "services",
+        "selector": "span.systems-stat-key",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "crons",
+        "selector": "span.systems-stat-key",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "cpu",
+        "selector": "span.systems-stat-key",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "mem",
+        "selector": "span.systems-stat-key",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Outer Sunset, SF · Ridiculous output · Living in agreement with nature",
+        "selector": "p.text-scramble.bio-tagline",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12.8,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "github",
+        "selector": "a.text-scramble",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "x",
+        "selector": "a.text-scramble",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "linkedin",
+        "selector": "a.text-scramble",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "// The supreme learning is to realize the meaning of selflessness.",
+        "selector": "#quote-text",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "currently building",
+        "selector": "span.building-label",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.63,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "systems",
+        "selector": "span.systems-label",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.63,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "React",
+        "selector": "span.maia-tech",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(20, 44, 48)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.64,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "FastAPI",
+        "selector": "span.maia-tech",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(20, 44, 48)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.64,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Python",
+        "selector": "span.maia-tech",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(20, 44, 48)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.64,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Postgres",
+        "selector": "span.maia-tech",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(20, 44, 48)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.64,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "DuckDB",
+        "selector": "span.maia-tech",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(20, 44, 48)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.64,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Pydantic AI",
+        "selector": "span.maia-tech",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(20, 44, 48)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.64,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "GCP",
+        "selector": "span.maia-tech",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(20, 44, 48)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.64,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "> show solar potential in Denver..",
+        "selector": "#maia-query",
+        "foreground": "rgba(6, 182, 212, 0.6)",
+        "estimatedBackground": "rgb(4, 22, 24)",
+        "fontSize": 11.2,
+        "fontWeight": 400,
+        "ratio": 3.5,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "dark",
+        "selector": "#theme-label",
+        "foreground": "rgb(113, 113, 122)",
+        "estimatedBackground": "rgb(28, 28, 31)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 3.52,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Founder",
+        "selector": "span.maia-badge",
+        "foreground": "rgba(6, 182, 212, 0.85)",
+        "estimatedBackground": "rgb(6, 61, 70)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 4,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Home",
+        "selector": "a.nav-link",
+        "foreground": "rgb(113, 113, 122)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 14,
+        "fontWeight": 400,
+        "ratio": 4.09,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Projects",
+        "selector": "a.nav-link",
+        "foreground": "rgb(113, 113, 122)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 14,
+        "fontWeight": 400,
+        "ratio": 4.09,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "CTO, context engineer",
+        "selector": "span.text-scramble",
+        "foreground": "rgb(113, 113, 122)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 14.4,
+        "fontWeight": 400,
+        "ratio": 4.09,
+        "threshold": 4.5,
+        "passes": false
+      }
+    ],
+    "theme": {
+      "dataTheme": "warm",
+      "storedTheme": "warm",
+      "metaThemeColor": "#9333ea",
+      "persistedAcrossNavigation": {
+        "dataTheme": "warm",
+        "storedTheme": "warm"
+      }
+    },
+    "homeTabOrder": [
+      {
+        "tag": "a",
+        "text": "C2K",
+        "href": "/",
+        "id": null,
+        "class": "logo"
+      },
+      {
+        "tag": "a",
+        "text": "Home",
+        "href": "/",
+        "id": null,
+        "class": "nav-link"
+      },
+      {
+        "tag": "a",
+        "text": "Projects",
+        "href": "/projects",
+        "id": null,
+        "class": "nav-link"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle theme",
+        "href": null,
+        "id": "theme-toggle",
+        "class": "theme-toggle"
+      },
+      {
+        "tag": "a",
+        "text": "@maia_analytics",
+        "href": "https://maia-analytics.com",
+        "id": null,
+        "class": "text-scramble"
+      },
+      {
+        "tag": "a",
+        "text": "github",
+        "href": "https://github.com/c2keesey",
+        "id": null,
+        "class": "text-scramble"
+      },
+      {
+        "tag": "a",
+        "text": "x",
+        "href": "https://x.com/c2keesey",
+        "id": null,
+        "class": "text-scramble"
+      },
+      {
+        "tag": "a",
+        "text": "linkedin",
+        "href": "https://linkedin.com/in/c2keesey",
+        "id": null,
+        "class": "text-scramble"
+      },
+      {
+        "tag": "a",
+        "text": "parleydolt remote info2d ago",
+        "href": "https://github.com/c2keesey/parley",
+        "id": null,
+        "class": "building-row"
+      },
+      {
+        "tag": "a",
+        "text": "c2k.devAdd Parley to project network (#10)3d ago",
+        "href": "https://github.com/c2keesey/c2k.dev",
+        "id": null,
+        "class": "building-row"
+      },
+      {
+        "tag": "a",
+        "text": "maia-analytics.com ↗",
+        "href": "https://maia-analytics.com",
+        "id": null,
+        "class": "maia-link"
+      },
+      {
+        "tag": "a",
+        "text": "maia-analytics.com ↗",
+        "href": "https://maia-analytics.com",
+        "id": null,
+        "class": "node-link"
+      },
+      {
+        "tag": "a",
+        "text": "c2k.page ↗",
+        "href": "https://c2k.page",
+        "id": null,
+        "class": "node-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/dotfiles ↗",
+        "href": "https://github.com/c2keesey/dotfiles",
+        "id": null,
+        "class": "node-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/secret-gate ↗",
+        "href": "https://github.com/c2keesey/secret-gate",
+        "id": null,
+        "class": "node-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/tech-digest ↗",
+        "href": "https://github.com/c2keesey/tech-digest",
+        "id": null,
+        "class": "node-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/propeller-scrape ↗",
+        "href": "https://github.com/c2keesey/propeller-scrape",
+        "id": null,
+        "class": "node-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/claude-pane-skill ↗",
+        "href": "https://github.com/c2keesey/claude-pane-skill",
+        "id": null,
+        "class": "node-link"
+      }
+    ],
+    "projectsNavigation": {
+      "status": 200,
+      "url": "http://127.0.0.1:4518/projects"
+    },
+    "projectsMetrics": {
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "devicePixelRatio": 1
+      },
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "clientHeight": 900,
+        "scrollHeight": 900
+      },
+      "horizontalOverflow": 0,
+      "focusableCount": 24,
+      "focusables": [
+        {
+          "tag": "a",
+          "text": "C2K",
+          "href": "/",
+          "id": null,
+          "class": "logo"
+        },
+        {
+          "tag": "a",
+          "text": "Home",
+          "href": "/",
+          "id": null,
+          "class": "nav-link"
+        },
+        {
+          "tag": "a",
+          "text": "Projects",
+          "href": "/projects",
+          "id": null,
+          "class": "nav-link"
+        },
+        {
+          "tag": "button",
+          "text": "Toggle theme",
+          "href": null,
+          "id": "theme-toggle",
+          "class": "theme-toggle"
+        },
+        {
+          "tag": "a",
+          "text": "–––––––––––––––",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "––––––",
+          "href": "https://github.com/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "–",
+          "href": "https://x.com/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "––––––––",
+          "href": "https://linkedin.com/in/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "parleydolt remote info2d ago",
+          "href": "https://github.com/c2keesey/parley",
+          "id": null,
+          "class": "building-row"
+        },
+        {
+          "tag": "a",
+          "text": "c2k.devAdd Parley to project network (#10)3d ago",
+          "href": "https://github.com/c2keesey/c2k.dev",
+          "id": null,
+          "class": "building-row"
+        },
+        {
+          "tag": "a",
+          "text": "maia-analytics.com ↗",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "maia-link"
+        },
+        {
+          "tag": "a",
+          "text": "maia-analytics.com ↗",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "c2k.page ↗",
+          "href": "https://c2k.page",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/dotfiles ↗",
+          "href": "https://github.com/c2keesey/dotfiles",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/secret-gate ↗",
+          "href": "https://github.com/c2keesey/secret-gate",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/tech-digest ↗",
+          "href": "https://github.com/c2keesey/tech-digest",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/propeller-scrape ↗",
+          "href": "https://github.com/c2keesey/propeller-scrape",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/claude-pane-skill ↗",
+          "href": "https://github.com/c2keesey/claude-pane-skill",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/spotify-playlist-ai ↗",
+          "href": "https://github.com/c2keesey/spotify-playlist-ai",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/song-sorter ↗",
+          "href": "https://github.com/c2keesey/spotify-song-sorter",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/all-look-different ↗",
+          "href": "https://github.com/c2keesey/All-look-different",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/parley ↗",
+          "href": "https://github.com/c2keesey/parley",
+          "id": null,
+          "class": "node-link"
+        },
+        {
+          "tag": "button",
+          "text": "UPGRADE",
+          "href": null,
+          "id": "upgrade-popup-btn",
+          "class": "upgrade-popup-btn"
+        },
+        {
+          "tag": "button",
+          "text": "Close",
+          "href": null,
+          "id": "focus-close",
+          "class": "focus-close"
+        }
+      ],
+      "projectSemantics": [
+        {
+          "project": "maia",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "c2k",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "flux",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "corne",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "spotify",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "dashboard",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "dotfiles",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "secretgate",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "techdigest",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "lightning",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "propeller",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "panecmd",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "playlistai",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "djtrainer",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "songsorter",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "momentplayer",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "alldifferent",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "vibe",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "polymarket",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "calsync",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "parley",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        }
+      ],
+      "animationCount": 73,
+      "runningAnimationCount": 71
+    },
+    "projectsContrast": [
+      {
+        "text": "SYNC NOW",
+        "selector": "#dashboard-sync",
+        "foreground": "rgba(255, 255, 255, 0.12)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.33,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "--",
+        "selector": "#hud-cpu-val",
+        "foreground": "rgba(255, 255, 255, 0.12)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.33,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "/s",
+        "selector": "span.game-hud-rate-unit",
+        "foreground": "rgba(168, 85, 247, 0.25)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8.8,
+        "fontWeight": 400,
+        "ratio": 1.33,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "STANDBY",
+        "selector": "span.node-status-label.standby",
+        "foreground": "rgba(255, 255, 255, 0.12)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.35,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "STANDB",
+        "selector": "span.node-status-label.standby",
+        "foreground": "rgba(255, 255, 255, 0.12)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.35,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-momentplayer",
+        "foreground": "rgba(99, 102, 241, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.39,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-techdigest",
+        "foreground": "rgba(139, 92, 246, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.41,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-secretgate",
+        "foreground": "rgba(239, 68, 68, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.43,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-c2k",
+        "foreground": "rgba(168, 85, 247, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.44,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-djtrainer",
+        "foreground": "rgba(236, 72, 153, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.47,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-parley",
+        "foreground": "rgba(59, 130, 246, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.48,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "click to explore",
+        "selector": "span.explore-hint-text",
+        "foreground": "rgba(168, 85, 247, 0.35)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8.8,
+        "fontWeight": 400,
+        "ratio": 1.56,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "→",
+        "selector": "span.explore-hint-arrow",
+        "foreground": "rgba(168, 85, 247, 0.35)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.56,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "NETWORK OPTIMIZER",
+        "selector": "div.game-hud-label",
+        "foreground": "rgba(168, 85, 247, 0.35)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.56,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "TP",
+        "selector": "span.game-hud-tp-unit",
+        "foreground": "rgba(168, 85, 247, 0.35)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8,
+        "fontWeight": 400,
+        "ratio": 1.56,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-dashboard",
+        "foreground": "rgba(224, 122, 95, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-flux",
+        "foreground": "rgba(249, 115, 22, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.61,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-songsorter",
+        "foreground": "rgba(16, 185, 129, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.67,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-vibe",
+        "foreground": "rgba(192, 132, 252, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.67,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-polymarket",
+        "foreground": "rgba(20, 184, 166, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.69,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0",
+        "selector": "#game-tp-rate",
+        "foreground": "rgba(168, 85, 247, 0.4)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8.8,
+        "fontWeight": 400,
+        "ratio": 1.7,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "UPGRADE",
+        "selector": "#upgrade-popup-btn",
+        "foreground": "rgba(168, 85, 247, 0.4)",
+        "estimatedBackground": "rgb(21, 16, 28)",
+        "fontSize": 8.8,
+        "fontWeight": 400,
+        "ratio": 1.73,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-maia",
+        "foreground": "rgba(6, 182, 212, 0.3)",
+        "estimatedBackground": "rgb(10, 20, 19)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.75,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "0.0/s",
+        "selector": "#tp-spotify",
+        "foreground": "rgba(34, 197, 94, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.75,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "CPU",
+        "selector": "span.hud-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 8,
+        "fontWeight": 400,
+        "ratio": 1.77,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "MEM",
+        "selector": "span.hud-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 8,
+        "fontWeight": 400,
+        "ratio": 1.77,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "SVC",
+        "selector": "span.hud-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 8,
+        "fontWeight": 400,
+        "ratio": 1.77,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "CRON",
+        "selector": "span.hud-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 8,
+        "fontWeight": 400,
+        "ratio": 1.77,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "PPD",
+        "selector": "span.hud-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 8,
+        "fontWeight": 400,
+        "ratio": 1.77,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "PUSHES / 7D",
+        "selector": "div.apm-tooltip-title",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(12, 12, 14)",
+        "fontSize": 9,
+        "fontWeight": 400,
+        "ratio": 1.79,
+        "threshold": 4.5,
+        "passes": false
+      }
+    ],
+    "projectInteractions": [
+      {
+        "project": "maia",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 36.79376220703125,
+            "y": 70.62374877929688,
+            "width": 329.5999755859375,
+            "height": 258.65875244140625
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "state3": {
+          "visible": true,
+          "showcaseInOverlay": true,
+          "controlInteractions": []
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "c2k",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 353.59063720703125,
+            "y": 266.1862487792969,
+            "width": 329.5999755859375,
+            "height": 258.6587219238281
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "state3": {
+          "visible": true,
+          "showcaseInOverlay": true,
+          "controlInteractions": []
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "flux",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 238.38751220703125,
+            "y": 589.8724365234375,
+            "width": 329.5999755859375,
+            "height": 256.067626953125
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "state3": {
+          "visible": true,
+          "showcaseInOverlay": true,
+          "controlInteractions": [
+            {
+              "text": "Ring-by-ring expanding pulse",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Jagged bolt with flash",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Heat simulation",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Particle explosion",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Ring segments paint & erase",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Fading stars",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Projectile shot",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            }
+          ]
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "corne",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 641.5906372070312,
+            "y": 383.23944091796875,
+            "width": 329.5999755859375,
+            "height": 217.98980712890625
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "state3": {
+          "visible": true,
+          "showcaseInOverlay": true,
+          "controlInteractions": [
+            {
+              "text": "base",
+              "class": "crn-layer-btn active",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "nav",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "fn",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "num",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "sym",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "sys",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "combos",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            }
+          ]
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "spotify",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 14.20001220703125,
+            "y": 481.1146240234375,
+            "width": 329.5999755859375,
+            "height": 312.395751953125
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "state3": {
+          "visible": true,
+          "showcaseInOverlay": true,
+          "controlInteractions": [
+            {
+              "text": "↔ playlist flow emoji-based routing",
+              "class": "sm-auto-card sm-active",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "◈ classifier genre sorting",
+              "class": "sm-auto-card",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "♡ daily likes liked → playlist",
+              "class": "sm-auto-card",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "⌘ save current hotkey → library",
+              "class": "sm-auto-card",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "⇅ playlist sync local DJ mirror",
+              "class": "sm-auto-card",
+              "disabled": false,
+              "outcome": "clicked"
+            }
+          ]
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "dashboard",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 641.5906372070312,
+            "y": 188.65882873535156,
+            "width": 329.5999755859375,
+            "height": 252.49485778808594
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "dotfiles",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 526.3875122070312,
+            "y": 71.49874877929688,
+            "width": 329.5999755859375,
+            "height": 258.65875244140625
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "state3": {
+          "visible": true,
+          "showcaseInOverlay": true,
+          "controlInteractions": [
+            {
+              "text": "▊ statusline bash prompt",
+              "class": "df-item-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "/ skills slash commands",
+              "class": "df-item-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "tap to explore ↓",
+              "class": "expand-trigger",
+              "disabled": false,
+              "outcome": "clicked"
+            }
+          ]
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "secretgate",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 929.5906372070312,
+            "y": 94.3702392578125,
+            "width": 329.60003662109375,
+            "height": 247.634521484375
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "techdigest",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 1096.199951171875,
+            "y": 223.3389892578125,
+            "width": 329.5999755859375,
+            "height": 247.634521484375
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "lightning",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 814.3875122070312,
+            "y": 567.157470703125,
+            "width": 329.60003662109375,
+            "height": 237.02880859375
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "state3": {
+          "visible": true,
+          "showcaseInOverlay": true,
+          "controlInteractions": []
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "propeller",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 1096.387451171875,
+            "y": 345.70220947265625,
+            "width": 329.5999755859375,
+            "height": 228.59564208984375
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "panecmd",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 267.20001220703125,
+            "y": 158.8546142578125,
+            "width": 329.5999755859375,
+            "height": 247.634521484375
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "playlistai",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 151.99688720703125,
+            "y": 384.5421142578125,
+            "width": 329.5999755859375,
+            "height": 247.634521484375
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "djtrainer",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 439.99688720703125,
+            "y": 494.5457763671875,
+            "width": 329.5999755859375,
+            "height": 253.283447265625
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "songsorter",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 14.20001220703125,
+            "y": 297.32720947265625,
+            "width": 329.5999755859375,
+            "height": 228.5955810546875
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "momentplayer",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 900.7937622070312,
+            "y": 455.70587158203125,
+            "width": 329.60003662109375,
+            "height": 234.2445068359375
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "alldifferent",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 785.5906372070312,
+            "y": 281.21783447265625,
+            "width": 329.60003662109375,
+            "height": 228.5955810546875
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "vibe",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 756.7937622070312,
+            "y": 70.82703399658203,
+            "width": 329.60003662109375,
+            "height": 253.283447265625
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "polymarket",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 1096.199951171875,
+            "y": 478.4364013671875,
+            "width": 329.5999755859375,
+            "height": 253.283447265625
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "calsync",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 14.38751220703125,
+            "y": 595.6239013671875,
+            "width": 329.5999755859375,
+            "height": 253.283447265625
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "parley",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "rect": {
+            "x": 526.3875122070312,
+            "y": 563.9287719726562,
+            "width": 329.5999755859375,
+            "height": 284.92376708984375
+          },
+          "clipped": false,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      }
+    ],
+    "navigationInteraction": {
+      "url": "http://127.0.0.1:4518/projects",
+      "scrollLeft": 1440,
+      "projectsCurrent": false
+    }
+  },
+  "mobile": {
+    "console": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      }
+    ],
+    "pageErrors": [],
+    "requestFailures": [],
+    "httpFailures": [
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/corne.gif"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+      }
+    ],
+    "homeNavigation": {
+      "status": 200,
+      "url": "http://127.0.0.1:4518/"
+    },
+    "homeMetrics": {
+      "viewport": {
+        "width": 375,
+        "height": 812,
+        "devicePixelRatio": 1
+      },
+      "document": {
+        "clientWidth": 375,
+        "scrollWidth": 375,
+        "clientHeight": 812,
+        "scrollHeight": 812
+      },
+      "horizontalOverflow": 0,
+      "focusableCount": 20,
+      "focusables": [
+        {
+          "tag": "a",
+          "text": "C2K",
+          "href": "/",
+          "id": null,
+          "class": "logo"
+        },
+        {
+          "tag": "button",
+          "text": "Toggle theme",
+          "href": null,
+          "id": "theme-toggle",
+          "class": "theme-toggle"
+        },
+        {
+          "tag": "button",
+          "text": "Home",
+          "href": null,
+          "id": null,
+          "class": "bottom-tab"
+        },
+        {
+          "tag": "button",
+          "text": "Projects",
+          "href": null,
+          "id": null,
+          "class": "bottom-tab"
+        },
+        {
+          "tag": "a",
+          "text": "@maia_analytics",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "github",
+          "href": "https://github.com/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "x",
+          "href": "https://x.com/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "linkedin",
+          "href": "https://linkedin.com/in/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "parleydolt remote info2d ago",
+          "href": "https://github.com/c2keesey/parley",
+          "id": null,
+          "class": "building-row"
+        },
+        {
+          "tag": "a",
+          "text": "c2k.devAdd Parley to project network (#10)3d ago",
+          "href": "https://github.com/c2keesey/c2k.dev",
+          "id": null,
+          "class": "building-row"
+        },
+        {
+          "tag": "a",
+          "text": "maia-analytics.com ↗",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "maia-link"
+        },
+        {
+          "tag": "a",
+          "text": "maia-analytics.com ↗",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "c2k.page ↗",
+          "href": "https://c2k.page",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/dotfiles ↗",
+          "href": "https://github.com/c2keesey/dotfiles",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/secret-gate ↗",
+          "href": "https://github.com/c2keesey/secret-gate",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/tech-digest ↗",
+          "href": "https://github.com/c2keesey/tech-digest",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/propeller-scrape ↗",
+          "href": "https://github.com/c2keesey/propeller-scrape",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/song-sorter ↗",
+          "href": "https://github.com/c2keesey/spotify-song-sorter",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/all-look-different ↗",
+          "href": "https://github.com/c2keesey/All-look-different",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/parley ↗",
+          "href": "https://github.com/c2keesey/parley",
+          "id": null,
+          "class": "mn-link"
+        }
+      ],
+      "projectSemantics": [
+        {
+          "project": "maia",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "c2k",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "flux",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "corne",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "spotify",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "dashboard",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "dotfiles",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "secretgate",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "techdigest",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "lightning",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "propeller",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "djtrainer",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "songsorter",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "momentplayer",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "alldifferent",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "vibe",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "polymarket",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "calsync",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "parley",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        }
+      ],
+      "animationCount": 88,
+      "runningAnimationCount": 67
+    },
+    "homeContrast": [
+      {
+        "text": "// — Atisha",
+        "selector": "#quote-author",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.77,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "dolt remote info",
+        "selector": "span.building-commit",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.88,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "2d ago",
+        "selector": "span.building-time",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Add Parley to project network (#10)",
+        "selector": "span.building-commit",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.88,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "3d ago",
+        "selector": "span.building-time",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "services",
+        "selector": "span.systems-stat-key",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "crons",
+        "selector": "span.systems-stat-key",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "cpu",
+        "selector": "span.systems-stat-key",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "mem",
+        "selector": "span.systems-stat-key",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 9.6,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Outer Sunset, SF · Ridiculous output · Living in agreement with nature",
+        "selector": "p.text-scramble.bio-tagline",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12.8,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "github",
+        "selector": "a.text-scramble",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "x",
+        "selector": "a.text-scramble",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "linkedin",
+        "selector": "a.text-scramble",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "// The supreme learning is to realize the meaning of selflessness.",
+        "selector": "#quote-text",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 12,
+        "fontWeight": 400,
+        "ratio": 2.59,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "currently building",
+        "selector": "span.building-label",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.63,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "systems",
+        "selector": "span.systems-label",
+        "foreground": "rgba(255, 255, 255, 0.3)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 2.63,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Founder",
+        "selector": "span.maia-badge",
+        "foreground": "rgba(6, 182, 212, 0.85)",
+        "estimatedBackground": "rgb(6, 61, 70)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 4,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "CTO, context engineer",
+        "selector": "span.text-scramble",
+        "foreground": "rgb(113, 113, 122)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 14.4,
+        "fontWeight": 400,
+        "ratio": 4.09,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "The interface between a question and a map. You ask in plain English; agents go find the parcels and draw them. Site sel",
+        "selector": "p.maia-desc",
+        "foreground": "rgba(255, 255, 255, 0.45)",
+        "estimatedBackground": "rgb(5, 31, 34)",
+        "fontSize": 12.8,
+        "fontWeight": 400,
+        "ratio": 4.4,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Home",
+        "selector": "span.tab-label",
+        "foreground": "rgb(168, 85, 247)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8.8,
+        "fontWeight": 500,
+        "ratio": 4.91,
+        "threshold": 4.5,
+        "passes": true
+      },
+      {
+        "text": "parley",
+        "selector": "span.building-name",
+        "foreground": "rgb(168, 85, 247)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 12.8,
+        "fontWeight": 500,
+        "ratio": 4.92,
+        "threshold": 4.5,
+        "passes": true
+      },
+      {
+        "text": "c2k.dev",
+        "selector": "span.building-name",
+        "foreground": "rgb(168, 85, 247)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 12.8,
+        "fontWeight": 500,
+        "ratio": 4.92,
+        "threshold": 4.5,
+        "passes": true
+      },
+      {
+        "text": "@maia_analytics",
+        "selector": "a.text-scramble",
+        "foreground": "rgb(168, 85, 247)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 14.4,
+        "fontWeight": 400,
+        "ratio": 5,
+        "threshold": 4.5,
+        "passes": true
+      },
+      {
+        "text": "AI geospatial platform",
+        "selector": "p.maia-tagline",
+        "foreground": "rgba(255, 255, 255, 0.9)",
+        "estimatedBackground": "rgb(5, 31, 34)",
+        "fontSize": 16,
+        "fontWeight": 600,
+        "ratio": 14.01,
+        "threshold": 4.5,
+        "passes": true
+      },
+      {
+        "text": "C2K",
+        "selector": "a.logo",
+        "foreground": "rgb(228, 228, 231)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 17.6,
+        "fontWeight": 800,
+        "ratio": 15.6,
+        "threshold": 4.5,
+        "passes": true
+      },
+      {
+        "text": "CHRISTOPHER CARSON KEESEY",
+        "selector": "#hero-title",
+        "foreground": "rgb(228, 228, 231)",
+        "estimatedBackground": "rgb(10, 10, 11)",
+        "fontSize": 18.4,
+        "fontWeight": 600,
+        "ratio": 15.6,
+        "threshold": 4.5,
+        "passes": true
+      },
+      {
+        "text": "--",
+        "selector": "#sys-services",
+        "foreground": "rgba(255, 255, 255, 0.9)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 13.6,
+        "fontWeight": 600,
+        "ratio": 15.71,
+        "threshold": 4.5,
+        "passes": true
+      },
+      {
+        "text": "--%",
+        "selector": "#sys-cpu",
+        "foreground": "rgba(255, 255, 255, 0.9)",
+        "estimatedBackground": "rgb(13, 13, 14)",
+        "fontSize": 13.6,
+        "fontWeight": 600,
+        "ratio": 15.71,
+        "threshold": 4.5,
+        "passes": true
+      }
+    ],
+    "homeTabOrder": [
+      {
+        "tag": "a",
+        "text": "C2K",
+        "href": "/",
+        "id": null,
+        "class": "logo"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle theme",
+        "href": null,
+        "id": "theme-toggle",
+        "class": "theme-toggle"
+      },
+      {
+        "tag": "button",
+        "text": "Home",
+        "href": null,
+        "id": null,
+        "class": "bottom-tab"
+      },
+      {
+        "tag": "button",
+        "text": "Projects",
+        "href": null,
+        "id": null,
+        "class": "bottom-tab"
+      },
+      {
+        "tag": "a",
+        "text": "@maia_analytics",
+        "href": "https://maia-analytics.com",
+        "id": null,
+        "class": "text-scramble"
+      },
+      {
+        "tag": "a",
+        "text": "github",
+        "href": "https://github.com/c2keesey",
+        "id": null,
+        "class": "text-scramble"
+      },
+      {
+        "tag": "a",
+        "text": "x",
+        "href": "https://x.com/c2keesey",
+        "id": null,
+        "class": "text-scramble"
+      },
+      {
+        "tag": "a",
+        "text": "linkedin",
+        "href": "https://linkedin.com/in/c2keesey",
+        "id": null,
+        "class": "text-scramble"
+      },
+      {
+        "tag": "a",
+        "text": "parleydolt remote info2d ago",
+        "href": "https://github.com/c2keesey/parley",
+        "id": null,
+        "class": "building-row"
+      },
+      {
+        "tag": "a",
+        "text": "c2k.devAdd Parley to project network (#10)3d ago",
+        "href": "https://github.com/c2keesey/c2k.dev",
+        "id": null,
+        "class": "building-row"
+      },
+      {
+        "tag": "a",
+        "text": "maia-analytics.com ↗",
+        "href": "https://maia-analytics.com",
+        "id": null,
+        "class": "maia-link"
+      },
+      {
+        "tag": "a",
+        "text": "maia-analytics.com ↗",
+        "href": "https://maia-analytics.com",
+        "id": null,
+        "class": "mn-link"
+      },
+      {
+        "tag": "a",
+        "text": "c2k.page ↗",
+        "href": "https://c2k.page",
+        "id": null,
+        "class": "mn-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/dotfiles ↗",
+        "href": "https://github.com/c2keesey/dotfiles",
+        "id": null,
+        "class": "mn-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/secret-gate ↗",
+        "href": "https://github.com/c2keesey/secret-gate",
+        "id": null,
+        "class": "mn-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/tech-digest ↗",
+        "href": "https://github.com/c2keesey/tech-digest",
+        "id": null,
+        "class": "mn-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/propeller-scrape ↗",
+        "href": "https://github.com/c2keesey/propeller-scrape",
+        "id": null,
+        "class": "mn-link"
+      },
+      {
+        "tag": "a",
+        "text": "github/song-sorter ↗",
+        "href": "https://github.com/c2keesey/spotify-song-sorter",
+        "id": null,
+        "class": "mn-link"
+      }
+    ],
+    "theme": {
+      "dataTheme": "warm",
+      "storedTheme": "warm",
+      "metaThemeColor": "#9333ea"
+    },
+    "navigationInteraction": {
+      "url": "http://127.0.0.1:4518/projects",
+      "scrollLeft": 375,
+      "projectsActive": "true"
+    },
+    "projectsNavigation": {
+      "status": 200,
+      "url": "http://127.0.0.1:4518/projects"
+    },
+    "projectsMetrics": {
+      "viewport": {
+        "width": 375,
+        "height": 812,
+        "devicePixelRatio": 1
+      },
+      "document": {
+        "clientWidth": 375,
+        "scrollWidth": 375,
+        "clientHeight": 812,
+        "scrollHeight": 812
+      },
+      "horizontalOverflow": 0,
+      "focusableCount": 20,
+      "focusables": [
+        {
+          "tag": "a",
+          "text": "C2K",
+          "href": "/",
+          "id": null,
+          "class": "logo"
+        },
+        {
+          "tag": "button",
+          "text": "Toggle theme",
+          "href": null,
+          "id": "theme-toggle",
+          "class": "theme-toggle"
+        },
+        {
+          "tag": "button",
+          "text": "Home",
+          "href": null,
+          "id": null,
+          "class": "bottom-tab"
+        },
+        {
+          "tag": "button",
+          "text": "Projects",
+          "href": null,
+          "id": null,
+          "class": "bottom-tab"
+        },
+        {
+          "tag": "a",
+          "text": "–––––––––––––––",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "––––––",
+          "href": "https://github.com/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "–",
+          "href": "https://x.com/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "––––––––",
+          "href": "https://linkedin.com/in/c2keesey",
+          "id": null,
+          "class": "text-scramble"
+        },
+        {
+          "tag": "a",
+          "text": "parleydolt remote info2d ago",
+          "href": "https://github.com/c2keesey/parley",
+          "id": null,
+          "class": "building-row"
+        },
+        {
+          "tag": "a",
+          "text": "c2k.devAdd Parley to project network (#10)3d ago",
+          "href": "https://github.com/c2keesey/c2k.dev",
+          "id": null,
+          "class": "building-row"
+        },
+        {
+          "tag": "a",
+          "text": "maia-analytics.com ↗",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "maia-link"
+        },
+        {
+          "tag": "a",
+          "text": "maia-analytics.com ↗",
+          "href": "https://maia-analytics.com",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "c2k.page ↗",
+          "href": "https://c2k.page",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/dotfiles ↗",
+          "href": "https://github.com/c2keesey/dotfiles",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/secret-gate ↗",
+          "href": "https://github.com/c2keesey/secret-gate",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/tech-digest ↗",
+          "href": "https://github.com/c2keesey/tech-digest",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/propeller-scrape ↗",
+          "href": "https://github.com/c2keesey/propeller-scrape",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/song-sorter ↗",
+          "href": "https://github.com/c2keesey/spotify-song-sorter",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/all-look-different ↗",
+          "href": "https://github.com/c2keesey/All-look-different",
+          "id": null,
+          "class": "mn-link"
+        },
+        {
+          "tag": "a",
+          "text": "github/parley ↗",
+          "href": "https://github.com/c2keesey/parley",
+          "id": null,
+          "class": "mn-link"
+        }
+      ],
+      "projectSemantics": [
+        {
+          "project": "maia",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "c2k",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "flux",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "corne",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "spotify",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "dashboard",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "dotfiles",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "secretgate",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "techdigest",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "lightning",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "propeller",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "djtrainer",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "songsorter",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "momentplayer",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "alldifferent",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "vibe",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "polymarket",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "calsync",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        },
+        {
+          "project": "parley",
+          "tag": "div",
+          "role": null,
+          "tabindex": null,
+          "ariaExpanded": null
+        }
+      ],
+      "animationCount": 87,
+      "runningAnimationCount": 66
+    },
+    "projectsContrast": [
+      {
+        "text": "STANDBY",
+        "selector": "span.mn-status-label.standby",
+        "foreground": "rgba(255, 255, 255, 0.12)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 7.2,
+        "fontWeight": 400,
+        "ratio": 1.35,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "tap to explore",
+        "selector": "span.mn-explore-text",
+        "foreground": "rgba(168, 85, 247, 0.35)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8.32,
+        "fontWeight": 400,
+        "ratio": 1.56,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "→",
+        "selector": "span.mn-explore-arrow",
+        "foreground": "rgba(168, 85, 247, 0.35)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8.8,
+        "fontWeight": 400,
+        "ratio": 1.56,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "tap to explore",
+        "selector": "span.mn-explore-text",
+        "foreground": "rgba(249, 115, 22, 0.35)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8.32,
+        "fontWeight": 400,
+        "ratio": 1.79,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "→",
+        "selector": "span.mn-explore-arrow",
+        "foreground": "rgba(249, 115, 22, 0.35)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 8.8,
+        "fontWeight": 400,
+        "ratio": 1.79,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "This website",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "LED wearable",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "42-key split keyboard",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Library auto-sorter",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Server monitoring PWA",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Dev environment system",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Human-in-the-loop gate",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Daily release digest",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "Procedural lightning",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(13, 13, 15)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.8,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "AI geospatial platform",
+        "selector": "span.mn-tagline",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(10, 20, 19)",
+        "fontSize": 10.4,
+        "fontWeight": 400,
+        "ratio": 1.84,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "co-hosted on optiplex",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(22, 17, 29)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.85,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "hand-built UI",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(18, 18, 28)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.85,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "keyboard config",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(22, 17, 29)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.85,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "monitored services",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(22, 17, 29)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.85,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "monitors crons",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(20, 18, 28)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.85,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "claude code plugin",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(26, 16, 18)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.85,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "background automation",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(27, 19, 15)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.86,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "cron on optiplex",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(27, 19, 15)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.86,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "agent skills + hooks",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(16, 20, 28)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.86,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "telegram bots",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(27, 19, 15)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.86,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "agent hooks",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(16, 20, 28)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.86,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "interactive keymap",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(12, 23, 26)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.87,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "same astro + bun stack",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(24, 20, 29)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.87,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "hand-soldered",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(12, 23, 26)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.87,
+        "threshold": 4.5,
+        "passes": false
+      },
+      {
+        "text": "hotkey macros",
+        "selector": "span.mn-conn-label",
+        "foreground": "rgba(255, 255, 255, 0.2)",
+        "estimatedBackground": "rgb(14, 24, 19)",
+        "fontSize": 6.72,
+        "fontWeight": 400,
+        "ratio": 1.87,
+        "threshold": 4.5,
+        "passes": false
+      }
+    ],
+    "projectInteractions": [
+      {
+        "project": "maia",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "height": 257.4375,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "state3": {
+          "focused": true,
+          "showcaseInCard": true,
+          "controlInteractions": []
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "c2k",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "height": 297.0625,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "state3": {
+          "focused": true,
+          "showcaseInCard": true,
+          "controlInteractions": []
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "flux",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "height": 237.265625,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "state3": {
+          "focused": true,
+          "showcaseInCard": true,
+          "controlInteractions": [
+            {
+              "text": "Ring-by-ring expanding pulse",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Jagged bolt with flash",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Heat simulation",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Particle explosion",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Ring segments paint & erase",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Fading stars",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "Projectile shot",
+              "class": "fg-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            }
+          ]
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "corne",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "height": 238.828125,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "state3": {
+          "focused": true,
+          "showcaseInCard": true,
+          "controlInteractions": [
+            {
+              "text": "base",
+              "class": "crn-layer-btn active",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "nav",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "fn",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "num",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "sym",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "sys",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "combos",
+              "class": "crn-layer-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            }
+          ]
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "spotify",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "height": 293.828125,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "state3": {
+          "focused": true,
+          "showcaseInCard": true,
+          "controlInteractions": [
+            {
+              "text": "↔ playlist flow emoji-based routing",
+              "class": "sm-auto-card sm-active",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "◈ classifier genre sorting",
+              "class": "sm-auto-card",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "♡ daily likes liked → playlist",
+              "class": "sm-auto-card",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "⌘ save current hotkey → library",
+              "class": "sm-auto-card",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "⇅ playlist sync local DJ mirror",
+              "class": "sm-auto-card",
+              "disabled": false,
+              "outcome": "clicked"
+            }
+          ]
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "dashboard",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 236.375,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "dotfiles",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "height": 336.6875,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "state3": {
+          "focused": true,
+          "showcaseInCard": true,
+          "controlInteractions": [
+            {
+              "text": "▊ statusline bash prompt",
+              "class": "df-item-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "/ skills slash commands",
+              "class": "df-item-btn",
+              "disabled": false,
+              "outcome": "clicked"
+            },
+            {
+              "text": "tap to explore ↓",
+              "class": "expand-trigger",
+              "disabled": false,
+              "outcome": "clicked"
+            }
+          ]
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "secretgate",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 250.6875,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "techdigest",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 270.5,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "lightning",
+        "present": true,
+        "showcase": true,
+        "state2": {
+          "expanded": true,
+          "height": 218.234375,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "state3": {
+          "focused": true,
+          "showcaseInCard": true,
+          "controlInteractions": []
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "propeller",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 231.65625,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "djtrainer",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 236.90625,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "songsorter",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 231.65625,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "momentplayer",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 217.875,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "alldifferent",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 211.84375,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "vibe",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 236.90625,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "polymarket",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 256.71875,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "calsync",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 237.6875,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      },
+      {
+        "project": "parley",
+        "present": true,
+        "showcase": false,
+        "state2": {
+          "expanded": true,
+          "height": 230.875,
+          "horizontalOverflow": 0,
+          "detailVisible": true
+        },
+        "closedByEscape": true
+      }
+    ]
+  },
+  "reducedMotion": {
+    "desktop": {
+      "mediaMatches": true,
+      "metrics": {
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "devicePixelRatio": 1
+        },
+        "document": {
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "clientHeight": 900,
+          "scrollHeight": 900
+        },
+        "horizontalOverflow": 0,
+        "focusableCount": 22,
+        "focusables": [
+          {
+            "tag": "a",
+            "text": "C2K",
+            "href": "/",
+            "id": null,
+            "class": "logo"
+          },
+          {
+            "tag": "a",
+            "text": "Home",
+            "href": "/",
+            "id": null,
+            "class": "nav-link"
+          },
+          {
+            "tag": "a",
+            "text": "Projects",
+            "href": "/projects",
+            "id": null,
+            "class": "nav-link"
+          },
+          {
+            "tag": "button",
+            "text": "Toggle theme",
+            "href": null,
+            "id": "theme-toggle",
+            "class": "theme-toggle"
+          },
+          {
+            "tag": "a",
+            "text": "–––––––––––––––",
+            "href": "https://maia-analytics.com",
+            "id": null,
+            "class": "text-scramble"
+          },
+          {
+            "tag": "a",
+            "text": "––––––",
+            "href": "https://github.com/c2keesey",
+            "id": null,
+            "class": "text-scramble"
+          },
+          {
+            "tag": "a",
+            "text": "–",
+            "href": "https://x.com/c2keesey",
+            "id": null,
+            "class": "text-scramble"
+          },
+          {
+            "tag": "a",
+            "text": "––––––––",
+            "href": "https://linkedin.com/in/c2keesey",
+            "id": null,
+            "class": "text-scramble"
+          },
+          {
+            "tag": "a",
+            "text": "maia-analytics.com ↗",
+            "href": "https://maia-analytics.com",
+            "id": null,
+            "class": "maia-link"
+          },
+          {
+            "tag": "a",
+            "text": "maia-analytics.com ↗",
+            "href": "https://maia-analytics.com",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "c2k.page ↗",
+            "href": "https://c2k.page",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/dotfiles ↗",
+            "href": "https://github.com/c2keesey/dotfiles",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/secret-gate ↗",
+            "href": "https://github.com/c2keesey/secret-gate",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/tech-digest ↗",
+            "href": "https://github.com/c2keesey/tech-digest",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/propeller-scrape ↗",
+            "href": "https://github.com/c2keesey/propeller-scrape",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/claude-pane-skill ↗",
+            "href": "https://github.com/c2keesey/claude-pane-skill",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/spotify-playlist-ai ↗",
+            "href": "https://github.com/c2keesey/spotify-playlist-ai",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/song-sorter ↗",
+            "href": "https://github.com/c2keesey/spotify-song-sorter",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/all-look-different ↗",
+            "href": "https://github.com/c2keesey/All-look-different",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/parley ↗",
+            "href": "https://github.com/c2keesey/parley",
+            "id": null,
+            "class": "node-link"
+          },
+          {
+            "tag": "button",
+            "text": "UPGRADE",
+            "href": null,
+            "id": "upgrade-popup-btn",
+            "class": "upgrade-popup-btn"
+          },
+          {
+            "tag": "button",
+            "text": "Close",
+            "href": null,
+            "id": "focus-close",
+            "class": "focus-close"
+          }
+        ],
+        "projectSemantics": [
+          {
+            "project": "maia",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "c2k",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "flux",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "corne",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "spotify",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "dashboard",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "dotfiles",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "secretgate",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "techdigest",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "lightning",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "propeller",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "panecmd",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "playlistai",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "djtrainer",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "songsorter",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "momentplayer",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "alldifferent",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "vibe",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "polymarket",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "calsync",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "parley",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          }
+        ],
+        "animationCount": 72,
+        "runningAnimationCount": 72
+      },
+      "runningAnimations": [
+        {
+          "target": "systems-dot",
+          "currentTime": 1808.336,
+          "duration": 3000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.336,
+          "duration": 4000,
+          "iterations": null
+        },
+        {
+          "target": "node-status-dot",
+          "currentTime": 1782.3899998500942,
+          "duration": 2000,
+          "iterations": null
+        },
+        {
+          "target": "explore-hint-arrow",
+          "currentTime": 1782.3899998500942,
+          "duration": 1500,
+          "iterations": null
+        }
+      ],
+      "diagnostics": {
+        "console": [
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          },
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          },
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          },
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 403 ()"
+          }
+        ],
+        "pageErrors": [],
+        "requestFailures": [],
+        "httpFailures": [
+          {
+            "status": 404,
+            "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+          },
+          {
+            "status": 404,
+            "url": "http://127.0.0.1:4518/corne.gif"
+          },
+          {
+            "status": 404,
+            "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+          },
+          {
+            "status": 403,
+            "url": "https://api.github.com/repos/c2keesey/urob-zmk-config-corne"
+          }
+        ]
+      }
+    },
+    "mobile": {
+      "mediaMatches": true,
+      "metrics": {
+        "viewport": {
+          "width": 375,
+          "height": 812,
+          "devicePixelRatio": 1
+        },
+        "document": {
+          "clientWidth": 375,
+          "scrollWidth": 375,
+          "clientHeight": 812,
+          "scrollHeight": 812
+        },
+        "horizontalOverflow": 0,
+        "focusableCount": 18,
+        "focusables": [
+          {
+            "tag": "a",
+            "text": "C2K",
+            "href": "/",
+            "id": null,
+            "class": "logo"
+          },
+          {
+            "tag": "button",
+            "text": "Toggle theme",
+            "href": null,
+            "id": "theme-toggle",
+            "class": "theme-toggle"
+          },
+          {
+            "tag": "button",
+            "text": "Home",
+            "href": null,
+            "id": null,
+            "class": "bottom-tab"
+          },
+          {
+            "tag": "button",
+            "text": "Projects",
+            "href": null,
+            "id": null,
+            "class": "bottom-tab"
+          },
+          {
+            "tag": "a",
+            "text": "–––––––––––––––",
+            "href": "https://maia-analytics.com",
+            "id": null,
+            "class": "text-scramble"
+          },
+          {
+            "tag": "a",
+            "text": "––––––",
+            "href": "https://github.com/c2keesey",
+            "id": null,
+            "class": "text-scramble"
+          },
+          {
+            "tag": "a",
+            "text": "–",
+            "href": "https://x.com/c2keesey",
+            "id": null,
+            "class": "text-scramble"
+          },
+          {
+            "tag": "a",
+            "text": "––––––––",
+            "href": "https://linkedin.com/in/c2keesey",
+            "id": null,
+            "class": "text-scramble"
+          },
+          {
+            "tag": "a",
+            "text": "maia-analytics.com ↗",
+            "href": "https://maia-analytics.com",
+            "id": null,
+            "class": "maia-link"
+          },
+          {
+            "tag": "a",
+            "text": "maia-analytics.com ↗",
+            "href": "https://maia-analytics.com",
+            "id": null,
+            "class": "mn-link"
+          },
+          {
+            "tag": "a",
+            "text": "c2k.page ↗",
+            "href": "https://c2k.page",
+            "id": null,
+            "class": "mn-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/dotfiles ↗",
+            "href": "https://github.com/c2keesey/dotfiles",
+            "id": null,
+            "class": "mn-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/secret-gate ↗",
+            "href": "https://github.com/c2keesey/secret-gate",
+            "id": null,
+            "class": "mn-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/tech-digest ↗",
+            "href": "https://github.com/c2keesey/tech-digest",
+            "id": null,
+            "class": "mn-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/propeller-scrape ↗",
+            "href": "https://github.com/c2keesey/propeller-scrape",
+            "id": null,
+            "class": "mn-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/song-sorter ↗",
+            "href": "https://github.com/c2keesey/spotify-song-sorter",
+            "id": null,
+            "class": "mn-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/all-look-different ↗",
+            "href": "https://github.com/c2keesey/All-look-different",
+            "id": null,
+            "class": "mn-link"
+          },
+          {
+            "tag": "a",
+            "text": "github/parley ↗",
+            "href": "https://github.com/c2keesey/parley",
+            "id": null,
+            "class": "mn-link"
+          }
+        ],
+        "projectSemantics": [
+          {
+            "project": "maia",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "c2k",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "flux",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "corne",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "spotify",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "dashboard",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "dotfiles",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "secretgate",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "techdigest",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "lightning",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "propeller",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "djtrainer",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "songsorter",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "momentplayer",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "alldifferent",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "vibe",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "polymarket",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "calsync",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          },
+          {
+            "project": "parley",
+            "tag": "div",
+            "role": null,
+            "tabindex": null,
+            "ariaExpanded": null
+          }
+        ],
+        "animationCount": 84,
+        "runningAnimationCount": 65
+      },
+      "runningAnimations": [
+        {
+          "target": {},
+          "currentTime": 1791.6379998661578,
+          "duration": 1800,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1791.6379998661578,
+          "duration": 1800,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1791.6379998661578,
+          "duration": 1800,
+          "iterations": null
+        },
+        {
+          "target": "systems-dot",
+          "currentTime": 1808.2359999999999,
+          "duration": 3000,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": {},
+          "currentTime": 1808.2359999999999,
+          "duration": 3500,
+          "iterations": null
+        },
+        {
+          "target": "mn-dot",
+          "currentTime": 1808.4450000189245,
+          "duration": 2000,
+          "iterations": null
+        },
+        {
+          "target": "mn-explore-arrow",
+          "currentTime": 1808.4450000189245,
+          "duration": 1500,
+          "iterations": null
+        },
+        {
+          "target": "mn-dot",
+          "currentTime": 1808.4450000189245,
+          "duration": 2500,
+          "iterations": null
+        },
+        {
+          "target": "mn-explore-arrow",
+          "currentTime": 1808.4450000189245,
+          "duration": 1500,
+          "iterations": null
+        }
+      ],
+      "diagnostics": {
+        "console": [
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          },
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          },
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+          },
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 403 ()"
+          }
+        ],
+        "pageErrors": [],
+        "requestFailures": [],
+        "httpFailures": [
+          {
+            "status": 404,
+            "url": "http://127.0.0.1:4518/flux-gauntlet.gif"
+          },
+          {
+            "status": 404,
+            "url": "http://127.0.0.1:4518/corne.gif"
+          },
+          {
+            "status": 404,
+            "url": "http://127.0.0.1:4518/lightning-cloud.gif"
+          },
+          {
+            "status": 403,
+            "url": "https://api.github.com/repos/c2keesey/urob-zmk-config-corne"
+          }
+        ]
+      }
+    }
+  }
+}
