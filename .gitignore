@@ -1,5 +1,10 @@
 # build output
 dist/
+.next/
+test-results/
+playwright-report/
+coverage/
+tsconfig.tsbuildinfo
 # generated types
 .astro/
 
