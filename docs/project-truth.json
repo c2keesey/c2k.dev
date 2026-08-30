@@ -1,0 +1,535 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-08-30",
+  "purpose": "Architecture-neutral canonical project facts for the c2k.dev migration.",
+  "scope": {
+    "existingProjects": 21,
+    "migrationTargets": 22,
+    "desktopExisting": 21,
+    "mobileExisting": 19,
+    "mobileOmissions": [
+      "panecmd",
+      "playlistai"
+    ],
+    "existingBespokeShowcases": [
+      "maia",
+      "c2k",
+      "dotfiles",
+      "spotify",
+      "flux",
+      "corne",
+      "lightning"
+    ],
+    "additionalTarget": "agent-console",
+    "nonProjectSourceArtifact": "morning-digest is present only as unreachable hidden source content; it is not one of the 21 project nodes and is not included as a migration target."
+  },
+  "statusModel": {
+    "rule": "Treat lifecycle and operational health as separate fields. Do not infer health from editorial labels.",
+    "lifecycleValues": [
+      "live-public",
+      "active-private",
+      "maintained",
+      "prototype",
+      "historical",
+      "completed-artifact",
+      "research-monitoring"
+    ],
+    "confidenceValues": [
+      "high",
+      "medium",
+      "low"
+    ]
+  },
+  "globalFindings": [
+    {
+      "severity": "P0",
+      "finding": "Every desktop and mobile /projects load requests /flux-gauntlet.gif, /corne.gif, and /lightning-cloud.gif; all three return 404 and create three console errors.",
+      "migrationAction": "Source accurate, creator-owned assets or remove the requests. Do not ship broken fallbacks."
+    },
+    {
+      "severity": "P0",
+      "finding": "Agent Console is a new 22nd target, not a replacement for any existing project.",
+      "migrationAction": "Add it to desktop, mobile, and rich-page inventories without publishing a private service URL, credentials, session details, machine identifiers, or real operational state."
+    },
+    {
+      "severity": "P1",
+      "finding": "Pane Skill and Playlist AI exist on desktop but are absent from mobile.",
+      "migrationAction": "Preserve both and add them to the migrated mobile inventory."
+    },
+    {
+      "severity": "P1",
+      "finding": "ONLINE, DEPLOYING, and STANDBY are static editorial values but the dashboard presents them as live system health.",
+      "migrationAction": "Use canonical lifecycle labels below; show health only when backed by a monitored probe and timestamp."
+    },
+    {
+      "severity": "P1",
+      "finding": "Only seven of the 21 existing projects currently have bespoke state-3 showcases, despite copy claiming every project has one.",
+      "migrationAction": "Remove the universal claim until all migrated rich pages exist."
+    }
+  ],
+  "projects": [
+    {
+      "id": "maia",
+      "name": "MAIA",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": true },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Geospatial research engine",
+        "summary": "A geospatial research engine connecting structured records, imagery, and the live web so investigations of the physical world can move at the speed of ideas.",
+        "status": { "lifecycle": "active-private", "confidence": "high", "basis": "Active private product repository and public company site." },
+        "tech": ["React 19", "TypeScript", "Vite", "Bun", "Python 3.12", "FastAPI", "PostgreSQL/PostGIS", "Mapbox", "Pydantic AI", "Google Cloud Run"],
+        "links": [
+          { "label": "MAIA", "url": "https://www.maia-analytics.com/", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["MAIA-Analytics/MAIA private repository, default branch dev", "https://www.maia-analytics.com/"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Ask about a property and get a map back.", "correction": "The current product positioning is broader geospatial research across structured records, imagery, and the live web." },
+        { "severity": "P1", "currentClaim": "Founder badge/title.", "correction": "Founder status was not verified; the public portfolio identifies the owner as CTO/context engineer. Avoid a title until explicitly confirmed." },
+        { "severity": "P2", "currentClaim": "DuckDB is shown as a core technology in showcase copy.", "correction": "DuckDB is a development dependency, not an evidenced core runtime component." }
+      ],
+      "storyBeats": ["Start with a physical-world question, not a product dashboard.", "Show agents joining structured records, imagery, and live-web evidence.", "Resolve the evidence into an inspectable geospatial result.", "Close on the engineering challenge: trustworthy orchestration across heterogeneous sources."],
+      "imagery": { "recommend": ["Existing MAIA logo asset", "Official marketing imagery", "Redacted product capture with synthetic or public-safe data"], "avoid": ["Customer records", "Private property data", "Unredacted internal product state"] }
+    },
+    {
+      "id": "c2k",
+      "name": "c2k.page",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": true },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Public observability layer",
+        "summary": "A self-hosted Astro site that presents projects and workflow as an interactive system monitor, served from an OptiPlex through a Cloudflare Tunnel.",
+        "status": { "lifecycle": "live-public", "confidence": "high", "basis": "Public site and public repository are reachable; source matches deployment architecture." },
+        "tech": ["Astro 5", "TypeScript", "Bun", "Canvas", "Node adapter", "Cloudflare Tunnel"],
+        "links": [
+          { "label": "Live site", "url": "https://c2k.page/", "publicSafe": true },
+          { "label": "Source", "url": "https://github.com/c2keesey/c2k.dev", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["Current worktree source", "c2keesey/c2k.dev", "https://c2k.page/"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Every project got a hand-built component.", "correction": "Seven of 21 existing projects have bespoke state-3 showcases; the others are generic network nodes." },
+        { "severity": "P2", "currentClaim": "v3.2", "correction": "No release or package version supports this label; package.json is 0.0.1." }
+      ],
+      "storyBeats": ["Frame the site as a public readout rather than a portfolio template.", "Show the project network and its real relationships.", "Explain self-hosting, tunnel exposure, and private/public boundaries.", "Use the migration itself as the next chapter: richer truth without control-room cosplay."],
+      "imagery": { "recommend": ["Current site screenshots", "Code-native network visualization", "Existing first-party icons and components"], "avoid": ["Private host dashboards", "Tailscale addresses", "Fake live telemetry"] }
+    },
+    {
+      "id": "flux",
+      "name": "Flux Gauntlet",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": true },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Cylindrical LED wearable",
+        "summary": "A 300-LED wearable arranged as 16 rings and addressed as a 3D cylinder so procedural effects travel around and along the arm.",
+        "status": { "lifecycle": "completed-artifact", "confidence": "high", "basis": "Local PlatformIO/Arduino source and configuration verify the hardware model and effects." },
+        "tech": ["C++", "PlatformIO", "Arduino", "Heltec ESP32", "FastLED", "U8g2", "WS2812"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/Flux-Gauntlet", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["/Users/c2k/Projects/Flux-Gauntlet", "c2keesey/Flux-Gauntlet"],
+      "conflicts": [
+        { "severity": "P0", "currentClaim": "/flux-gauntlet.gif exists.", "correction": "The asset is absent and returns 404 on every /projects load." },
+        { "severity": "P2", "currentClaim": "Seven effects total.", "correction": "The named seven are representative; source contains more than 15 effects." }
+      ],
+      "storyBeats": ["Unroll a strip, then wrap it into the cylinder coordinate model.", "Map five finger inputs to light behavior.", "Let blast, lightning, fire, Casimir, twinkle, and pew travel through the model.", "End on the physical artifact and the constraints of wearable power and control."],
+      "imagery": { "recommend": ["Creator-owned new photo or loop", "Existing code-native cylinder simulation", "Diagram derived from committed LED geometry"], "avoid": ["The missing GIF request", "Unverified third-party hardware footage"] }
+    },
+    {
+      "id": "corne",
+      "name": "Corne",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": true },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "42-key ZMK split keyboard",
+        "summary": "An actively used 42-key wireless split keyboard with eight ZMK layers, home-row mods, combos, mouse controls, Unicode, and symbol layers.",
+        "status": { "lifecycle": "maintained", "confidence": "high", "basis": "Current local configuration and public repository were updated in 2026." },
+        "tech": ["ZMK", "Devicetree", "C preprocessor", "west", "Nix", "Bluetooth"],
+        "links": [
+          { "label": "Current config", "url": "https://github.com/c2keesey/zmk-config-corne-2", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["/Users/c2k/Projects/Corne/zmk-config", "c2keesey/zmk-config-corne-2"],
+      "conflicts": [
+        { "severity": "P0", "currentClaim": "/corne.gif exists.", "correction": "The asset is absent and returns 404 on every /projects load." },
+        { "severity": "P1", "currentClaim": "QMK, C, KiCad with seven layers.", "correction": "The current config is ZMK/Devicetree and has eight layers: base, nav, fn, num, sys, mouse, uc, and sym." },
+        { "severity": "P1", "currentClaim": "The older urob-zmk-config-corne repository is canonical.", "correction": "The active local remote is c2keesey/zmk-config-corne-2." }
+      ],
+      "storyBeats": ["Introduce the 42-key constraint.", "Animate a key press resolving through layers and combos.", "Show the actual eight-layer map and home-row mods.", "Close with daily-driver iteration rather than a finished museum piece."],
+      "imagery": { "recommend": ["Repository-owned draw/keymap.png", "Repository-owned draw/base.svg", "Creator-owned keyboard photo"], "avoid": ["The missing GIF request", "QMK or KiCad visuals that imply the wrong firmware stack"] }
+    },
+    {
+      "id": "spotify",
+      "name": "Spotify Macro",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": true },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Offline-first music automation suite",
+        "summary": "A private automation suite that caches library state locally, sorts and reconciles Spotify organization, and combines metadata with learned audio embeddings for selected classification work.",
+        "status": { "lifecycle": "active-private", "confidence": "high", "basis": "Active private repository, current launchd jobs, and benchmark documentation." },
+        "tech": ["Python", "Spotipy", "Spotify Web API", "scikit-learn", "Essentia", "TensorFlow", "Discogs-EffNet", "launchd", "uv"],
+        "links": []
+      },
+      "truthSources": ["/Users/c2k/repos/spotify-macro", "c2keesey/spotify-macro private repository"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Public GitHub link.", "correction": "The repository is private; the current public link returns 404 and must be removed." },
+        { "severity": "P1", "currentClaim": "Audio improved folder accuracy from .800 to .878.", "correction": "Precisely: metadata baseline folder@1 was .800; the expanded verified metadata/audio hybrid reached .878 on the audio-covered benchmark. It is not a universal accuracy claim." },
+        { "severity": "P2", "currentClaim": "The whole system predates LLM assistance in 2024.", "correction": "Substantial 2026 work makes that framing stale." }
+      ],
+      "storyBeats": ["Start with a library that must be understood without repeated API calls.", "Show the local cache and provenance layer.", "Compare metadata-only and audio-covered benchmark paths with the scoped .800 to .878 result.", "End on safe desired-state reconciliation back to Spotify."],
+      "imagery": { "recommend": ["Abstract library-flow diagram", "Anonymized taxonomy", "First-party benchmark plot derived from repository results"], "avoid": ["Album artwork", "Playlist names or IDs", "Private repository links"] }
+    },
+    {
+      "id": "dashboard",
+      "name": "OptiPlex Dashboard",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Mobile server-monitor prototype",
+        "summary": "A private prototype with an Express/systeminformation backend and an Expo React Native client currently driven by mock data.",
+        "status": { "lifecycle": "prototype", "confidence": "high", "basis": "Private repository source does not implement the production claims shown on the site." },
+        "tech": ["Express", "TypeScript", "systeminformation", "Expo 54", "React Native 0.81", "React 19", "React Navigation", "Reanimated"],
+        "links": []
+      },
+      "truthSources": ["c2keesey/c2k-dashboard private repository"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Next.js, shadcn/ui, SQLite, installable PWA.", "correction": "The source is Express plus Expo/React Native; those claimed technologies are absent." },
+        { "severity": "P1", "currentClaim": "CPU, memory, disk, network, cron, and Claude sessions are all polled live.", "correction": "The checked repository client uses mock data; live sparklines, cron state, and agent-session monitoring are not implemented." }
+      ],
+      "storyBeats": ["Present the project honestly as a prototype exploration.", "Show the intended mobile information hierarchy.", "Separate implemented host metrics from mocked client state.", "Frame live service/session monitoring as future direction, not current truth."],
+      "imagery": { "recommend": ["Clearly labeled prototype mock screen", "Code-derived architecture diagram", "Synthetic telemetry"], "avoid": ["Private live host data", "Tailscale endpoints", "Claims of production monitoring"] }
+    },
+    {
+      "id": "dotfiles",
+      "name": "Dotfiles",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": true },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Versioned development environment",
+        "summary": "A private, actively maintained source of truth for shell, terminal, tmux, keybindings, agent configuration, skills, hooks, and symlink-based machine setup.",
+        "status": { "lifecycle": "active-private", "confidence": "high", "basis": "Private repository is actively updated and is the source of the current environment." },
+        "tech": ["Bash", "Zsh", "tmux", "Ghostty", "Claude Code", "symlinks"],
+        "links": []
+      },
+      "truthSources": ["/Users/c2k/repos/dotfiles", "c2keesey/dotfiles private repository"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Public GitHub link.", "correction": "The repository is private; the public link returns 404 and must be removed." },
+        { "severity": "P1", "currentClaim": "The Claude statusline is a 221-line, dependency-free Bash script.", "correction": "The current script is 648 lines and depends on jq." },
+        { "severity": "P1", "currentClaim": "Nine displayed Claude skills represent the current dotfiles set.", "correction": "Several displayed skills have moved or are absent; only sync, make-tests, mods-command, and raycast-chrome-tab were verified in the current dotfiles skill set." }
+      ],
+      "storyBeats": ["Show one repository becoming a repeatable machine environment.", "Trace source files through the symlink manifest.", "Use the real statusline and agent hooks as living examples.", "Explain how capabilities graduate into standalone plugins without pretending old inventories remain current."],
+      "imagery": { "recommend": ["Sanitized terminal capture", "Symlink topology diagram", "Current statusline with fake repository data"], "avoid": ["Home paths", "Machine names", "Tokens", "Private GitHub links"] }
+    },
+    {
+      "id": "secretgate",
+      "name": "Secret Gate",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Cooperative human approval workflow",
+        "summary": "A Claude Code plugin experiment that routes declared requests for 1Password secrets or privileged commands to Telegram for explicit human approval.",
+        "status": { "lifecycle": "prototype", "confidence": "high", "basis": "Public repository and its own research document describe the workflow and bypass limitations." },
+        "tech": ["Python", "requests", "1Password CLI", "Telegram Bot API", "Claude Code hooks", "shell"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/secret-gate", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["c2keesey/secret-gate README and RESEARCH"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Nothing runs without an answer.", "correction": "The hook is a cooperative approval aid, not a security boundary; repository research documents bypasses through indirect execution and encoded access." }
+      ],
+      "storyBeats": ["Show an agent declaring intent to access a privileged capability.", "Route a redacted request to a human decision.", "Return the scoped decision to the tool flow.", "End with the honest boundary: helpful friction, not sandbox-grade enforcement."],
+      "imagery": { "recommend": ["Synthetic request/approve/deny sequence", "Threat-boundary diagram", "Fake secret names"], "avoid": ["Real secrets", "Chat IDs", "Phone screenshots with personal metadata", "Security-boundary language"] }
+    },
+    {
+      "id": "techdigest",
+      "name": "Tech Digest",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Personal release-intelligence pipeline",
+        "summary": "An active Python automation that detects releases and changelog changes across a tool stack, asks Claude CLI for concise synthesis, and delivers structured Telegram digests; a separate bot can operate a headless Claude session and commit changes.",
+        "status": { "lifecycle": "maintained", "confidence": "high", "basis": "Public source verifies scrapers, state tracking, summarization, delivery, scheduling, and bot control." },
+        "tech": ["Python", "requests", "BeautifulSoup", "Claude CLI", "Telegram Bot API", "GitHub API", "cron", "systemd"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/tech-digest", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["c2keesey/tech-digest"],
+      "conflicts": [],
+      "storyBeats": ["Open on noisy release streams across many tools.", "Show version and content-hash change detection.", "Condense only the changed material with Claude.", "Deliver a compact digest, then distinguish the separate remote-control bot."],
+      "imagery": { "recommend": ["Deterministic fake digest", "Source-to-change-to-summary pipeline", "Generic Telegram-style message without branding dependence"], "avoid": ["Real chat IDs", "Bot tokens", "Private conversation history"] }
+    },
+    {
+      "id": "lightning",
+      "name": "Lightning Cloud",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": true },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Procedural lightning lamp",
+        "summary": "A completed cloud lamp whose Arduino/FastLED code generates branching bolts at runtime across four LED strips totaling 221 pixels, then flashes and fades them without animation files.",
+        "status": { "lifecycle": "completed-artifact", "confidence": "high", "basis": "Public source consists of the original Arduino implementation and exact strip geometry." },
+        "tech": ["C++", "Arduino", "FastLED", "WS2812"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/LightningCloud", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["c2keesey/LightningCloud"],
+      "conflicts": [
+        { "severity": "P0", "currentClaim": "/lightning-cloud.gif exists.", "correction": "The asset is absent and returns 404 on every /projects load." },
+        { "severity": "P1", "currentClaim": "ESP32.", "correction": "The repository verifies generic Arduino/FastLED code but does not identify the board as ESP32." }
+      ],
+      "storyBeats": ["Lay out the four strips and their 95/27/61/38-pixel geometry.", "Generate a primary bolt and branching forks.", "Layer the four-flash and fade sequence.", "Reveal the physical cloud as a deterministic system that still feels organic."],
+      "imagery": { "recommend": ["Existing code-native lightning canvas", "Creator-owned new lamp video", "Diagram derived from repository strip lengths"], "avoid": ["The missing GIF request", "Unverified ESP32 imagery"] }
+    },
+    {
+      "id": "propeller",
+      "name": "Propeller Scrape",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Concert-reward availability monitor",
+        "summary": "A scheduled Python scraper that watches Propeller reward listings and show pages in Los Angeles, San Francisco, and Boulder, deduplicates findings, and sends Telegram and macOS notifications when availability appears.",
+        "status": { "lifecycle": "maintained", "confidence": "medium", "basis": "Public source and recent repository activity verify implementation; current scheduler health was not probed." },
+        "tech": ["Python", "requests", "BeautifulSoup", "Telegram Bot API", "macOS notifications", "JSON state", "cron"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/propeller-scrape", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["/Users/c2k/repos/propeller-scrape", "c2keesey/propeller-scrape"],
+      "conflicts": [
+        { "severity": "P2", "currentClaim": "ONLINE.", "correction": "Implementation and scheduling are verified, but live job health was not; use maintained rather than a health claim." }
+      ],
+      "storyBeats": ["Start with geographically scattered reward listings.", "Visit show detail pages to distinguish presence from availability.", "Use persisted state to suppress duplicate alerts.", "End with a single useful notification instead of a monitoring dashboard."],
+      "imagery": { "recommend": ["Synthetic listing-to-alert flow", "Anonymized notification", "Simple three-city map"], "avoid": ["Propeller logos or event art without permission", "Real notification history"] }
+    },
+    {
+      "id": "panecmd",
+      "name": "Pane Skill",
+      "currentSurfaces": { "desktop": true, "mobile": false, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Managed tmux side-pane viewer",
+        "summary": "A shell-based agent skill that routes files, diffs, logs, command output, and rendered Markdown into one managed tmux side pane using the best viewer for each content type.",
+        "status": { "lifecycle": "maintained", "confidence": "medium", "basis": "Public standalone repository verifies the capability; its current maintained incarnation also exists in the MAIA Deck plugin ecosystem." },
+        "tech": ["Bash", "tmux", "Helix", "delta", "less", "Claude Code"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/claude-pane-skill", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["c2keesey/claude-pane-skill", "Current MAIA Deck pane skill"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Desktop-only inventory.", "correction": "This is one of the 21 existing projects and must be restored to the mobile migration inventory." },
+        { "severity": "P2", "currentClaim": "Current dotfiles skill.", "correction": "It is no longer verified in the current dotfiles skill set; treat the standalone repo and plugin incarnation as the sources." }
+      ],
+      "storyBeats": ["Show chat becoming unreadable when large artifacts are pasted inline.", "Route a file, diff, command log, and Markdown document through one pane.", "Switch viewers without multiplying panes.", "Close on keeping the agent conversation focused on decisions."],
+      "imagery": { "recommend": ["Sanitized tmux capture with fixture content", "Animated viewer-routing diagram", "Repository-owned examples"], "avoid": ["Private diffs", "Home paths", "Command output containing tokens"] }
+    },
+    {
+      "id": "playlistai",
+      "name": "Playlist AI",
+      "currentSurfaces": { "desktop": true, "mobile": false, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Historical playlist-classification experiment",
+        "summary": "A 2024 Jupyter experiment comparing random forest, gradient boosting, SVM, and neural-network classifiers on personal Spotify playlists using the legacy audio-feature API.",
+        "status": { "lifecycle": "historical", "confidence": "high", "basis": "Public repository and notebooks document the experiment; no recent product activity is claimed." },
+        "tech": ["Python", "Jupyter", "scikit-learn", "Spotipy", "Spotify Web API", "PyTorch"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/spotify-playlist-ai", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["c2keesey/spotify-playlist-ai"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Desktop-only inventory.", "correction": "This is one of the 21 existing projects and must be restored to the mobile migration inventory." },
+        { "severity": "P2", "currentClaim": "Current ML sorter.", "correction": "Frame it as the historical first attempt that preceded Spotify Macro." }
+      ],
+      "storyBeats": ["Introduce the now-legacy Spotify audio-feature vector.", "Compare four model families on the same personal dataset.", "Show what the notebooks learned and where they failed.", "Bridge to Spotify Macro as the later, provenance-aware system."],
+      "imagery": { "recommend": ["Anonymized notebook charts", "Model-comparison plot", "Synthetic feature-space view"], "avoid": ["Playlist names", "Track IDs", "Album art"] }
+    },
+    {
+      "id": "djtrainer",
+      "name": "DJ Trainer",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Interactive DJ-controller learning prototype",
+        "summary": "A private vanilla-web prototype that overlays manually authored hotspots on a DDJ-FLX4 image so learners can click a control and read what it does; separate scripts explore SAM/CoreML-assisted authoring but are not the app runtime.",
+        "status": { "lifecycle": "prototype", "confidence": "high", "basis": "Private source and project instructions make manual CSS hotspot positions authoritative." },
+        "tech": ["HTML", "CSS", "JavaScript", "live-server", "Python experiments", "SAM experiments", "CoreML experiments"],
+        "links": []
+      },
+      "truthSources": ["/Users/c2k/repos/dj-trainer", "c2keesey/dj-trainer private repository"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Vite app with an on-device SAM/CoreML pipeline that finds controls.", "correction": "The runtime is vanilla HTML/CSS/JS with manually positioned hotspots; SAM/CoreML scripts are separate experiments." },
+        { "severity": "P1", "currentClaim": "Current controller photo is safe portfolio media.", "correction": "Project notes trace the image to third-party publisher/manufacturer media; licensing is not established." }
+      ],
+      "storyBeats": ["Begin with the intimidating density of an unfamiliar control surface.", "Turn each control into a discoverable hotspot and short explanation.", "Show the manual authoring tool and the separate ML-assisted experiments honestly.", "Close on learning by spatial interaction rather than reading a manual front to back."],
+      "imagery": { "recommend": ["Creator-owned controller photo", "Original abstract SVG control surface", "Licensed manufacturer media only with permission"], "avoid": ["The current third-party image unless rights are cleared", "Claims of on-device ML runtime"] }
+    },
+    {
+      "id": "songsorter",
+      "name": "Song Sorter",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Keyboard-first Spotify triage",
+        "summary": "A React app for reviewing the current Spotify track, ranking likely destination playlists by genre similarity, adding it to a playlist, and supporting undo and history.",
+        "status": { "lifecycle": "prototype", "confidence": "high", "basis": "Public source implements triage and playlist recommendation; pairwise ranking is absent." },
+        "tech": ["React 18", "TypeScript", "Vite", "Zustand", "Radix UI", "Tailwind CSS", "Spotify Web Playback SDK", "Spotify Web API"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/spotify-song-sorter", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["c2keesey/spotify-song-sorter"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "Pairwise library ranker that produces an ordered list.", "correction": "No pairwise chooser exists; the app triages the current track into genre-similar destination playlists." }
+      ],
+      "storyBeats": ["Open on the current track and a keyboard-driven decision loop.", "Rank destination playlists by explainable genre similarity.", "Apply the choice through Spotify and preserve undo/history.", "Contrast quick human triage with fully automated sorting."],
+      "imagery": { "recommend": ["Synthetic tracks and playlists", "First-party UI rendered with placeholder art", "Genre-similarity explanation graphic"], "avoid": ["Copyrighted album covers", "Personal playlist names and IDs"] }
+    },
+    {
+      "id": "momentplayer",
+      "name": "Moment Player",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Contextual podcast-companion prototype",
+        "summary": "An uncommitted SwiftUI/Python prototype exploring a podcast flow where pausing captures transcript context for a question before playback resumes.",
+        "status": { "lifecycle": "prototype", "confidence": "low", "basis": "The local repository has no remote and the implementation exists only as untracked working files after a commit removed it." },
+        "tech": ["Swift", "SwiftUI", "Python", "FastAPI", "LLM prototype"],
+        "links": []
+      },
+      "truthSources": ["/Users/c2k/Projects/moment-player local repository and SPEC"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "A standing iOS podcast product.", "correction": "The only implementation inspected is uncommitted local prototype work with no configured remote; avoid shipped-product language." }
+      ],
+      "storyBeats": ["Freeze playback at the exact confusing moment.", "Capture only the nearby transcript context.", "Answer the listener's question without losing their place.", "Resume playback and frame the whole piece as an exploratory prototype."],
+      "imagery": { "recommend": ["Synthetic waveform", "Fabricated transcript", "Original SwiftUI mock with fake episode data"], "avoid": ["Copyrighted podcast audio", "Podcast artwork", "Claims of public availability"] }
+    },
+    {
+      "id": "alldifferent",
+      "name": "All Look Different",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Historical visual-assumption quiz",
+        "summary": "A live historical browser game that asks players to guess nationality from a face, with retro styling and a Cloudflare Worker-backed leaderboard; it requires explicit ethical framing around bias and the invalidity of inferring identity from appearance.",
+        "status": { "lifecycle": "live-public", "confidence": "high", "basis": "Public repository, deployed GitHub Pages site, and Worker source are reachable." },
+        "tech": ["JavaScript", "HTML", "CSS", "Cloudflare Workers", "GitHub Pages"],
+        "links": [
+          { "label": "Live experiment", "url": "https://c2keesey.github.io/All-look-different/", "publicSafe": true },
+          { "label": "Source", "url": "https://github.com/c2keesey/All-look-different", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["c2keesey/All-look-different", "GitHub Pages deployment"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "A straightforward face-quiz game.", "correction": "The rich page must make the bias/assumption critique explicit and must not endorse nationality inference from appearance." },
+        { "severity": "P1", "currentClaim": "Existing face imagery is safe to reuse.", "correction": "Licensing and consent were not established; do not migrate the image corpus by default." }
+      ],
+      "storyBeats": ["State the ethical premise before interaction: appearance does not reveal nationality.", "Use the game to expose player confidence and error, not to score physiognomic skill.", "Explain the leaderboard architecture briefly.", "Conclude with what the experiment reveals about assumptions and why its original framing deserves critique."],
+      "imagery": { "recommend": ["Synthetic, licensed, or explicitly consented portraits", "Abstract silhouettes", "Bias/error visualization"], "avoid": ["Scraping new face datasets", "Unverified existing face licenses", "Celebratory nationality-classification framing"] }
+    },
+    {
+      "id": "vibe",
+      "name": "Vibe Framework",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "In-app coding-agent prototype",
+        "summary": "A private Astro template that embeds a streaming chat surface, delegates changes to a Claude Code or Pi harness, and lets Vite hot reload reveal the result in place.",
+        "status": { "lifecycle": "active-private", "confidence": "high", "basis": "Private source verifies the Astro, SSE, agent-harness, and hot-reload path; no public deployment is claimed." },
+        "tech": ["Astro 5", "TypeScript", "Bun", "SSE", "Claude Code", "Pi", "Vite HMR"],
+        "links": []
+      },
+      "truthSources": ["/Users/c2k/repos/vibe-framework", "c2keesey/vibe-framework private repository"],
+      "conflicts": [
+        { "severity": "P2", "currentClaim": "DEPLOYING as operational status.", "correction": "Use active private prototype; the static label does not establish deploy or health state." }
+      ],
+      "storyBeats": ["Put the coding agent inside the surface it is changing.", "Stream the request and agent response without pretending it is public infrastructure.", "Let Vite HMR reveal the change immediately.", "End on the feedback loop between intent, code, and rendered result."],
+      "imagery": { "recommend": ["Deterministic mock conversation", "Local demo using fixture paths", "Code-to-HMR sequence"], "avoid": ["Private prompts", "Local paths", "Tailnet endpoints", "Agent credentials"] }
+    },
+    {
+      "id": "polymarket",
+      "name": "Polymarket Bot",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Prediction-market research harness",
+        "summary": "A private research, backtest, and zero-stakes paper-monitoring system using public read-only Polymarket data; it has no wallet and has not deployed real capital.",
+        "status": { "lifecycle": "research-monitoring", "confidence": "high", "basis": "Latest repository readiness documents supersede earlier verdicts and require a forward paper gate before capital." },
+        "tech": ["Python", "pandas", "httpx", "PyArrow", "public Polymarket data"],
+        "links": []
+      },
+      "truthSources": ["/Users/c2k/repos/polymarket-bot", "Latest CAPITAL_READINESS and canonical research documents"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "A mid-range underdog strategy survived replication.", "correction": "One scoped mid-underdog signal survived historical tests, but current documents require forward paper monitoring and explicitly forbid real capital deployment." }
+      ],
+      "storyBeats": ["Begin with multiple plausible behavioral hypotheses.", "Show most failing under replication and cost sensitivity.", "Isolate the surviving scoped signal without promoting it as an investable strategy.", "Close on the zero-stakes forward gate and disciplined refusal to deploy capital."],
+      "imagery": { "recommend": ["Repository-derived calibration plots", "Clearly labeled backtest charts", "Public-data flow diagram"], "avoid": ["Profit claims", "Live account balances", "Wallet data", "Financial-advice framing"] }
+    },
+    {
+      "id": "calsync",
+      "name": "Cal Sync",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Apple Note and Google Calendar sync",
+        "summary": "A private two-way personal automation that turns plans in a shared Apple Note into Google Calendar events and syncs edits back, using persisted state and event-level private metadata for identity.",
+        "status": { "lifecycle": "active-private", "confidence": "medium", "basis": "Private source verifies the sync and launchd setup; current runtime health was not probed." },
+        "tech": ["Python", "AppleScript", "Google Calendar API", "launchd", "JSON state"],
+        "links": []
+      },
+      "truthSources": ["/Users/c2k/repos/helen-cal-sync", "c2keesey/helen-cal-sync private repository"],
+      "conflicts": [
+        { "severity": "P1", "currentClaim": "The calendar is identified by a marker instead of its name.", "correction": "The calendar ID is persisted so renames are safe; a private extended-property marker identifies managed events." },
+        { "severity": "P2", "currentClaim": "ONLINE.", "correction": "The automation is implemented and scheduled, but a live health probe was not performed." }
+      ],
+      "storyBeats": ["Start with the real behavior: plans are written in a shared note.", "Parse the note into managed calendar intent.", "Use persisted IDs and private event metadata to reconcile both directions safely.", "Show edits returning to the note without exposing the actual household schedule."],
+      "imagery": { "recommend": ["Synthetic note/calendar pair", "Two-way reconciliation diagram", "Fabricated dates and event names"], "avoid": ["Real family schedules", "Calendar IDs", "OAuth state"] }
+    },
+    {
+      "id": "parley",
+      "name": "Parley",
+      "currentSurfaces": { "desktop": true, "mobile": true, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Two-way voice for terminal coding agents",
+        "summary": "An active macOS open-source voice layer for Claude Code and Codex that speaks agent replies, supports local wake-phrase and dictation flows, and serializes all sessions through one global audio queue.",
+        "status": { "lifecycle": "maintained", "confidence": "high", "basis": "Public v0.5.4 repository and base checkout verify the current voice, queue, provider, and tmux architecture." },
+        "tech": ["Python", "Claude Code", "Codex", "OpenAI", "ElevenLabs", "macOS speech", "whisper.cpp", "tmux", "file spool", "flock"],
+        "links": [
+          { "label": "Source", "url": "https://github.com/c2keesey/parley", "publicSafe": true }
+        ]
+      },
+      "truthSources": ["/Users/c2k/repos/parley base checkout only", "c2keesey/parley v0.5.4"],
+      "conflicts": [
+        { "severity": "P2", "currentClaim": "General cross-platform voice loop.", "correction": "The current project is macOS-only." }
+      ],
+      "storyBeats": ["Let a long-running agent narrate only useful progress.", "Capture a local wake phrase and explicit dictation/send loop.", "Show several terminal sessions converging on one serialized audio queue.", "Close with local trigger privacy and provider fallback choices."],
+      "imagery": { "recommend": ["Repository-owned architecture visuals", "Synthetic waveform and queue animation", "Sanitized tmux demo"], "avoid": ["Captured private speech", "Conversation transcripts", "Provider keys"] }
+    },
+    {
+      "id": "agent-console",
+      "name": "Agent Console",
+      "currentSurfaces": { "desktop": false, "mobile": false, "bespoke": false },
+      "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
+      "canonical": {
+        "tagline": "Pocket control room for agent work",
+        "summary": "A private mobile-first PWA for conversing with a resident Pi agent, inspecting machine and automation status, coordinating isolated workers, and following work from human intent through PR, CI, and exact-SHA deployment.",
+        "status": { "lifecycle": "active-private", "confidence": "high", "basis": "Current private GitHub default branch and c2-7rayg define the product and its public-safe portfolio treatment." },
+        "tech": ["Node.js", "React 19", "TypeScript 6", "Vite 8", "Tailwind CSS 4", "shadcn", "PWA", "Pi RPC", "SSE", "systemd"],
+        "links": []
+      },
+      "truthSources": ["c2-7rayg", "/Users/c2k/repos/agent-console", "c2keesey/agent-console private repository metadata and current README"],
+      "conflicts": [
+        { "severity": "P0", "currentClaim": "Not present in the current 21-project site inventory.", "correction": "Add it as the 22nd target without replacing any existing project." },
+        { "severity": "P0", "currentClaim": "A live product link or real operational screenshot would demonstrate it.", "correction": "Never expose or link the private service. Do not publish tokens, history, paths, machine identifiers, tailnet details, session IDs, or real operational state." },
+        { "severity": "P2", "currentClaim": "Local checkout alone is current truth.", "correction": "The local checkout is stale relative to the private GitHub default branch; use the current remote README/metadata for product facts." }
+      ],
+      "storyBeats": ["Human Conductor captures intent in a pocket-sized surface.", "Automation Conductor turns intent into bounded work and checks resource admission.", "An isolated worker and worktree produce a PR while streaming redacted progress.", "CI establishes a candidate and exact-SHA deployment closes the loop.", "Keep the public story at the system-design level; never reveal the private service."],
+      "imagery": { "recommend": ["Deterministic redacted mock UI", "Synthetic streaming transcript", "Abstract human-to-automation-to-worker-to-PR/CI/deploy diagram", "Fabricated machine metrics"], "avoid": ["Live service URL", "Private GitHub link", "Real screenshots", "Tokens", "Prompts or history", "Local paths", "Machine or tailnet identifiers", "Session IDs"] }
+    }
+  ]
+}
