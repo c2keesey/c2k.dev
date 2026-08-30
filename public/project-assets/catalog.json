@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-30",
+  "assetBasePath": "/project-assets",
+  "summary": {
+    "targets": 22,
+    "selectedAssets": 4,
+    "customVisualizationRecommendations": 18
+  },
+  "targets": [
+    {
+      "id": "maia",
+      "name": "MAIA",
+      "disposition": "selected_asset",
+      "assets": [
+        {
+          "id": "maia-logo",
+          "kind": "brand_mark",
+          "role": "supporting",
+          "url": "/project-assets/maia/logo.svg",
+          "mimeType": "image/svg+xml",
+          "width": 400,
+          "height": 100,
+          "bytes": 1924,
+          "sha256": "fd824845f922115af67717176179fff96c770f7a41207854b77aa9e95daaf61a",
+          "alt": "White MAIA wordmark and triangular mark",
+          "safetyRef": "maia-logo"
+        }
+      ]
+    },
+    {
+      "id": "c2k",
+      "name": "c2k.dev",
+      "disposition": "selected_asset",
+      "assets": [
+        {
+          "id": "c2k-icon",
+          "kind": "brand_mark",
+          "role": "hero",
+          "url": "/project-assets/c2k/icon.webp",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 11584,
+          "sha256": "c065e98260329698ae0bd9ee1fc61c381511c2c9d642c7b63cd046758b97604d",
+          "alt": "C2K gradient wordmark on a rounded black square",
+          "safetyRef": "c2k-icon"
+        }
+      ]
+    },
+    {
+      "id": "flux",
+      "name": "Flux Gauntlet",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "interactive_system_diagram",
+        "brief": "Render the authored 300-LED cylindrical address model and let the seven named effects travel around its 16 rings. Derive geometry and timing from the public firmware; do not imply a photographed artifact exists."
+      }
+    },
+    {
+      "id": "corne",
+      "name": "Corne",
+      "disposition": "selected_asset",
+      "assets": [
+        {
+          "id": "corne-keymap",
+          "kind": "generated_diagram",
+          "role": "hero",
+          "url": "/project-assets/corne/keymap.webp",
+          "mimeType": "image/webp",
+          "width": 1408,
+          "height": 1269,
+          "bytes": 36576,
+          "sha256": "27e55d8bee6f4b1f27073c79ef09e873fb3b196798c62335390bb0cf3f7e38b2",
+          "alt": "Generated diagram of the current Corne keyboard base layout and symbol combos",
+          "safetyRef": "corne-keymap"
+        }
+      ]
+    },
+    {
+      "id": "spotify",
+      "name": "Spotify Macro",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "aggregate_model_evidence",
+        "brief": "Show the offline classification pipeline and the aggregate accuracy lift from metadata-only to metadata-plus-audio. Never include track names, playlist names, account identifiers, cover art, or listening history."
+      }
+    },
+    {
+      "id": "dashboard",
+      "name": "Optiplex Dashboard",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "telemetry_topology",
+        "brief": "Build a code-derived schematic of telemetry categories, polling cadence, and PWA delivery. Use labeled metric classes without live values, service names, network details, machine names, or session content."
+      }
+    },
+    {
+      "id": "dotfiles",
+      "name": "Dotfiles",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "configuration_dependency_map",
+        "brief": "Map the public-facing shell, editor, tmux, agent-skill, and keyboard layers as abstract modules. Exclude paths, usernames, machine-specific configuration, remotes, secrets, and private plugin names."
+      }
+    },
+    {
+      "id": "secretgate",
+      "name": "Secret Gate",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "approval_state_machine",
+        "brief": "Animate a generic request through pending, phone approval, allow, deny, and timeout states. Use placeholder command categories only; never show real commands, secret names, vaults, chat IDs, tokens, or approval messages."
+      }
+    },
+    {
+      "id": "techdigest",
+      "name": "Tech Digest",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "information_pipeline",
+        "brief": "Trace public release sources through collection, summarization, and delivery using generic cards. Do not reproduce private subscriptions, chats, recipients, bot configuration, or remote-session controls."
+      }
+    },
+    {
+      "id": "lightning",
+      "name": "Lightning Cloud",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "procedural_effect_simulator",
+        "brief": "Recreate the public firmware's branching bolt generation as a clearly labeled simulator, emphasizing runtime forks, flash, and fade rather than presenting it as footage of the physical lamp."
+      }
+    },
+    {
+      "id": "propeller",
+      "name": "Propeller Scrape",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "monitoring_timeline",
+        "brief": "Show a generic polling and change-detection timeline across the three publicly described metro areas. Omit actual offers, event inventory, account state, chat messages, recipient data, and notification endpoints."
+      }
+    },
+    {
+      "id": "panecmd",
+      "name": "Pane Skill",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "routing_diagram",
+        "brief": "Diagram how files, diffs, logs, and command output route to suitable pane viewers. Use neutral placeholder content instead of a terminal screenshot so no paths, repository names, commands, or host details appear."
+      }
+    },
+    {
+      "id": "playlistai",
+      "name": "Playlist AI",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "model_comparison_chart",
+        "brief": "Chart only reproducible aggregate model scores from the public project, with model family labels and methodology. Exclude track metadata, playlist identities, cover art, account data, and fabricated metrics."
+      }
+    },
+    {
+      "id": "djtrainer",
+      "name": "DJ Trainer",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "original_control_taxonomy",
+        "brief": "Create an original, non-product-likeness diagram grouping mixer, deck, transport, and performance controls, then reveal the authored hotspot-learning flow. Do not redistribute or trace the third-party controller photographs."
+      }
+    },
+    {
+      "id": "songsorter",
+      "name": "Song Sorter",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "pairwise_ranking_simulator",
+        "brief": "Visualize pairwise choices converging into an ordered list using abstract, unlabeled records. Avoid real tracks, artists, cover art, Spotify account data, and a UI screenshot that suggests fictional user content is authentic."
+      }
+    },
+    {
+      "id": "momentplayer",
+      "name": "Moment Player",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "concept_sequence",
+        "brief": "Label this explicitly as a concept: pause a neutral waveform, select a transcript moment, add context, answer, resume. The repository is specification-only, so do not fabricate an implemented-app screenshot."
+      }
+    },
+    {
+      "id": "alldifferent",
+      "name": "All Look Different",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "privacy_safe_game_mechanic",
+        "brief": "Explain the quiz loop with abstract portrait silhouettes, country-choice tokens, scoring, and leaderboard flow. Do not publish face imagery until every image's consent and redistribution license are independently verified."
+      }
+    },
+    {
+      "id": "vibe",
+      "name": "Vibe Framework",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "live_reload_sequence",
+        "brief": "Show request, agent edit, filesystem event, Vite refresh, and browser update as an architecture sequence. Avoid screenshots of private prompts, sessions, repositories, paths, network addresses, or Tailscale state."
+      }
+    },
+    {
+      "id": "polymarket",
+      "name": "Polymarket Bot",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "reproducible_research_chart",
+        "brief": "Generate a fresh aggregate chart only from the project's public-data research exports, including sample windows and uncertainty. Do not show wallet data, positions, credentials, local experiment paths, or unsupported performance claims."
+      }
+    },
+    {
+      "id": "calsync",
+      "name": "Cal Sync",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "bidirectional_sync_state_machine",
+        "brief": "Use generic event blocks to explain note parsing, stable calendar identification, diffing, conflict handling, and two-way writes. Never show real notes, events, attendees, calendar IDs, account names, or tokens."
+      }
+    },
+    {
+      "id": "parley",
+      "name": "Parley",
+      "disposition": "custom_visualization",
+      "recommendation": {
+        "kind": "voice_loop_signal_flow",
+        "brief": "Illustrate public README concepts: agent output queue, speech synthesis, wake phrase, transcription, and reply injection. Keep example utterances generic and omit real transcripts, voiceprints, session names, paths, and API credentials."
+      }
+    },
+    {
+      "id": "agentconsole",
+      "name": "Agent Console",
+      "disposition": "selected_asset",
+      "assets": [
+        {
+          "id": "agent-console-icon",
+          "kind": "app_icon",
+          "role": "supporting",
+          "url": "/project-assets/agent-console/icon.webp",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 2532,
+          "sha256": "a9ba16616533cc984203dd6c5a0a2fd98af75ec8f9cded193a5ec26c04cdc7bc",
+          "alt": "Blue ring on a dark navy square, the Agent Console app icon",
+          "safetyRef": "agent-console-icon"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-08-30",
+  "policy": {
+    "audience": "public portfolio",
+    "required": [
+      "Chris-owned, officially published, or otherwise redistribution-safe source",
+      "No secrets, tokens, private service data, user content, local paths, host identifiers, customer data, or proprietary MAIA data",
+      "No fabricated screenshots or fictional content presented as observed product state",
+      "No third-party media without an affirmative redistribution basis"
+    ]
+  },
+  "selected": [
+    {
+      "assetId": "maia-logo",
+      "targetId": "maia",
+      "source": {
+        "kind": "existing_public_portfolio_asset",
+        "repository": "https://github.com/c2keesey/c2k.dev",
+        "revision": "f45d40d62bce0b617655f7007d47a5b5148f2eb7",
+        "repositoryPath": "public/MAIA-logo-white.svg",
+        "sourceSha256": "fd824845f922115af67717176179fff96c770f7a41207854b77aa9e95daaf61a"
+      },
+      "transform": "Byte-for-byte copy; no visual edit.",
+      "rightsBasis": "Official company mark already published in Chris's public portfolio; preserve as a brand mark.",
+      "safetyReview": {
+        "result": "approved",
+        "checks": [
+          "Path-only SVG with no scripts, external references, metadata, or embedded raster content",
+          "Contains no customer, map, property, account, or service data",
+          "Contains no local or infrastructure identifiers"
+        ]
+      }
+    },
+    {
+      "assetId": "c2k-icon",
+      "targetId": "c2k",
+      "source": {
+        "kind": "existing_public_repository_asset",
+        "repository": "https://github.com/c2keesey/c2k.dev",
+        "revision": "f45d40d62bce0b617655f7007d47a5b5148f2eb7",
+        "repositoryPath": "public/icon-512.png",
+        "sourceSha256": "e801cf54eb068854f05c878172d4b6f824ec5e1ba0d3dd70ec3133be1c3cda95"
+      },
+      "transform": "Lossless WebP conversion; 24,037 bytes to 11,584 bytes (51.8% smaller).",
+      "rightsBasis": "Chris-authored c2k identity asset in the public project repository.",
+      "safetyReview": {
+        "result": "approved",
+        "checks": [
+          "Visual inspection shows only the C2K wordmark",
+          "No metadata-dependent content, user content, paths, or infrastructure details",
+          "Lossless pixel comparison is expected by the conversion mode"
+        ]
+      }
+    },
+    {
+      "assetId": "corne-keymap",
+      "targetId": "corne",
+      "source": {
+        "kind": "generated_asset_from_chris_public_repository",
+        "repository": "https://github.com/c2keesey/zmk-config-corne-2",
+        "revision": "f9ac97ba575a91887e494ee6695635d0f62a6f00",
+        "repositoryPath": "draw/keymap.png",
+        "gitBlob": "f05b6e28e69d9e90c6ea0490d820f678415bab99",
+        "sourceSha256": "709aad8ca24720f5d99974974a6c674833e2fc3693a13cab7f1f140fd91a45da"
+      },
+      "transform": "Lossless WebP conversion; 121,709 bytes to 36,576 bytes (69.9% smaller).",
+      "rightsBasis": "Generated diagram of Chris's publicly published keyboard configuration; existing upstream credit remains visible in the image.",
+      "safetyReview": {
+        "result": "approved",
+        "checks": [
+          "Current successor repository used; rejected the deprecated fork image whose README says it does not apply",
+          "Visual inspection shows only key labels and abstract keyboard geometry",
+          "No local paths, account data, host data, secrets, or private shortcuts are shown"
+        ]
+      }
+    },
+    {
+      "assetId": "agent-console-icon",
+      "targetId": "agentconsole",
+      "source": {
+        "kind": "chris_owned_private_repository_asset",
+        "repository": "agent-console",
+        "revision": "983e0b43e2a09c889ec1dc301ca1eabe1a7a10d8",
+        "repositoryPath": "public/icon-512.png",
+        "sourceSha256": "23110a7cf55abb8b0e54b2eb561530cee09188b503483c9ecead339df76db367"
+      },
+      "transform": "Lossless WebP conversion; 9,078 bytes to 2,532 bytes (72.1% smaller).",
+      "rightsBasis": "Chris-owned app icon selected independently of the private application data and implementation.",
+      "safetyReview": {
+        "result": "approved",
+        "checks": [
+          "Visual inspection shows only an abstract blue ring on a solid background",
+          "No console screenshot, machine telemetry, sessions, prompts, messages, paths, network details, or host identifiers",
+          "No private repository URL is published"
+        ]
+      }
+    }
+  ],
+  "rejectedCandidates": [
+    {
+      "targetId": "maia",
+      "candidate": "Product or map screenshot",
+      "reason": "Could expose proprietary MAIA UI, customer/property data, private service state, or map data with unclear portfolio clearance."
+    },
+    {
+      "targetId": "flux",
+      "candidate": "Repository media",
+      "reason": "No owned image or video is committed in the authoritative public repository."
+    },
+    {
+      "targetId": "corne",
+      "candidate": "Deprecated fork keymap image",
+      "reason": "The authoritative README explicitly says that image does not apply to Chris's fork; the current successor repository was used instead."
+    },
+    {
+      "targetId": "spotify",
+      "candidate": "Spotify library or notification screenshot",
+      "reason": "Would reveal listening history, track or playlist data, account state, and possibly private notification content."
+    },
+    {
+      "targetId": "dashboard",
+      "candidate": "Live dashboard screenshot and bundled Expo icon",
+      "reason": "Live UI risks private telemetry and host/session data; the icon is an uncustomized framework placeholder and is not authentic project evidence."
+    },
+    {
+      "targetId": "dotfiles",
+      "candidate": "Terminal or configuration screenshot",
+      "reason": "High likelihood of local paths, usernames, machine names, private remotes, or secret-adjacent configuration."
+    },
+    {
+      "targetId": "secretgate",
+      "candidate": "Telegram approval screenshot",
+      "reason": "Could reveal chats, identities, real commands, secret labels, tokens, or approval endpoints; no safe media is committed."
+    },
+    {
+      "targetId": "techdigest",
+      "candidate": "Telegram digest screenshot",
+      "reason": "Would contain private messages, subscriptions, recipient context, or remote-control details; no safe media is committed."
+    },
+    {
+      "targetId": "lightning",
+      "candidate": "Repository media",
+      "reason": "No owned image or video is committed in the authoritative public repository."
+    },
+    {
+      "targetId": "propeller",
+      "candidate": "Offer or notification screenshot",
+      "reason": "Could republish third-party event content and reveal account, inventory, or private notification data; no safe media is committed."
+    },
+    {
+      "targetId": "panecmd",
+      "candidate": "Terminal pane screenshot",
+      "reason": "Likely to expose local paths, repository names, commands, host state, or user content; no safe media is committed."
+    },
+    {
+      "targetId": "playlistai",
+      "candidate": "Spotify data screenshot",
+      "reason": "Would expose personal listening data and third-party cover art; the public repository has no owned media."
+    },
+    {
+      "targetId": "djtrainer",
+      "candidate": "Controller photos and hotspot overlay",
+      "reason": "The project documents the photos as third-party product imagery; redistribution rights were not established, and the overlay depends on the copied product image."
+    },
+    {
+      "targetId": "songsorter",
+      "candidate": "Bundled framework logos or authenticated app screenshot",
+      "reason": "Vite/React logos are generic third-party marks, while an app screenshot would expose Spotify/user content or require fabricated records."
+    },
+    {
+      "targetId": "momentplayer",
+      "candidate": "App screenshot",
+      "reason": "The inspected repository is specification-only; a screenshot would falsely imply an implemented product."
+    },
+    {
+      "targetId": "alldifferent",
+      "candidate": "Gameplay screenshot with faces",
+      "reason": "Face-image consent and redistribution provenance are not established in the repository."
+    },
+    {
+      "targetId": "vibe",
+      "candidate": "In-app agent screenshot",
+      "reason": "Could expose private prompts, sessions, repository context, local paths, network state, or host details; no reviewed screenshot is committed."
+    },
+    {
+      "targetId": "polymarket",
+      "candidate": "Research notebook or trading-state screenshot",
+      "reason": "Could expose local paths, private experiment state, positions, or decontextualized performance claims; no reviewed aggregate chart is committed."
+    },
+    {
+      "targetId": "calsync",
+      "candidate": "Calendar or note screenshot",
+      "reason": "Would expose private notes, events, attendees, calendar identifiers, or account details; no safe media is committed."
+    },
+    {
+      "targetId": "parley",
+      "candidate": "Transcript, terminal, or voice-session screenshot",
+      "reason": "Could expose user speech, session names, local paths, commands, or credentials; the public repository contains no owned visual media."
+    },
+    {
+      "targetId": "agentconsole",
+      "candidate": "Console UI screenshot",
+      "reason": "The private console is designed around machine and agent state; a live screenshot risks host identifiers, telemetry, prompts, sessions, and private service data."
+    }
+  ]
+}
