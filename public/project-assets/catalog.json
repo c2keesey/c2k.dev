@@ -231,7 +231,7 @@
       }
     },
     {
-      "id": "agentconsole",
+      "id": "agent-console",
       "name": "Agent Console",
       "disposition": "selected_asset",
       "assets": [

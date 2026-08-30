@@ -77,7 +77,7 @@
     },
     {
       "assetId": "agent-console-icon",
-      "targetId": "agentconsole",
+      "targetId": "agent-console",
       "source": {
         "kind": "chris_owned_private_repository_asset",
         "repository": "agent-console",
@@ -199,7 +199,7 @@
       "reason": "Could expose user speech, session names, local paths, commands, or credentials; the public repository contains no owned visual media."
     },
     {
-      "targetId": "agentconsole",
+      "targetId": "agent-console",
       "candidate": "Console UI screenshot",
       "reason": "The private console is designed around machine and agent state; a live screenshot risks host identifiers, telemetry, prompts, sessions, and private service data."
     }
