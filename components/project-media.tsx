@@ -64,7 +64,7 @@ export function ProjectMedia({ project }: { project: Project }) {
 
   if (project.slug === "c2k") {
     const isPublic = step % 2 === 0;
-    return <InstrumentFrame project={project} state={isPublic ? "Public readout selected" : "Private systems withheld"}><div className="c2k-network"><div className="network-boundary" data-public={isPublic}><span>Public</span><b>Project atlas</b><b>Live site</b><b>Source</b></div><div className="network-boundary private"><span>Private</span><b>Host panels</b><b>Machine identity</b><b>Operator state</b></div></div><PrincipalButton slug="c2k" onClick={() => next(2)}>{isPublic ? "Inspect private boundary" : "Return to public readout"}</PrincipalButton></InstrumentFrame>;
+    return <InstrumentFrame project={project} state={isPublic ? "Public readout selected" : "Private boundary selected · nothing loaded"}><div className="c2k-network"><div className="network-boundary" data-public={isPublic} data-selected={isPublic || undefined}><span>Public readout</span><b>Project atlas</b><b>Live site</b><b>Public source</b></div><div className="network-boundary private" data-selected={!isPublic || undefined}><span>{isPublic ? "Private / outside the readout" : "Private / withheld by design"}</span>{isPublic ? <><b>Host panels</b><b>Machine identity</b><b>Operator state</b></> : <><b>No host panels loaded</b><b>Machine identity withheld</b><b>Operator state unpublished</b></>}</div></div><PrincipalButton slug="c2k" onClick={() => next(2)}>{isPublic ? "Inspect private boundary" : "Return to public readout"}</PrincipalButton></InstrumentFrame>;
   }
 
   if (project.slug === "flux") {

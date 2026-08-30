@@ -1,7 +1,41 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
 import { join } from "node:path";
 import { instrumentLabels } from "../../components/project-media";
 import { projects } from "../../lib/projects";
+
+async function contrastRatio(locator: Locator) {
+  return locator.evaluate((element) => {
+    const parse = (value: string) => value.match(/[\d.]+/g)!.slice(0, 3).map(Number);
+    const luminance = (rgb: number[]) => {
+      const channels = rgb.map((channel) => { const normalized = channel / 255; return normalized <= .03928 ? normalized / 12.92 : ((normalized + .055) / 1.055) ** 2.4; });
+      return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+    };
+    const style = getComputedStyle(element);
+    const foreground = luminance(parse(style.color));
+    const background = luminance(parse(style.backgroundColor));
+    return (Math.max(foreground, background) + .05) / (Math.min(foreground, background) + .05);
+  });
+}
+
+async function expectProjectChromeClear(instrument: Locator, label: string, mobile: boolean) {
+  const geometry = await instrument.evaluate((element) => {
+    const instrumentRect = element.getBoundingClientRect();
+    const inspect = (selector: string) => {
+      const target = document.querySelector<HTMLElement>(selector);
+      if (!target) return { display: "missing", position: "missing", overlaps: false };
+      const style = getComputedStyle(target);
+      const rect = target.getBoundingClientRect();
+      const visible = style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) > 0 && rect.width > 0 && rect.height > 0;
+      const overlaps = visible && rect.left < instrumentRect.right && rect.right > instrumentRect.left && rect.top < instrumentRect.bottom && rect.bottom > instrumentRect.top;
+      return { display: style.display, position: style.position, overlaps };
+    };
+    return { nav: inspect(".mobile-nav"), footer: inspect(".status-footer") };
+  });
+  if (mobile) expect(geometry.nav.display, `${label} mobile nav must be removed from detail layout`).toBe("none");
+  expect(geometry.nav.overlaps, `${label} navigation overlap`).toBe(false);
+  expect(geometry.footer.position, `${label} footer must remain in document flow`).not.toMatch(/fixed|sticky/);
+  expect(geometry.footer.overlaps, `${label} footer overlap`).toBe(false);
+}
 
 test("production project routes are direct, complete, and console-clean", async ({ page }) => {
   const errors: string[] = [];
@@ -32,21 +66,11 @@ test("warm theme changes real surfaces and persists through navigation", async (
   expect(warm).not.toEqual(before);
   expect(warm.scheme).toContain("light");
   expect(await page.locator('meta[name="theme-color"]').getAttribute("content")).toBe("#f1eadf");
+  const warmContrast = await contrastRatio(page.locator(".rail-link.is-active:visible, .mobile-nav-link.is-active:visible"));
+  expect(warmContrast).toBeGreaterThanOrEqual(4.5);
   await page.goto("/projects/parley");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "warm");
-  await expect(page.locator('.theme-toggle:visible')).toHaveAccessibleName("Switch to dark theme");
-  const warmContrast = await page.locator(".rail-link.is-active:visible, .mobile-nav-link.is-active:visible").evaluate((element) => {
-    const parse = (value: string) => value.match(/[\d.]+/g)!.slice(0, 3).map(Number);
-    const luminance = (rgb: number[]) => {
-      const channels = rgb.map((channel) => { const normalized = channel / 255; return normalized <= .03928 ? normalized / 12.92 : ((normalized + .055) / 1.055) ** 2.4; });
-      return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
-    };
-    const style = getComputedStyle(element);
-    const foreground = luminance(parse(style.color));
-    const background = luminance(parse(style.backgroundColor));
-    return (Math.max(foreground, background) + .05) / (Math.min(foreground, background) + .05);
-  });
-  expect(warmContrast).toBeGreaterThanOrEqual(4.5);
+  expect(await contrastRatio(page.locator(".project-back-link"))).toBeGreaterThanOrEqual(4.5);
 });
 
 test("mobile project atlas does not overflow", async ({ page }, testInfo) => {
@@ -71,13 +95,15 @@ test("every canonical rich route activates its unique instrument without overflo
     expect(response?.status(), project.slug).toBe(200);
     const instrument = page.locator(`[data-instrument="${project.slug}"]`);
     await expect(instrument).toBeVisible();
+    await expectProjectChromeClear(instrument, `${project.slug} page load`, testInfo.project.name === "mobile");
     const control = page.getByRole("button", { name: instrumentLabels[project.slug as keyof typeof instrumentLabels] });
     await control.scrollIntoViewIfNeeded();
+    await expectProjectChromeClear(instrument, `${project.slug} arbitrary scroll`, testInfo.project.name === "mobile");
     const before = await instrument.getAttribute("data-state");
     await control.focus();
-    if (testInfo.project.name === "mobile") await expect(page.locator(".mobile-nav")).toHaveCSS("visibility", "hidden");
     await page.keyboard.press("Enter");
     await expect(instrument).not.toHaveAttribute("data-state", before ?? "");
+    await expectProjectChromeClear(instrument, `${project.slug} post-click`, testInfo.project.name === "mobile");
 
     const geometry = await page.evaluate(() => ({
       innerWidth: window.innerWidth,
@@ -119,9 +145,9 @@ test("capture production review artifacts", async ({ page }, testInfo) => {
   const mobile = testInfo.project.name === "mobile";
   await page.goto("/projects");
   await page.screenshot({ path: join(root, `projects-${mobile ? "mobile" : "desktop"}-dark.png`), fullPage: false });
-  await page.goto("/projects/agent-console");
   await page.locator(".theme-toggle:visible").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "warm");
+  await page.goto("/projects/agent-console");
   await page.screenshot({ path: join(root, `agent-console-${mobile ? "mobile" : "desktop"}-warm.png`), fullPage: false });
 });
 
@@ -131,16 +157,18 @@ test("capture the rich instrument evidence set", async ({ page }, testInfo) => {
   await page.goto("/projects");
   await page.screenshot({ path: join(root, `rich-atlas-${viewport}-dark.png`), fullPage: true });
 
-  for (const slug of ["maia", "flux", "corne", "spotify", "secretgate", "lightning", "agent-console"] as const) {
-    await page.goto(`/projects/${slug}`);
+  for (const slug of ["maia", "c2k", "flux", "corne", "spotify", "secretgate", "lightning", "agent-console"] as const) {
     if (slug === "agent-console") {
+      await page.goto("/projects");
       await page.locator(".theme-toggle:visible").click();
       await expect(page.locator("html")).toHaveAttribute("data-theme", "warm");
     }
+    await page.goto(`/projects/${slug}`);
     const instrument = page.locator(`[data-instrument="${slug}"]`);
     const control = page.getByRole("button", { name: instrumentLabels[slug] });
     await control.focus();
     await page.keyboard.press("Enter");
+    await instrument.evaluate((element) => element.scrollIntoView({ block: "start" }));
     await instrument.screenshot({ path: join(root, `rich-${slug}-${viewport}-${slug === "agent-console" ? "warm" : "dark"}.png`) });
   }
 });

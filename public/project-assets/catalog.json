@@ -172,8 +172,8 @@
       "name": "Song Sorter",
       "disposition": "custom_visualization",
       "recommendation": {
-        "kind": "pairwise_ranking_simulator",
-        "brief": "Visualize pairwise choices converging into an ordered list using abstract, unlabeled records. Avoid real tracks, artists, cover art, Spotify account data, and a UI screenshot that suggests fictional user content is authentic."
+        "kind": "current_track_triage",
+        "brief": "Visualize keyboard-assisted triage of the current synthetic track into genre-similar destination playlists, with an undoable action and visible local history. Avoid real tracks, artists, cover art, Spotify account data, and a UI screenshot that suggests fictional user content is authentic."
       }
     },
     {

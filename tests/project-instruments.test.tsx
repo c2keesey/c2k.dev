@@ -35,6 +35,18 @@ describe("rich project instrument registry", () => {
     expect(container.textContent).not.toMatch(/pairwise/i);
   });
 
+  it("materially replaces the c2k panel when the private boundary is selected", () => {
+    const project = projects.find(({ slug }) => slug === "c2k")!;
+    const { container } = render(<ProjectMedia project={project} />);
+    expect(container.textContent).toContain("Private / outside the readout");
+    expect(container.textContent).not.toContain("No host panels loaded");
+    fireEvent.click(screen.getByRole("button", { name: instrumentLabels.c2k }));
+    expect(container.textContent).toContain("Private / withheld by design");
+    expect(container.textContent).toContain("No host panels loaded");
+    expect(container.textContent).toContain("Machine identity withheld");
+    expect(container.querySelector(".network-boundary.private")).toHaveAttribute("data-selected");
+  });
+
   it("renders Agent Console with only explicit representative state", () => {
     const project = projects.find(({ slug }) => slug === "agent-console")!;
     const { container } = render(<ProjectMedia project={project} />);

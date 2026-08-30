@@ -23,6 +23,7 @@ function isCurrent(pathname: string, href: string) {
 export function SiteNav({ showPrivate }: { showPrivate: boolean }) {
   const pathname = usePathname();
   const items = showPrivate ? [...publicItems, ...privateItems] : publicItems;
+  const isProjectDetail = pathname.startsWith("/projects/");
 
   return (
     <>
@@ -50,7 +51,7 @@ export function SiteNav({ showPrivate }: { showPrivate: boolean }) {
         </div>
       </aside>
 
-      <nav className="mobile-nav" aria-label="Primary navigation">
+      <nav className={cn("mobile-nav", isProjectDetail && "mobile-nav-project-detail")} aria-label="Primary navigation">
         {items.map(({ href, label, icon: Icon }) => {
           const active = isCurrent(pathname, href);
           return (

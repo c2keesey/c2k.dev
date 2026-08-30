@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getConnectedProjects, getProject, projectConnections, projects, projectTruth } from "@/lib/projects";
+import projectAssetCatalog from "@/public/project-assets/catalog.json";
 
 const canonicalLifecycle = {
   maia: "active-private", c2k: "live-public", flux: "completed-artifact", corne: "maintained",
@@ -59,9 +60,12 @@ describe("canonical project registry", () => {
   it("keeps Song Sorter on audited current-track triage, never pairwise ranking", () => {
     const project = getProject("songsorter")!;
     const songSorter = JSON.stringify({ description: project.description, story: project.story, highlights: project.highlights });
+    const assetBrief = projectAssetCatalog.targets.find(({ id }) => id === "songsorter")!.recommendation!;
     expect(songSorter).toMatch(/current track/i);
     expect(songSorter).toMatch(/undo/i);
     expect(songSorter).not.toMatch(/pairwise/i);
+    expect(assetBrief.kind).toBe("current_track_triage");
+    expect(JSON.stringify(assetBrief)).not.toMatch(/pairwise/i);
   });
 
   it("only connects known projects and preserves Agent Console foundation relationships", () => {
