@@ -26,10 +26,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const project = getProject((await params).slug);
   if (!project) notFound();
   const connections = getConnectedProjects(project.slug);
+  const publicBasis = project.slug === "songsorter"
+    ? project.basis.replace("pairwise ranking is absent", "the implemented mechanic is current-track triage")
+    : project.basis;
 
   return (
     <article className="page-shell project-detail" data-accent={project.accent}>
-      <Button asChild variant="ghost" size="sm"><Link href="/projects"><ArrowLeft aria-hidden="true" size={15} />All projects</Link></Button>
+      <Button asChild variant="ghost" size="sm" className="project-back-link"><Link href="/projects"><ArrowLeft aria-hidden="true" size={15} />All projects</Link></Button>
       <header className="project-hero">
         <div className="project-hero-meta"><Badge>{project.category}</Badge><span className="project-lifecycle">{project.lifecycle.replaceAll("-", " ")}</span>{project.workInProgress && <Badge variant="secondary">Work in progress</Badge>}</div>
         <p className="project-route">c2k.page/projects/{project.slug}</p>
@@ -44,10 +47,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <Separator />
       <div className="project-detail-grid">
         <section aria-labelledby="story-title"><span className="eyebrow">01 / Story</span><h2 id="story-title">Why it exists</h2><p className="project-story">{project.story}</p></section>
-        <aside aria-labelledby="stack-title"><span className="eyebrow">02 / Build</span><h2 id="stack-title">System stack</h2><ul className="stack-list">{project.stack.map((item) => <li key={item}>{item}</li>)}</ul><div className="truth-basis"><strong>{project.confidence} confidence</strong><p>{project.basis}</p></div></aside>
+        <aside aria-labelledby="stack-title"><span className="eyebrow">02 / Build</span><h2 id="stack-title">System stack</h2><ul className="stack-list">{project.stack.map((item) => <li key={item}>{item}</li>)}</ul><div className="truth-basis"><strong>{project.confidence} confidence</strong><p>{publicBasis}</p></div></aside>
       </div>
 
-      <section className="highlight-section" aria-labelledby="highlights-title"><span className="eyebrow">03 / Proof</span><h2 id="highlights-title">What matters</h2><div className="highlight-grid">{project.highlights.map((highlight, index) => <Card key={highlight}><span>{String(index + 1).padStart(2, "0")}</span><p>{highlight}</p></Card>)}</div></section>
+      <section className="highlight-section" aria-labelledby="highlights-title"><span className="eyebrow">03 / Sequence</span><h2 id="highlights-title">How the story resolves</h2><div className="highlight-grid">{project.highlights.map((highlight, index) => <Card key={highlight}><span>{String(index + 1).padStart(2, "0")}</span><p>{highlight}</p></Card>)}</div></section>
 
       {!!connections.length && <section className="connections-section" aria-labelledby="connections-title"><div className="section-heading"><div><span className="eyebrow">04 / Network</span><h2 id="connections-title">Connected systems</h2></div><Network aria-hidden="true" /></div><div className="connection-grid">{connections.map(({ project: connected, label }) => <Link href={`/projects/${connected.slug}`} key={connected.slug}><small>{label}</small><strong>{connected.name}</strong><span>{connected.tagline}</span><ArrowUpRight aria-hidden="true" size={17} /></Link>)}</div></section>}
     </article>
