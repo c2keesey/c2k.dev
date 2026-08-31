@@ -43,6 +43,27 @@ describe("GET /api/activity", () => {
     expect(response.headers.get("cache-control")).toBe("public, max-age=300");
     expect(await response.json()).toMatchObject({ repos: [{ name: "parley", url: "https://github.com/c2keesey/parley", lastCommit: "Preserve the loop" }], totalPushes: 1 });
   });
+
+  it("excludes private event counts and repository metadata when a token can see them", async () => {
+    const pushedAt = new Date().toISOString();
+    vi.stubGlobal("fetch", vi.fn(async (input: string | URL | Request) => {
+      const url = String(input);
+      if (url.includes("/events?")) {
+        const page = new URL(url).searchParams.get("page");
+        return page === "1" ? Response.json([
+          { type: "PushEvent", public: false, repo: { name: "c2keesey/private-control-plane" }, created_at: pushedAt, payload: { head: "private" } },
+          { type: "PushEvent", public: true, repo: { name: "c2keesey/parley" }, created_at: pushedAt, payload: { head: "public" } },
+        ]) : Response.json([]);
+      }
+      if (url.endsWith("/repos/c2keesey/parley")) return Response.json({ description: "Voice for coding agents", private: false });
+      if (url.endsWith("/commits/public")) return Response.json({ commit: { message: "Public work" } });
+      throw new Error(`Unexpected private metadata request: ${url}`);
+    }));
+
+    const payload = await (await getActivity()).json();
+    expect(payload).toMatchObject({ repos: [{ name: "parley" }], totalPushes: 1 });
+    expect(JSON.stringify(payload)).not.toContain("private-control-plane");
+  });
 });
 
 describe("GET /api/status", () => {
@@ -59,37 +80,66 @@ describe("GET /api/status", () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response(null, { status: 503 })));
     expect(await (await getStatus()).json()).toEqual({ status: "offline" });
   });
+
+  it("marks partial or schema-drifted telemetry as advisory instead of green", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: string | URL | Request) => String(input).endsWith("/api/health")
+      ? Response.json({ cpu: { percent: "unknown" }, memory: {}, uptime: "3d" })
+      : new Response(null, { status: 503 })));
+    expect(await (await getStatus()).json()).toEqual({
+      status: "online", overall: "yellow", cpu: null, memory: null, uptime: "3d",
+      services: { running: 0, total: 0 }, system: { running: 0, total: 0 }, crons: { ok: 0, error: 0, total: 0 },
+    });
+  });
 });
 
 describe("GET /api/feature/current", () => {
   it("returns the stable default state and runtime interactivity flag", async () => {
     const response = await getCurrent();
-    expect(response.headers.get("cache-control")).toBe("no-cache");
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
     expect(await response.json()).toEqual({ status: "idle", current: null, history: [], log_tail: [], interactive: true });
+  });
+
+  it.each([undefined, "production", "unexpected"])("is unobservable when C2K_ENV is %s", async (value) => {
+    if (value === undefined) delete process.env.C2K_ENV;
+    else process.env.C2K_ENV = value;
+    const response = await getCurrent();
+    expect(response.status).toBe(404);
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
   });
 });
 
 describe("POST /api/feature/accept", () => {
   it("moves a pending proposal to accepting and echoes feedback", async () => {
     writeFeatureState({ ...structuredClone(defaultFeatureState), status: "pending_review", current: { title: "Typed shell" } });
-    const response = await acceptFeature(new Request("http://localhost/api/feature/accept", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ feedback: "Keep the semantic route" }) }));
+    const response = await acceptFeature(new Request("http://localhost/api/feature/accept", { method: "POST", headers: { "Content-Type": "application/json", Origin: "http://localhost" }, body: JSON.stringify({ feedback: "Keep the semantic route" }) }));
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ ok: true, feedback: "Keep the semantic route" });
     expect(readFeatureState()).toMatchObject({ status: "accepting", accept_feedback: "Keep the semantic route", current: { title: "Typed shell" } });
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
   });
 
   it("is not observable in production", async () => {
     process.env.C2K_ENV = "production";
     expect((await acceptFeature(new Request("http://localhost", { method: "POST" }))).status).toBe(404);
   });
+
+  it("rejects cross-origin private mutations", async () => {
+    const response = await acceptFeature(new Request("http://localhost/api/feature/accept", { method: "POST", headers: { "Content-Type": "application/json", Origin: "https://attacker.example" }, body: "{}" }));
+    expect(response.status).toBe(403);
+  });
 });
 
 describe("POST /api/feature/deny", () => {
   it("moves a pending proposal to denying and records the pattern", async () => {
     writeFeatureState({ ...structuredClone(defaultFeatureState), status: "pending_review", current: { title: "Bad motion" } });
-    const response = await denyFeature(new Request("http://localhost/api/feature/deny", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reason: "Too much motion" }) }));
+    const response = await denyFeature(new Request("http://localhost/api/feature/deny", { method: "POST", headers: { "Content-Type": "application/json", Origin: "http://localhost" }, body: JSON.stringify({ reason: "Too much motion" }) }));
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ ok: true });
     expect(readFeatureState()).toMatchObject({ status: "denying", deny_reason: "Too much motion", denied_patterns: ["Too much motion"] });
+  });
+
+  it("rejects form-compatible content types before changing state", async () => {
+    const response = await denyFeature(new Request("http://localhost/api/feature/deny", { method: "POST", headers: { "Content-Type": "text/plain", Origin: "http://localhost" }, body: "{}" }));
+    expect(response.status).toBe(415);
   });
 });

@@ -4,12 +4,12 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/c2k/repos/c2k.dev
+WorkingDirectory=%h/repos/c2k.dev
 Environment=NODE_ENV=production
 Environment=C2K_ENV=production
 Environment=HOSTNAME=127.0.0.1
 Environment=PORT=4321
-ExecStart=/home/c2k/.bun/bin/bun ./.next/standalone/server.js
+ExecStart=%h/.bun/bin/bun ./.next/standalone/server.js
 Restart=on-failure
 RestartSec=5
 

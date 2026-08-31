@@ -6,13 +6,17 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  if (!isPrivateEnvironment()) {
+    return new Response("Not found", { status: 404, headers: { "Cache-Control": "private, no-store" } });
+  }
+
   const state = readFeatureState();
   if (["accepting", "denying", "proposing"].includes(state.status) && (featureStateAgeMs() ?? 0) > 10 * 60 * 1000) {
     if (state.current) state.history.push({ ...state.current, outcome: "error", feedback: `timeout: stuck in ${state.status}`, resolved_at: new Date().toISOString() });
     state.status = "idle";
     state.current = null;
     writeFeatureState(state);
-    if (isPrivateEnvironment()) triggerFeatureLab("propose");
+    triggerFeatureLab("propose");
   }
 
   let logTail: string[] = [];
@@ -20,5 +24,5 @@ export async function GET() {
     try { logTail = readFileSync(state.log_file, "utf-8").split("\n").filter((line) => line.trim()).slice(-8); } catch { /* best effort */ }
   }
 
-  return Response.json({ status: state.status, current: state.current, history: state.history ?? [], log_tail: logTail, interactive: isPrivateEnvironment() }, { headers: { "Cache-Control": "no-cache" } });
+  return Response.json({ status: state.status, current: state.current, history: state.history ?? [], log_tail: logTail, interactive: true }, { headers: { "Cache-Control": "private, no-store" } });
 }

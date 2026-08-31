@@ -36,7 +36,7 @@ function InstrumentFrame({ project, state, children }: { project: Project; state
     <figure className={`project-instrument instrument-${project.slug}`} data-instrument={project.slug} data-state={state} aria-labelledby={`${project.slug}-instrument-title`}>
       <header className="instrument-header">
         <div><span>Interactive instrument</span><h2 id={`${project.slug}-instrument-title`}>{project.name} mechanism</h2></div>
-        <output aria-live="polite">{state}</output>
+        <output aria-live="polite" aria-atomic="true">{state}</output>
       </header>
       {children}
       <figcaption>{project.storyBeats[1]} <span>Deterministic public-safe fixture; no live or private state.</span></figcaption>
@@ -49,7 +49,7 @@ function PrincipalButton({ slug, onClick, children }: { slug: keyof typeof instr
 }
 
 function Steps({ labels, active }: { labels: readonly string[]; active: number }) {
-  return <ol className="instrument-steps">{labels.map((label, index) => <li key={label} data-active={index <= active || undefined}><i />{label}</li>)}</ol>;
+  return <ol className="instrument-steps">{labels.map((label, index) => <li key={label} data-active={index <= active || undefined} aria-current={index === active ? "step" : undefined}><i />{label}</li>)}</ol>;
 }
 
 export function ProjectMedia({ project }: { project: Project }) {
@@ -109,7 +109,7 @@ export function ProjectMedia({ project }: { project: Project }) {
 
   if (project.slug === "propeller") {
     const cities = ["Los Angeles", "San Francisco", "Boulder"];
-    return <InstrumentFrame project={project} state={`${cities[step]} · synthetic check`}><div className="propeller-map">{cities.map((city, index) => <button type="button" key={city} data-active={index === step || undefined} onClick={() => setStep(index)} aria-label={`Inspect ${city} synthetic availability`}>{city}<i /></button>)}</div><Steps labels={["Listing found", "Detail page checked", "State deduplicated", "One useful alert"]} active={choice} /><PrincipalButton slug="propeller" onClick={() => { setStep((value) => (value + 1) % 3); setChoice((value) => (value + 1) % 4); }} /></InstrumentFrame>;
+    return <InstrumentFrame project={project} state={`${cities[step]} · synthetic check`}><div className="propeller-map">{cities.map((city, index) => <button type="button" key={city} data-active={index === step || undefined} aria-pressed={index === step} onClick={() => setStep(index)} aria-label={`Inspect ${city} synthetic availability`}>{city}<i /></button>)}</div><Steps labels={["Listing found", "Detail page checked", "State deduplicated", "One useful alert"]} active={choice} /><PrincipalButton slug="propeller" onClick={() => { setStep((value) => (value + 1) % 3); setChoice((value) => (value + 1) % 4); }} /></InstrumentFrame>;
   }
 
   if (project.slug === "panecmd") {
@@ -124,12 +124,12 @@ export function ProjectMedia({ project }: { project: Project }) {
 
   if (project.slug === "djtrainer") {
     const groups = ["Mixer", "Deck", "Transport", "Performance"];
-    return <InstrumentFrame project={project} state={`${groups[step]} controls revealed`}><div className="dj-surface" aria-label="Original abstract DJ control taxonomy">{Array.from({ length: 20 }, (_, index) => <button type="button" aria-label={`${groups[index % 4]} control ${index + 1}`} key={index} data-active={index % 4 === step || undefined} onClick={() => setStep(index % 4)} />)}<strong>{groups[step]}</strong></div><p className="instrument-note">Original control map; no third-party controller photograph. Runtime hotspots are manually authored.</p><PrincipalButton slug="djtrainer" onClick={() => next(groups.length)} /></InstrumentFrame>;
+    return <InstrumentFrame project={project} state={`${groups[step]} controls revealed`}><div className="dj-surface" aria-label="Original abstract DJ control taxonomy">{Array.from({ length: 20 }, (_, index) => <button type="button" aria-label={`${groups[index % 4]} control ${index + 1}`} aria-pressed={index % 4 === step} key={index} data-active={index % 4 === step || undefined} onClick={() => setStep(index % 4)} />)}<strong>{groups[step]}</strong></div><p className="instrument-note">Original control map; no third-party controller photograph. Runtime hotspots are manually authored.</p><PrincipalButton slug="djtrainer" onClick={() => next(groups.length)} /></InstrumentFrame>;
   }
 
   if (project.slug === "songsorter") {
     const destinations = ["Warm textures", "Night drive", "Open focus"];
-    return <InstrumentFrame project={project} state={choice ? `Moved to ${destinations[step]} · undo available` : "Synthetic current track awaiting triage"}><div className="song-triage"><article><small>Current track / fixture</small><h3>Untitled synthetic record</h3><span>genre evidence: electronic · ambient</span></article><div aria-label="Genre-similar destinations">{destinations.map((destination, index) => <button type="button" key={destination} onClick={() => { setStep(index); setChoice(1); }} data-active={choice && index === step || undefined}>{index + 1}<b>{destination}</b><small>genre-similar destination</small></button>)}</div></div><div className="instrument-controls"><PrincipalButton slug="songsorter" onClick={() => { setStep((value) => (value + 1) % destinations.length); setChoice(1); }}>Send synthetic track</PrincipalButton><button type="button" className="instrument-control secondary" disabled={!choice} onClick={() => setChoice(0)}>Undo last destination</button></div></InstrumentFrame>;
+    return <InstrumentFrame project={project} state={choice ? `Moved to ${destinations[step]} · undo available` : "Synthetic current track awaiting triage"}><div className="song-triage"><article><small>Current track / fixture</small><h3>Untitled synthetic record</h3><span>genre evidence: electronic · ambient</span></article><div aria-label="Genre-similar destinations">{destinations.map((destination, index) => <button type="button" key={destination} onClick={() => { setStep(index); setChoice(1); }} aria-pressed={Boolean(choice && index === step)} data-active={choice && index === step || undefined}>{index + 1}<b>{destination}</b><small>genre-similar destination</small></button>)}</div></div><div className="instrument-controls"><PrincipalButton slug="songsorter" onClick={() => { setStep((value) => (value + 1) % destinations.length); setChoice(1); }}>Send synthetic track</PrincipalButton><button type="button" className="instrument-control secondary" disabled={!choice} onClick={() => setChoice(0)}>Undo last destination</button></div></InstrumentFrame>;
   }
 
   if (project.slug === "momentplayer") {

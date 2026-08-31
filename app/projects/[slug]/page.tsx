@@ -26,9 +26,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const project = getProject((await params).slug);
   if (!project) notFound();
   const connections = getConnectedProjects(project.slug);
-  const publicBasis = project.slug === "songsorter"
-    ? project.basis.replace("pairwise ranking is absent", "the implemented mechanic is current-track triage")
-    : project.basis;
 
   return (
     <article className="page-shell project-detail" data-accent={project.accent}>
@@ -47,7 +44,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <Separator />
       <div className="project-detail-grid">
         <section aria-labelledby="story-title"><span className="eyebrow">01 / Story</span><h2 id="story-title">Why it exists</h2><p className="project-story">{project.story}</p></section>
-        <aside aria-labelledby="stack-title"><span className="eyebrow">02 / Build</span><h2 id="stack-title">System stack</h2><ul className="stack-list">{project.stack.map((item) => <li key={item}>{item}</li>)}</ul><div className="truth-basis"><strong>{project.confidence} confidence</strong><p>{publicBasis}</p></div></aside>
+        <aside aria-labelledby="stack-title"><span className="eyebrow">02 / Build</span><h2 id="stack-title">System stack</h2><ul className="stack-list">{project.stack.map((item) => <li key={item}>{item}</li>)}</ul><div className="truth-basis"><strong>{project.confidence} confidence</strong><p>{project.basis}</p></div></aside>
       </div>
 
       <section className="highlight-section" aria-labelledby="highlights-title"><span className="eyebrow">03 / Sequence</span><h2 id="highlights-title">How the story resolves</h2><div className="highlight-grid">{project.highlights.map((highlight, index) => <Card key={highlight}><span>{String(index + 1).padStart(2, "0")}</span><p>{highlight}</p></Card>)}</div></section>

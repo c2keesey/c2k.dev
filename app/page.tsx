@@ -27,7 +27,7 @@ export default function HomePage() {
       <section className="home-system-grid" aria-label="System overview">
         <div className="system-stats">
           <div><strong>{projects.length}</strong><span>projects in one typed atlas</span></div>
-          <div><strong>05</strong><span>live server contracts</span></div>
+          <div><strong>05</strong><span>server route contracts</span></div>
           <div><strong>01</strong><span>OptiPlex under the desk</span></div>
         </div>
         <ActivityPanel />

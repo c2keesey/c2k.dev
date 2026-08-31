@@ -98,9 +98,9 @@
       "migrationTarget": { "desktop": true, "mobile": true, "richPage": true },
       "canonical": {
         "tagline": "Public observability layer",
-        "summary": "A self-hosted Astro site that presents projects and workflow as an interactive system monitor, served from an OptiPlex through a Cloudflare Tunnel.",
+        "summary": "A self-hosted Next.js site that presents projects and workflow as an interactive system monitor, served from an OptiPlex through a Cloudflare Tunnel.",
         "status": { "lifecycle": "live-public", "confidence": "high", "basis": "Public site and public repository are reachable; source matches deployment architecture." },
-        "tech": ["Astro 5", "TypeScript", "Bun", "Canvas", "Node adapter", "Cloudflare Tunnel"],
+        "tech": ["Next.js 16", "React 19", "TypeScript 6", "Bun", "Playwright", "Cloudflare Tunnel"],
         "links": [
           { "label": "Live site", "url": "https://c2k.page/", "publicSafe": true },
           { "label": "Source", "url": "https://github.com/c2keesey/c2k.dev", "publicSafe": true }
@@ -109,7 +109,7 @@
       "truthSources": ["Current worktree source", "c2keesey/c2k.dev", "https://c2k.page/"],
       "conflicts": [
         { "severity": "P1", "currentClaim": "Every project got a hand-built component.", "correction": "Seven of 21 existing projects have bespoke state-3 showcases; the others are generic network nodes." },
-        { "severity": "P2", "currentClaim": "v3.2", "correction": "No release or package version supports this label; package.json is 0.0.1." }
+        { "severity": "P2", "currentClaim": "v3.2", "correction": "No release supports this label; remove it rather than substituting another displayed version." }
       ],
       "storyBeats": ["Frame the site as a public readout rather than a portfolio template.", "Show the project network and its real relationships.", "Explain self-hosting, tunnel exposure, and private/public boundaries.", "Use the migration itself as the next chapter: richer truth without control-room cosplay."],
       "imagery": { "recommend": ["Current site screenshots", "Code-native network visualization", "Existing first-party icons and components"], "avoid": ["Private host dashboards", "Tailscale addresses", "Fake live telemetry"] }
@@ -128,7 +128,7 @@
           { "label": "Source", "url": "https://github.com/c2keesey/Flux-Gauntlet", "publicSafe": true }
         ]
       },
-      "truthSources": ["/Users/c2k/Projects/Flux-Gauntlet", "c2keesey/Flux-Gauntlet"],
+      "truthSources": ["Local Flux Gauntlet source checkout", "c2keesey/Flux-Gauntlet"],
       "conflicts": [
         { "severity": "P0", "currentClaim": "/flux-gauntlet.gif exists.", "correction": "The asset is absent and returns 404 on every /projects load." },
         { "severity": "P2", "currentClaim": "Seven effects total.", "correction": "The named seven are representative; source contains more than 15 effects." }
@@ -150,7 +150,7 @@
           { "label": "Current config", "url": "https://github.com/c2keesey/zmk-config-corne-2", "publicSafe": true }
         ]
       },
-      "truthSources": ["/Users/c2k/Projects/Corne/zmk-config", "c2keesey/zmk-config-corne-2"],
+      "truthSources": ["Local Corne configuration checkout", "c2keesey/zmk-config-corne-2"],
       "conflicts": [
         { "severity": "P0", "currentClaim": "/corne.gif exists.", "correction": "The asset is absent and returns 404 on every /projects load." },
         { "severity": "P1", "currentClaim": "QMK, C, KiCad with seven layers.", "correction": "The current config is ZMK/Devicetree and has eight layers: base, nav, fn, num, sys, mouse, uc, and sym." },
@@ -171,7 +171,7 @@
         "tech": ["Python", "Spotipy", "Spotify Web API", "scikit-learn", "Essentia", "TensorFlow", "Discogs-EffNet", "launchd", "uv"],
         "links": []
       },
-      "truthSources": ["/Users/c2k/repos/spotify-macro", "c2keesey/spotify-macro private repository"],
+      "truthSources": ["Local Spotify Macro checkout", "Private repository source"],
       "conflicts": [
         { "severity": "P1", "currentClaim": "Public GitHub link.", "correction": "The repository is private; the current public link returns 404 and must be removed." },
         { "severity": "P1", "currentClaim": "Audio improved folder accuracy from .800 to .878.", "correction": "Precisely: metadata baseline folder@1 was .800; the expanded verified metadata/audio hybrid reached .878 on the audio-covered benchmark. It is not a universal accuracy claim." },
@@ -212,7 +212,7 @@
         "tech": ["Bash", "Zsh", "tmux", "Ghostty", "Claude Code", "symlinks"],
         "links": []
       },
-      "truthSources": ["/Users/c2k/repos/dotfiles", "c2keesey/dotfiles private repository"],
+      "truthSources": ["Local Dotfiles checkout", "Private repository source"],
       "conflicts": [
         { "severity": "P1", "currentClaim": "Public GitHub link.", "correction": "The repository is private; the public link returns 404 and must be removed." },
         { "severity": "P1", "currentClaim": "The Claude statusline is a 221-line, dependency-free Bash script.", "correction": "The current script is 648 lines and depends on jq." },
@@ -297,7 +297,7 @@
           { "label": "Source", "url": "https://github.com/c2keesey/propeller-scrape", "publicSafe": true }
         ]
       },
-      "truthSources": ["/Users/c2k/repos/propeller-scrape", "c2keesey/propeller-scrape"],
+      "truthSources": ["Local Propeller Scrape checkout", "c2keesey/propeller-scrape"],
       "conflicts": [
         { "severity": "P2", "currentClaim": "ONLINE.", "correction": "Implementation and scheduling are verified, but live job health was not; use maintained rather than a health claim." }
       ],
@@ -360,7 +360,7 @@
         "tech": ["HTML", "CSS", "JavaScript", "live-server", "Python experiments", "SAM experiments", "CoreML experiments"],
         "links": []
       },
-      "truthSources": ["/Users/c2k/repos/dj-trainer", "c2keesey/dj-trainer private repository"],
+      "truthSources": ["Local DJ Trainer checkout", "Private repository source"],
       "conflicts": [
         { "severity": "P1", "currentClaim": "Vite app with an on-device SAM/CoreML pipeline that finds controls.", "correction": "The runtime is vanilla HTML/CSS/JS with manually positioned hotspots; SAM/CoreML scripts are separate experiments." },
         { "severity": "P1", "currentClaim": "Current controller photo is safe portfolio media.", "correction": "Project notes trace the image to third-party publisher/manufacturer media; licensing is not established." }
@@ -376,7 +376,7 @@
       "canonical": {
         "tagline": "Keyboard-first Spotify triage",
         "summary": "A React app for reviewing the current Spotify track, ranking likely destination playlists by genre similarity, adding it to a playlist, and supporting undo and history.",
-        "status": { "lifecycle": "prototype", "confidence": "high", "basis": "Public source implements triage and playlist recommendation; pairwise ranking is absent." },
+        "status": { "lifecycle": "prototype", "confidence": "high", "basis": "Public source implements current-track triage, genre-similar playlist recommendation, undo, and history." },
         "tech": ["React 18", "TypeScript", "Vite", "Zustand", "Radix UI", "Tailwind CSS", "Spotify Web Playback SDK", "Spotify Web API"],
         "links": [
           { "label": "Source", "url": "https://github.com/c2keesey/spotify-song-sorter", "publicSafe": true }
@@ -401,7 +401,7 @@
         "tech": ["Swift", "SwiftUI", "Python", "FastAPI", "LLM prototype"],
         "links": []
       },
-      "truthSources": ["/Users/c2k/Projects/moment-player local repository and SPEC"],
+      "truthSources": ["Local Moment Player repository and specification"],
       "conflicts": [
         { "severity": "P1", "currentClaim": "A standing iOS podcast product.", "correction": "The only implementation inspected is uncommitted local prototype work with no configured remote; avoid shipped-product language." }
       ],
@@ -443,7 +443,7 @@
         "tech": ["Astro 5", "TypeScript", "Bun", "SSE", "Claude Code", "Pi", "Vite HMR"],
         "links": []
       },
-      "truthSources": ["/Users/c2k/repos/vibe-framework", "c2keesey/vibe-framework private repository"],
+      "truthSources": ["Local Vibe Framework checkout", "Private repository source"],
       "conflicts": [
         { "severity": "P2", "currentClaim": "DEPLOYING as operational status.", "correction": "Use active private prototype; the static label does not establish deploy or health state." }
       ],
@@ -462,7 +462,7 @@
         "tech": ["Python", "pandas", "httpx", "PyArrow", "public Polymarket data"],
         "links": []
       },
-      "truthSources": ["/Users/c2k/repos/polymarket-bot", "Latest CAPITAL_READINESS and canonical research documents"],
+      "truthSources": ["Local Polymarket research checkout", "Latest CAPITAL_READINESS and canonical research documents"],
       "conflicts": [
         { "severity": "P1", "currentClaim": "A mid-range underdog strategy survived replication.", "correction": "One scoped mid-underdog signal survived historical tests, but current documents require forward paper monitoring and explicitly forbid real capital deployment." }
       ],
@@ -481,7 +481,7 @@
         "tech": ["Python", "AppleScript", "Google Calendar API", "launchd", "JSON state"],
         "links": []
       },
-      "truthSources": ["/Users/c2k/repos/helen-cal-sync", "c2keesey/helen-cal-sync private repository"],
+      "truthSources": ["Local Cal Sync checkout", "Private repository source"],
       "conflicts": [
         { "severity": "P1", "currentClaim": "The calendar is identified by a marker instead of its name.", "correction": "The calendar ID is persisted so renames are safe; a private extended-property marker identifies managed events." },
         { "severity": "P2", "currentClaim": "ONLINE.", "correction": "The automation is implemented and scheduled, but a live health probe was not performed." }
@@ -503,7 +503,7 @@
           { "label": "Source", "url": "https://github.com/c2keesey/parley", "publicSafe": true }
         ]
       },
-      "truthSources": ["/Users/c2k/repos/parley base checkout only", "c2keesey/parley v0.5.4"],
+      "truthSources": ["Local Parley base checkout only", "c2keesey/parley v0.5.4"],
       "conflicts": [
         { "severity": "P2", "currentClaim": "General cross-platform voice loop.", "correction": "The current project is macOS-only." }
       ],
@@ -522,7 +522,7 @@
         "tech": ["Node.js", "React 19", "TypeScript 6", "Vite 8", "Tailwind CSS 4", "shadcn", "PWA", "Pi RPC", "SSE", "systemd"],
         "links": []
       },
-      "truthSources": ["c2-7rayg", "/Users/c2k/repos/agent-console", "c2keesey/agent-console private repository metadata and current README"],
+      "truthSources": ["c2-7rayg", "Local Agent Console checkout", "Private default-branch metadata and current README"],
       "conflicts": [
         { "severity": "P0", "currentClaim": "Not present in the current 21-project site inventory.", "correction": "Add it as the 22nd target without replacing any existing project." },
         { "severity": "P0", "currentClaim": "A live product link or real operational screenshot would demonstrate it.", "correction": "Never expose or link the private service. Do not publish tokens, history, paths, machine identifiers, tailnet details, session IDs, or real operational state." },

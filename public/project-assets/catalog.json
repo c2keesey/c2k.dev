@@ -54,7 +54,7 @@
       "disposition": "custom_visualization",
       "recommendation": {
         "kind": "interactive_system_diagram",
-        "brief": "Render the authored 300-LED cylindrical address model and let the seven named effects travel around its 16 rings. Derive geometry and timing from the public firmware; do not imply a photographed artifact exists."
+        "brief": "Render the authored 300-LED cylindrical address model and let representative named effects travel around its 16 rings. Derive geometry and timing from the public firmware; do not imply a photographed artifact exists."
       }
     },
     {
@@ -88,11 +88,11 @@
     },
     {
       "id": "dashboard",
-      "name": "Optiplex Dashboard",
+      "name": "OptiPlex Dashboard",
       "disposition": "custom_visualization",
       "recommendation": {
         "kind": "telemetry_topology",
-        "brief": "Build a code-derived schematic of telemetry categories, polling cadence, and PWA delivery. Use labeled metric classes without live values, service names, network details, machine names, or session content."
+        "brief": "Build a code-derived schematic of implemented backend metric classes and the mocked Expo client boundary. Use labeled categories without live values, service names, network details, machine names, or session content."
       }
     },
     {
@@ -182,7 +182,7 @@
       "disposition": "custom_visualization",
       "recommendation": {
         "kind": "concept_sequence",
-        "brief": "Label this explicitly as a concept: pause a neutral waveform, select a transcript moment, add context, answer, resume. The repository is specification-only, so do not fabricate an implemented-app screenshot."
+        "brief": "Label this explicitly as a concept: pause a neutral waveform, select a transcript moment, add context, answer, resume. Public evidence does not establish a shipped app, so do not fabricate an implemented-product screenshot."
       }
     },
     {

@@ -109,7 +109,7 @@ Each story should move from a real constraint through an implemented mechanism t
 
 ## Evidence and conflict policy
 
-The audit used the checked-out site source for desktop/mobile/showcase inventory, relevant base repositories under `/Users/c2k/repos` and `/Users/c2k/Projects`, and GitHub default-branch metadata/content where the local checkout was absent or stale. Private repository visibility was treated as a public-link prohibition, not as evidence that a project does not exist.
+The audit used the checked-out site source for desktop/mobile/showcase inventory, relevant local base-repository checkouts, and GitHub default-branch metadata/content where the local checkout was absent or stale. Private repository visibility was treated as a public-link prohibition, not as evidence that a project does not exist.
 
 Important source qualifications:
 
@@ -118,7 +118,7 @@ Important source qualifications:
 - Lightning Cloud has no relevant local checkout; its small public GitHub history is the authoritative source.
 - Corne's active local remote is `zmk-config-corne-2`; the older linked repository is not the current configuration.
 - MAIA's repository README and current marketing position differ in scope; the public product positioning governs the headline, while the repository governs technology claims.
-- Parley was inspected only through `/Users/c2k/repos/parley` and public repository truth. The existing Parley worktree was not accessed or modified.
+- Parley was inspected only through its base checkout and public repository truth. The existing Parley worktree was not accessed or modified.
 - Tracker history writes are globally broken because the Beads database is missing its `events` table. This audit used the manager-approved `bd ... --no-history` workaround and made no destructive database repair.
 
 ## Migration acceptance gates

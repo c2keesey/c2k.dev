@@ -5,7 +5,7 @@ const GITHUB_USERNAME = "c2keesey";
 const URL_OVERRIDES: Record<string, string> = { "maia-analytics": "https://maia-analytics.com" };
 const HIDE_COMMITS = new Set(["maia-analytics"]);
 
-interface GitHubEvent { type: string; repo: { name: string }; created_at: string; payload?: { head?: string } }
+interface GitHubEvent { type: string; repo: { name: string }; created_at: string; public?: boolean; payload?: { head?: string } }
 interface GitHubRepo { description: string | null; private?: boolean }
 
 export async function GET() {
@@ -20,7 +20,7 @@ export async function GET() {
       if (!response.ok) break;
       const batch = await response.json() as GitHubEvent[];
       if (!batch.length) break;
-      events.push(...batch);
+      events.push(...batch.filter((event) => event.public !== false));
       if (new Date(batch.at(-1)!.created_at).getTime() < cutoff) break;
     }
 
@@ -53,7 +53,7 @@ export async function GET() {
       if (event) repoNames.push({ fullName: event.repo.name, name: event.repo.name.replace(`${GITHUB_USERNAME}/`, ""), head: event.payload?.head, pushedAt: event.created_at });
     }
 
-    const repos = await Promise.all(repoNames.map(async (repo) => {
+    const repos = (await Promise.all(repoNames.map(async (repo) => {
       const [repoResponse, commitResponse] = await Promise.all([
         fetch(`https://api.github.com/repos/${repo.fullName}`, { headers, signal: AbortSignal.timeout(3_000) }).catch(() => null),
         repo.head ? fetch(`https://api.github.com/repos/${repo.fullName}/commits/${repo.head}`, { headers, signal: AbortSignal.timeout(3_000) }).catch(() => null) : null,
@@ -61,14 +61,15 @@ export async function GET() {
       const repoData = repoResponse?.ok ? await repoResponse.json() as GitHubRepo : null;
       const commitData = commitResponse?.ok ? await commitResponse.json() as { commit: { message: string } } : null;
       const isPrivate = repoData?.private ?? false;
+      if (isPrivate) return null;
       return {
         name: repo.name,
-        url: URL_OVERRIDES[repo.name] ?? (isPrivate ? "#" : `https://github.com/${repo.fullName}`),
+        url: URL_OVERRIDES[repo.name] ?? `https://github.com/${repo.fullName}`,
         description: repoData?.description ?? "",
-        lastCommit: isPrivate || HIDE_COMMITS.has(repo.name) ? "" : commitData?.commit.message.split("\n")[0] ?? "",
+        lastCommit: HIDE_COMMITS.has(repo.name) ? "" : commitData?.commit.message.split("\n")[0] ?? "",
         pushedAt: repo.pushedAt,
       };
-    }));
+    }))).filter((repo) => repo !== null);
 
     return Response.json({ repos, totalPushes, pushesByDay }, { headers: { "Cache-Control": "public, max-age=300" } });
   } catch {

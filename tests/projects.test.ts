@@ -43,6 +43,12 @@ describe("canonical project registry", () => {
     expect(getProject("lightning")?.stack).not.toContain("ESP32");
     expect(getProject("parley")?.tagline).toBe("Two-way voice for terminal coding agents");
     expect(getProject("alldifferent")?.links?.[0].href).toBe("https://c2keesey.github.io/All-look-different/");
+    expect(getProject("c2k")?.stack).toEqual(expect.arrayContaining(["Next.js 16", "React 19", "TypeScript 6"]));
+    expect(getProject("c2k")?.stack).not.toContain("Astro 5");
+  });
+
+  it("keeps canonical evidence free of workstation paths", () => {
+    expect(JSON.stringify(projectTruth)).not.toMatch(/\/(?:Users|home)\//);
   });
 
   it("enforces canonical public-link and privacy rules", () => {

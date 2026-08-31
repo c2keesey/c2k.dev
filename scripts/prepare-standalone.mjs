@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const root = process.cwd();
@@ -19,4 +19,10 @@ for (const [source, destination] of copies) {
   cpSync(source, destination, { recursive: true, force: true });
 }
 
-console.log("Prepared .next/standalone with public and static assets.");
+const serverPath = join(standalone, "server.js");
+const serverSource = readFileSync(serverPath, "utf-8");
+if (serverSource.includes(root)) {
+  writeFileSync(serverPath, serverSource.replaceAll(root, "."));
+}
+
+console.log("Prepared .next/standalone with public/static assets and sanitized build paths.");

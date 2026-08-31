@@ -45,7 +45,7 @@ export function StatusFooter() {
       {status?.observedAt && <span className="status-indicator" data-state={state} aria-hidden="true" />}
       <span aria-live="polite">{summary(status)}</span>
       {status?.observedAt && <time className="status-observed" dateTime={status.observedAt}>observed {new Date(status.observedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</time>}
-      <span className="status-location">37.76° N · 122.51° W</span>
+      <span className="status-location">Self-hosted · San Francisco</span>
     </footer>
   );
 }

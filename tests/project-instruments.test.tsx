@@ -53,4 +53,16 @@ describe("rich project instrument registry", () => {
     expect(container.textContent).toMatch(/representative local demo/i);
     expect(container.textContent).not.toMatch(/localhost|127\.0\.0\.1|100\.\d+|\.ts\.net|token|bearer|session id|machine id/i);
   });
+
+  it("exposes current-step and selectable-control state to assistive technology", () => {
+    const propeller = projects.find(({ slug }) => slug === "propeller")!;
+    const { unmount } = render(<ProjectMedia project={propeller} />);
+    expect(screen.getByRole("listitem", { current: "step" })).toHaveTextContent("Listing found");
+    expect(screen.getByRole("button", { name: /Inspect Los Angeles/ })).toHaveAttribute("aria-pressed", "true");
+    unmount();
+
+    const songSorter = projects.find(({ slug }) => slug === "songsorter")!;
+    render(<ProjectMedia project={songSorter} />);
+    expect(screen.getByRole("button", { name: /Warm textures/ })).toHaveAttribute("aria-pressed", "false");
+  });
 });

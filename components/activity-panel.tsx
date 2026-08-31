@@ -27,7 +27,7 @@ export function ActivityPanel() {
   return (
     <Card className="activity-card">
       <div className="activity-header">
-        <div><span className="eyebrow">Live signal</span><h2>Last seven days</h2></div>
+        <div><span className="eyebrow">Public activity</span><h2>Last seven days</h2></div>
         <strong>{activity.totalPushes}<small> pushes</small></strong>
       </div>
       <div className="activity-bars" aria-label={`${activity.totalPushes} GitHub pushes in the last seven days`}>

@@ -17,6 +17,40 @@ async function contrastRatio(locator: Locator) {
   });
 }
 
+async function contrastAgainstThemeSurface(locator: Locator, surface: "--background" | "--card" = "--background") {
+  return locator.evaluate((element, surfaceName) => {
+    const parse = (value: string) => {
+      if (value.startsWith("#")) {
+        const hex = value.slice(1);
+        const normalized = hex.length === 3 ? [...hex].map((character) => character + character).join("") : hex;
+        return [Number.parseInt(normalized.slice(0, 2), 16), Number.parseInt(normalized.slice(2, 4), 16), Number.parseInt(normalized.slice(4, 6), 16), 1];
+      }
+      const channels = value.match(/[\d.]+/g)?.map(Number) ?? [];
+      return [channels[0] ?? 0, channels[1] ?? 0, channels[2] ?? 0, channels[3] ?? 1];
+    };
+    const composite = (foreground: number[], background: number[]) => {
+      const alpha = foreground[3] + background[3] * (1 - foreground[3]);
+      return [0, 1, 2].map((index) => (foreground[index] * foreground[3] + background[index] * background[3] * (1 - foreground[3])) / alpha).concat(alpha);
+    };
+    const luminance = (rgb: number[]) => rgb.slice(0, 3).map((channel) => channel / 255).map((channel) => channel <= .03928 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4).reduce((sum, channel, index) => sum + channel * [.2126, .7152, .0722][index], 0);
+    const rootStyle = getComputedStyle(document.documentElement);
+    const background = parse(rootStyle.getPropertyValue("--background").trim());
+    const surfaceColor = surfaceName === "--background" ? background : composite(parse(rootStyle.getPropertyValue(surfaceName).trim()), background);
+    const foreground = composite(parse(getComputedStyle(element).color), surfaceColor);
+    return (Math.max(luminance(foreground), luminance(surfaceColor)) + .05) / (Math.min(luminance(foreground), luminance(surfaceColor)) + .05);
+  }, surface);
+}
+
+async function expectMobileTargets(page: import("@playwright/test").Page, label: string) {
+  const undersized = await page.locator('a[href], button:not([disabled]), input:not([disabled])').evaluateAll((elements) => elements.flatMap((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    if (style.display === "none" || style.visibility === "hidden" || rect.width === 0 || rect.height === 0) return [];
+    return rect.width + .01 < 44 || rect.height + .01 < 44 ? [`${element.tagName.toLowerCase()}.${element.className}:${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`] : [];
+  }));
+  expect(undersized, `${label} mobile targets`).toEqual([]);
+}
+
 async function expectProjectChromeClear(instrument: Locator, label: string, mobile: boolean) {
   const geometry = await instrument.evaluate((element) => {
     const instrumentRect = element.getBoundingClientRect();
@@ -57,6 +91,24 @@ test("production gates private routes", async ({ page }) => {
   expect((await page.goto("/lab"))?.status()).toBe(404);
 });
 
+test("production exposes only the intended five API contracts", async ({ request }) => {
+  const activity = await request.get("/api/activity");
+  expect(activity.status()).toBe(200);
+  expect(activity.headers()["cache-control"]).toBe("public, max-age=300");
+  expect(await activity.json()).toMatchObject({ repos: expect.any(Array), totalPushes: expect.any(Number), pushesByDay: expect.any(Array) });
+
+  const status = await request.get("/api/status");
+  expect(status.status()).toBe(200);
+  expect(status.headers()["cache-control"]).toBe("no-cache");
+  expect(await status.json()).toMatchObject({ status: expect.stringMatching(/^(online|offline)$/) });
+
+  for (const path of ["/api/feature/current", "/api/feature/accept", "/api/feature/deny"]) {
+    const response = path.endsWith("current") ? await request.get(path) : await request.post(path, { data: {} });
+    expect(response.status(), path).toBe(404);
+    expect(response.headers()["cache-control"], path).toBe("private, no-store");
+  }
+});
+
 test("warm theme changes real surfaces and persists through navigation", async ({ page }) => {
   await page.goto("/");
   const before = await page.locator("body").evaluate((element) => ({ background: getComputedStyle(element).backgroundColor, color: getComputedStyle(element).color }));
@@ -78,6 +130,17 @@ test("mobile project atlas does not overflow", async ({ page }, testInfo) => {
   await page.goto("/projects");
   const dimensions = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth }));
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.innerWidth);
+
+  for (let index = 0; index < 4; index++) await page.keyboard.press("Tab");
+  for (const project of projects) {
+    await page.keyboard.press("Tab");
+    await expect.poll(() => page.evaluate(() => {
+      const focused = document.activeElement?.getBoundingClientRect();
+      const navigation = document.querySelector<HTMLElement>(".mobile-nav")?.getBoundingClientRect();
+      return Boolean(document.activeElement?.classList.contains("project-card-link") && focused && navigation && focused.top >= 0 && focused.bottom <= navigation.top - 6);
+    }), { message: `${project.slug} keyboard focus must stay above mobile navigation` }).toBe(true);
+  }
+
   await page.getByRole("link", { name: "Open Agent Console project page" }).click();
   await expect(page).toHaveURL(/\/projects\/agent-console$/);
 });
@@ -113,10 +176,33 @@ test("every canonical rich route activates its unique instrument without overflo
     }));
     expect(geometry.scrollWidth, `${project.slug} horizontal overflow`).toBeLessThanOrEqual(geometry.innerWidth);
     expect(geometry.focusedBottom, `${project.slug} focused control below chrome`).toBeLessThanOrEqual(geometry.viewportHeight - (testInfo.project.name === "mobile" ? 8 : 0));
+    if (testInfo.project.name === "mobile") await expectMobileTargets(page, project.slug);
   }
 
   expect(errors.filter((error) => !error.includes("favicon"))).toEqual([]);
   expect(failedRequests).toEqual([]);
+});
+
+test("mobile public pages keep every visible target at least 44 pixels", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "mobile-only invariant");
+  for (const path of ["/", "/projects", "/definitely-missing"]) {
+    await page.goto(path);
+    await expectMobileTargets(page, path);
+  }
+});
+
+test("warm and dark project facts meet text contrast minimums", async ({ page }) => {
+  for (const theme of ["dark", "warm"] as const) {
+    await page.goto("/projects");
+    if (theme === "warm") await page.locator(".theme-toggle:visible").click();
+    for (const project of projects) {
+      await page.goto(`/projects/${project.slug}`);
+      for (const selector of [".project-lifecycle", ".project-route", ".stack-list li", ".truth-basis p"]) {
+        expect(await contrastAgainstThemeSurface(page.locator(selector).first()), `${theme} ${project.slug} ${selector}`).toBeGreaterThanOrEqual(4.5);
+      }
+      expect(await contrastAgainstThemeSurface(page.locator(".instrument-header span").first(), "--card"), `${theme} ${project.slug} instrument accent`).toBeGreaterThanOrEqual(4.5);
+    }
+  }
 });
 
 test("Song Sorter route rejects the conflicting pairwise asset brief", async ({ page }) => {
