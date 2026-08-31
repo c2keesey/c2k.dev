@@ -7,7 +7,7 @@ export function privateMutationError(request: Request): Response | null {
 
   const origin = request.headers.get("Origin");
   const requestUrl = new URL(request.url);
-  const host = request.headers.get("X-Forwarded-Host")?.split(",")[0]?.trim() || request.headers.get("Host") || requestUrl.host;
+  const host = request.headers.get("Host") || requestUrl.host;
   const protocol = request.headers.get("X-Forwarded-Proto")?.split(",")[0]?.trim() || requestUrl.protocol.slice(0, -1);
   if (!origin || origin !== `${protocol}://${host}`) {
     return Response.json({ error: "Same-origin request required" }, { status: 403, headers: privateHeaders });

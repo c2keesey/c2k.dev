@@ -57,6 +57,14 @@ async function expectRoute(origin, path, status, options = {}) {
   return response;
 }
 
+async function expectNeutralCurrent(origin) {
+  const response = await expectRoute(origin, "/api/feature/current", 200);
+  const payload = await response.json();
+  const expected = { status: "idle", current: null, history: [], log_tail: [], interactive: false };
+  if (JSON.stringify(payload) !== JSON.stringify(expected)) throw new Error(`GET /api/feature/current returned non-neutral production state: ${JSON.stringify(payload)}`);
+  if (response.headers.get("Cache-Control") !== "private, no-store") throw new Error("GET /api/feature/current must be private, no-store");
+}
+
 try {
   await withServer({ port: 4382, environment: "production" }, async (origin) => {
     await expectRoute(origin, "/", 200);
@@ -67,7 +75,7 @@ try {
     await expectRoute(origin, "/lab", 404);
     await expectRoute(origin, "/api/activity", 200);
     await expectRoute(origin, "/api/status", 200);
-    await expectRoute(origin, "/api/feature/current", 404);
+    await expectNeutralCurrent(origin);
     await expectRoute(origin, "/api/feature/accept", 404, { method: "POST" });
     await expectRoute(origin, "/api/feature/deny", 404, { method: "POST" });
     await expectRoute(origin, "/manifest.json", 200);
@@ -78,7 +86,7 @@ try {
     await withServer({ port, environment }, async (origin) => {
       await expectRoute(origin, "/about", 404);
       await expectRoute(origin, "/lab", 404);
-      await expectRoute(origin, "/api/feature/current", 404);
+      await expectNeutralCurrent(origin);
       await expectRoute(origin, "/api/feature/accept", 404, { method: "POST" });
       await expectRoute(origin, "/api/feature/deny", 404, { method: "POST" });
     });
@@ -88,6 +96,11 @@ try {
     await expectRoute(origin, "/about", 200);
     await expectRoute(origin, "/lab", 200);
     await expectRoute(origin, "/api/feature/current", 200);
+    await expectRoute(origin, "/api/feature/accept", 403, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: "http://attacker.example", "X-Forwarded-Host": "attacker.example" },
+      body: "{}",
+    });
     const headers = { "Content-Type": "application/json", Origin: origin };
     await expectRoute(origin, "/api/feature/accept", 409, { method: "POST", headers, body: "{}" });
     await expectRoute(origin, "/api/feature/deny", 409, { method: "POST", headers, body: "{}" });

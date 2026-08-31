@@ -99,12 +99,37 @@ describe("GET /api/feature/current", () => {
     expect(await response.json()).toEqual({ status: "idle", current: null, history: [], log_tail: [], interactive: true });
   });
 
-  it.each([undefined, "production", "unexpected"])("is unobservable when C2K_ENV is %s", async (value) => {
+  it.each([undefined, "production", "unexpected"])("returns only a neutral redacted state when C2K_ENV is %s", async (value) => {
     if (value === undefined) delete process.env.C2K_ENV;
     else process.env.C2K_ENV = value;
     const response = await getCurrent();
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(200);
     expect(response.headers.get("cache-control")).toBe("private, no-store");
+    expect(await response.json()).toEqual({ status: "idle", current: null, history: [], log_tail: [], interactive: false });
+  });
+
+  it("returns production state before accessing feature state or logs", async () => {
+    process.env.C2K_ENV = "production";
+    const readFeatureState = vi.fn(() => { throw new Error("production must not read feature state"); });
+    const featureStateAgeMs = vi.fn(() => { throw new Error("production must not stat feature state"); });
+    const triggerFeatureLab = vi.fn(() => { throw new Error("production must not trigger the feature lab"); });
+    const writeFeatureState = vi.fn(() => { throw new Error("production must not write feature state"); });
+
+    vi.resetModules();
+    vi.doMock("@/lib/feature-state", () => ({ readFeatureState, featureStateAgeMs, triggerFeatureLab, writeFeatureState }));
+    try {
+      const { GET } = await import("@/app/api/feature/current/route");
+      const response = await GET();
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({ status: "idle", current: null, history: [], log_tail: [], interactive: false });
+      expect(readFeatureState).not.toHaveBeenCalled();
+      expect(featureStateAgeMs).not.toHaveBeenCalled();
+      expect(triggerFeatureLab).not.toHaveBeenCalled();
+      expect(writeFeatureState).not.toHaveBeenCalled();
+    } finally {
+      vi.doUnmock("@/lib/feature-state");
+      vi.resetModules();
+    }
   });
 });
 
@@ -125,6 +150,15 @@ describe("POST /api/feature/accept", () => {
 
   it("rejects cross-origin private mutations", async () => {
     const response = await acceptFeature(new Request("http://localhost/api/feature/accept", { method: "POST", headers: { "Content-Type": "application/json", Origin: "https://attacker.example" }, body: "{}" }));
+    expect(response.status).toBe(403);
+  });
+
+  it("rejects hostile origins even when X-Forwarded-Host matches the spoofed origin", async () => {
+    const response = await acceptFeature(new Request("http://localhost/api/feature/accept", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: "http://attacker.example", "X-Forwarded-Host": "attacker.example" },
+      body: "{}",
+    }));
     expect(response.status).toBe(403);
   });
 });

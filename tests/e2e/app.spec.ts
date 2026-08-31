@@ -45,7 +45,8 @@ async function expectMobileTargets(page: import("@playwright/test").Page, label:
   const undersized = await page.locator('a[href], button:not([disabled]), input:not([disabled])').evaluateAll((elements) => elements.flatMap((element) => {
     const rect = element.getBoundingClientRect();
     const style = getComputedStyle(element);
-    if (style.display === "none" || style.visibility === "hidden" || rect.width === 0 || rect.height === 0) return [];
+    const clipped = style.clipPath !== "none" || (style.clip !== "auto" && style.clip !== "rect(auto, auto, auto, auto)");
+    if (style.display === "none" || style.visibility === "hidden" || clipped || rect.width === 0 || rect.height === 0) return [];
     return rect.width + .01 < 44 || rect.height + .01 < 44 ? [`${element.tagName.toLowerCase()}.${element.className}:${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`] : [];
   }));
   expect(undersized, `${label} mobile targets`).toEqual([]);
@@ -70,6 +71,16 @@ async function expectProjectChromeClear(instrument: Locator, label: string, mobi
   expect(geometry.footer.position, `${label} footer must remain in document flow`).not.toMatch(/fixed|sticky/);
   expect(geometry.footer.overlaps, `${label} footer overlap`).toBe(false);
 }
+
+test("skip link is first in keyboard order and moves focus to main content", async ({ page }) => {
+  await page.goto("/projects");
+  const skipLink = page.getByRole("link", { name: "Skip to content" });
+  await page.keyboard.press("Tab");
+  await expect(skipLink).toBeFocused();
+  await expect(skipLink).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#main-content")).toBeFocused();
+});
 
 test("production project routes are direct, complete, and console-clean", async ({ page }) => {
   const errors: string[] = [];
@@ -102,8 +113,13 @@ test("production exposes only the intended five API contracts", async ({ request
   expect(status.headers()["cache-control"]).toBe("no-cache");
   expect(await status.json()).toMatchObject({ status: expect.stringMatching(/^(online|offline)$/) });
 
-  for (const path of ["/api/feature/current", "/api/feature/accept", "/api/feature/deny"]) {
-    const response = path.endsWith("current") ? await request.get(path) : await request.post(path, { data: {} });
+  const current = await request.get("/api/feature/current");
+  expect(current.status()).toBe(200);
+  expect(current.headers()["cache-control"]).toBe("private, no-store");
+  expect(await current.json()).toEqual({ status: "idle", current: null, history: [], log_tail: [], interactive: false });
+
+  for (const path of ["/api/feature/accept", "/api/feature/deny"]) {
+    const response = await request.post(path, { data: {} });
     expect(response.status(), path).toBe(404);
     expect(response.headers()["cache-control"], path).toBe("private, no-store");
   }

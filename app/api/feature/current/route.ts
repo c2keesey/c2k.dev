@@ -7,7 +7,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   if (!isPrivateEnvironment()) {
-    return new Response("Not found", { status: 404, headers: { "Cache-Control": "private, no-store" } });
+    return Response.json(
+      { status: "idle", current: null, history: [], log_tail: [], interactive: false },
+      { headers: { "Cache-Control": "private, no-store" } },
+    );
   }
 
   const state = readFeatureState();
