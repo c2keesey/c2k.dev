@@ -2,6 +2,10 @@
   "name": "c2k.dev",
   "version": "1.0.0",
   "private": true,
+  "overrides": {
+    "nanoid": "3.3.18",
+    "postcss": "8.5.26"
+  },
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1 --port 4321",
     "build": "next build && bun run scripts/prepare-standalone.mjs",
