@@ -1,13 +1,13 @@
 ---
-// Interactive Claude Code statusline showcase with animated context fill
+// Interactive Codex statusline showcase with animated context fill
 // Tap to expand for detailed breakdown
 ---
 
 <div class="showcase" id="sl-showcase">
   <div class="showcase-header">
-    <span class="showcase-label text-scramble" data-text="Claude Code Statusline" data-delay="200" data-always="false">Claude Code Statusline</span>
-    <a class="showcase-tag" href="https://github.com/c2keesey/dotfiles/blob/main/bin/claude-statusline" target="_blank" rel="noopener">
-      dotfiles/bin/claude-statusline ↗
+    <span class="showcase-label text-scramble" data-text="Codex Statusline" data-delay="200" data-always="false">Codex Statusline</span>
+    <a class="showcase-tag" href="https://github.com/c2keesey/codex-statusline" target="_blank" rel="noopener">
+      github/codex-statusline ↗
     </a>
   </div>
 
@@ -16,7 +16,7 @@
       <span class="dot red"></span>
       <span class="dot yellow"></span>
       <span class="dot green"></span>
-      <span class="terminal-title">claude-statusline</span>
+      <span class="terminal-title">codex-statusline</span>
     </div>
     <div class="terminal-body">
       <div class="sl-line1" id="sl-line1">
@@ -32,19 +32,19 @@
         </span>
       </div>
       <div class="sl-line2" id="sl-line2">
-        <span class="sl-segment" data-label="context usage" data-desc="Context window %. Green 0-60, yellow 60-100, red 100+. For 1M models, scales so 500K personal limit = 100%.">
+        <span class="sl-segment" data-label="context usage" data-desc="Live Codex context usage, read from the native footer with a rollout fallback.">
           <span class="sl-ctx" id="sl-ctx">0%</span>
         </span>
+        <span class="sl-segment" data-label="weekly usage" data-desc="Seven-day allowance plus actual burn versus expected pace.">
+          <span class="sl-model">7d ◰◱◱◱ 30% ⇡0.8×</span>
+        </span>
+        <span class="sl-sep">│</span>
         <span class="sl-segment" data-label="system stats" data-desc="CPU load and memory usage, cached every second">
           <span class="sl-stats">↯12 ⛁43</span>
         </span>
         <span class="sl-sep">│</span>
-        <span class="sl-segment" data-label="model" data-desc="Shows model name for 1M context or non-default models. Warm brown color.">
-          <span class="sl-model">Opus 4.6 (1M)</span>
-        </span>
-        <span class="sl-sep">│</span>
-        <span class="sl-segment" data-label="MAIA port" data-desc="Client dev port in MAIA worktrees. White when docker backend is running, grey when down.">
-          <span class="sl-port">:5173</span>
+        <span class="sl-segment" data-label="session" data-desc="Compact Agent Deck session identity.">
+          <span class="sl-port">feature-work_5af</span>
         </span>
       </div>
     </div>
@@ -61,58 +61,58 @@
     <div class="detail-section">
       <h3 class="detail-title">What is this?</h3>
       <p class="detail-text">
-        A 221-line bash script that replaces Claude Code's default statusline. It runs on every prompt, parsing JSON input from Claude Code and rendering a two-line display with ANSI colors.
+        A small Go utility that gives Codex a richer native footer and adds the machine signals Codex cannot expose through an optional tmux companion.
       </p>
     </div>
 
     <div class="detail-section">
-      <h3 class="detail-title">Line 1 — Git + Location</h3>
+      <h3 class="detail-title">Native footer — Codex-owned state</h3>
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-key">Branch</span>
-          <span class="detail-val">Current branch, truncated at 30 chars. Shows HEAD during detached state.</span>
+          <span class="detail-val">Current branch and working-tree change count, rendered by Codex itself.</span>
         </div>
         <div class="detail-item">
-          <span class="detail-key">State icons</span>
-          <span class="detail-val">↻ rebase · ⑂ merge · ⊕ cherry-pick · ↩ revert · ◇ bisect</span>
+          <span class="detail-key">Thread</span>
+          <span class="detail-val">The live Codex thread title stays visible across tmux, SSH, and resizes.</span>
         </div>
         <div class="detail-item">
           <span class="detail-key">±N</span>
-          <span class="detail-val">Total of staged + unstaged + untracked files.</span>
+          <span class="detail-val">The model and reasoning effort come from Codex's native status fields.</span>
         </div>
         <div class="detail-item">
           <span class="detail-key">Path</span>
-          <span class="detail-val">Shortened CWD. Detects git worktrees and shows worktree name.</span>
+          <span class="detail-val">Codex owns the current directory display, so it follows pane state without polling.</span>
         </div>
       </div>
     </div>
 
     <div class="detail-section">
-      <h3 class="detail-title">Line 2 — Context + System + Model</h3>
+      <h3 class="detail-title">Tmux companion — usage + machine</h3>
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-key">Context %</span>
-          <span class="detail-val">Color-coded: green (0-60%), yellow (60-100%), red (100%+). For 1M models, scales so the 500K personal limit reads as 100%.</span>
+          <span class="detail-val">Reads the live native footer first, with the session rollout as a compaction-aware fallback.</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-key">7d + ⇡</span>
+          <span class="detail-val">A four-cell weekly allowance gauge plus actual spend divided by expected spend.</span>
         </div>
         <div class="detail-item">
           <span class="detail-key">↯ ⛁</span>
-          <span class="detail-val">CPU load and memory usage. Cached for 1 second to avoid expensive recalculation.</span>
+          <span class="detail-val">Cross-platform CPU load and memory usage, kept out of the Codex pane itself.</span>
         </div>
         <div class="detail-item">
-          <span class="detail-key">Model</span>
-          <span class="detail-val">Shows "Opus 4.6 (1M)" for 1M context models. For other non-default models, shows the display name. Hidden when using the default model.</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-key">:PORT</span>
-          <span class="detail-val">MAIA client dev port. Only appears in MAIA worktrees. White when the docker backend is running, grey when it's down.</span>
+          <span class="detail-key">Session</span>
+          <span class="detail-val">Keeps the Agent Deck name and a short unique suffix without repeating tmux chrome.</span>
         </div>
       </div>
     </div>
 
     <div class="detail-section">
-      <h3 class="detail-title">Why native bash?</h3>
+      <h3 class="detail-title">Why native-first?</h3>
       <p class="detail-text">
-        Replaced the third-party ccstatusline tool to eliminate rendering artifacts and stdin handling issues. A single bash script with jq parsing, no dependencies, no wrapper hacks. Works on both macOS and Linux.
+        Codex already knows git, context, model, effort, limits, and thread state. The tool configures those official fields, then uses tmux only for CPU, memory, burn pace, and Agent Deck identity. Less scraping, fewer stale values.
       </p>
     </div>
   </div>

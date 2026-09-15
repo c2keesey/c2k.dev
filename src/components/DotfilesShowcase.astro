@@ -1,7 +1,6 @@
 ---
 // Dotfiles — developer environment as code
-// Groups statusline, skills, and other dotfiles highlights into one expandable card
-import StatuslineShowcase from './StatuslineShowcase.astro';
+// Groups skills and other dotfiles highlights into one expandable card
 import SkillsShowcase from './SkillsShowcase.astro';
 ---
 
@@ -16,13 +15,6 @@ import SkillsShowcase from './SkillsShowcase.astro';
       <p class="df-desc">Shell, editor, Claude Code setup, custom tools. All of it lives in one repo and gets symlinked into place, so a new machine is a git clone and one script.</p>
 
       <div class="df-items" id="df-items">
-        <button class="df-item-btn" data-item="statusline">
-          <div class="df-item-icon">▊</div>
-          <div class="df-item-info">
-            <span class="df-item-name">statusline</span>
-            <span class="df-item-sub">bash prompt</span>
-          </div>
-        </button>
         <button class="df-item-btn" data-item="skills">
           <div class="df-item-icon">/</div>
           <div class="df-item-info">
@@ -32,9 +24,6 @@ import SkillsShowcase from './SkillsShowcase.astro';
         </button>
       </div>
 
-      <div class="df-section" id="df-section-statusline">
-        <StatuslineShowcase />
-      </div>
       <div class="df-section" id="df-section-skills">
         <SkillsShowcase />
       </div>
@@ -58,7 +47,6 @@ import SkillsShowcase from './SkillsShowcase.astro';
   function initDotfiles() {
     const btns = document.querySelectorAll<HTMLElement>('.df-item-btn');
     const sections: Record<string, HTMLElement | null> = {
-      statusline: document.getElementById('df-section-statusline'),
       skills: document.getElementById('df-section-skills'),
     };
 

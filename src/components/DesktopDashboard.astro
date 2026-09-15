@@ -81,6 +81,14 @@ const projects: Project[] = [
     color: '168, 85, 247', x: 48, y: 14,
   },
   {
+    id: 'statusline', name: 'Codex Statusline', tagline: 'Native footer + tmux telemetry',
+    description: 'A Claude-style status line for Codex. Codex renders its own git, thread, context, model, and limit state; a tiny Go companion adds CPU, memory, weekly burn pace, and Agent Deck identity in tmux.',
+    badge: 'open source', status: 'ONLINE', pulseRate: 3,
+    tech: ['Go', 'Codex', 'tmux', 'Agent Deck'],
+    link: 'https://github.com/c2keesey/codex-statusline', linkText: 'github/codex-statusline',
+    color: '16, 185, 129', x: 78, y: 8,
+  },
+  {
     id: 'secretgate', name: 'Secret Gate', tagline: 'Human-in-the-loop gate',
     description: 'An agent that wants a 1Password secret or a sudo command has to ask my phone first. Telegram sends the request, I reply yes or no, nothing runs without an answer. Ships as a Claude Code plugin.',
     badge: 'security', status: 'DEPLOYING', pulseRate: 1.5, wip: true,
@@ -207,6 +215,8 @@ const edgesRaw: { from: string; to: string; label: string }[] = [
   { from: 'maia', to: 'dotfiles', label: 'primary workspace' },
   { from: 'maia', to: 'c2k', label: 'showcase piece' },
   { from: 'c2k', to: 'dotfiles', label: 'co-hosted on optiplex' },
+  { from: 'statusline', to: 'dotfiles', label: 'installed by dotfiles' },
+  { from: 'statusline', to: 'parley', label: 'codex tooling' },
   { from: 'c2k', to: 'corne', label: 'interactive keymap' },
   { from: 'dotfiles', to: 'corne', label: 'keyboard config' },
   { from: 'dotfiles', to: 'secretgate', label: 'claude code plugin' },
@@ -265,7 +275,7 @@ edges.forEach((edge, i) => {
 });
 
 // Projects with full interactive showcases (state 3 available)
-const showcaseIds = new Set(['maia', 'c2k', 'dotfiles', 'spotify', 'flux', 'corne', 'lightning']);
+const showcaseIds = new Set(['maia', 'c2k', 'dotfiles', 'statusline', 'spotify', 'flux', 'corne', 'lightning']);
 
 // Compute edge midpoints for labels (as percentages)
 const edgeMidpoints = edges.map(edge => {
@@ -476,6 +486,7 @@ const edgeMidpoints = edges.map(edge => {
       maia: '.showcases-source .maia-showcase',
       c2k: '.showcases-source .c2k-showcase',
       dotfiles: '.showcases-source .df-showcase',
+      statusline: '.showcases-source #sl-showcase',
       spotify: '.showcases-source .sm-showcase',
       flux: '.showcases-source .fg-showcase',
       corne: '.showcases-source .crn-showcase',
