@@ -11,6 +11,7 @@ interface Project {
   status: 'ONLINE' | 'DEPLOYING' | 'STANDBY';
   pulseRate: number;
   wip?: boolean;
+  kind?: 'satellite';
   tech: string[];
   link?: string;
   linkText?: string;
@@ -86,10 +87,10 @@ const projects: Project[] = [
     badge: 'open source', status: 'ONLINE', pulseRate: 3,
     tech: ['Go', 'Codex', 'tmux', 'Agent Deck'],
     link: 'https://github.com/c2keesey/codex-statusline', linkText: 'github/codex-statusline',
-    color: '16, 185, 129', x: 78, y: 8,
+    color: '16, 185, 129', x: 90, y: 22,
   },
   {
-    id: 'secretgate', name: 'Secret Gate', tagline: 'Human-in-the-loop gate',
+    id: 'secretgate', kind: 'satellite', name: 'Secret Gate', tagline: 'Human-in-the-loop gate',
     description: 'An agent that wants a 1Password secret or a sudo command has to ask my phone first. Telegram sends the request, I reply yes or no, nothing runs without an answer. Ships as a Claude Code plugin.',
     badge: 'security', status: 'DEPLOYING', pulseRate: 1.5, wip: true,
     tech: ['Python', '1Password CLI', 'Telegram', 'Claude Code'],
@@ -97,7 +98,7 @@ const projects: Project[] = [
     color: '239, 68, 68', x: 76, y: 20,
   },
   {
-    id: 'techdigest', name: 'Tech Digest', tagline: 'Daily release digest',
+    id: 'techdigest', kind: 'satellite', name: 'Tech Digest', tagline: 'Daily release digest',
     description: 'Pulls release notes for everything in my stack, has Claude read them, and sends me the short version on Telegram. The same bot lets me drive a headless Claude session from my phone.',
     badge: 'automation', status: 'ONLINE', pulseRate: 5,
     tech: ['Python', 'Claude CLI', 'Telegram', 'GitHub API', 'cron'],
@@ -112,7 +113,7 @@ const projects: Project[] = [
     color: '200, 210, 255', x: 68, y: 78,
   },
   {
-    id: 'propeller', name: 'Propeller Scrape', tagline: 'Concert ticket monitor',
+    id: 'propeller', kind: 'satellite', name: 'Propeller Scrape', tagline: 'Concert ticket monitor',
     description: 'Watches Propeller rewards for concert tickets in LA, SF, and Boulder and pings me on Telegram when something good shows up. Runs on cron and I forget it exists.',
     badge: 'utility', status: 'ONLINE', pulseRate: 5,
     tech: ['Python', 'BeautifulSoup', 'Telegram', 'cron'],
@@ -120,7 +121,7 @@ const projects: Project[] = [
     color: '249, 115, 22', x: 88, y: 50,
   },
   {
-    id: 'panecmd', name: 'Pane Skill', tagline: 'Claude tmux side pane',
+    id: 'panecmd', kind: 'satellite', name: 'Pane Skill', tagline: 'Claude tmux side pane',
     description: 'Claude Code skill that throws files, diffs, and command output into a managed tmux side pane instead of the chat log. Routes each through Helix, delta, or less depending on what it is.',
     badge: 'claude tools', status: 'ONLINE', pulseRate: 4,
     tech: ['Bash', 'tmux', 'Claude Code', 'Helix'],
@@ -128,7 +129,7 @@ const projects: Project[] = [
     color: '239, 68, 68', x: 30, y: 28,
   },
   {
-    id: 'playlistai', name: 'Playlist AI', tagline: 'ML playlist sorter',
+    id: 'playlistai', kind: 'satellite', name: 'Playlist AI', tagline: 'ML playlist sorter',
     description: 'The first attempt at auto-sorting my liked songs, back when Spotify still handed out audio features. Random forests against gradient boosting against SVMs against a small net, scored on my own playlists.',
     badge: 'ml', status: 'STANDBY', pulseRate: 6,
     tech: ['Python', 'scikit-learn', 'Jupyter', 'Spotify API'],
@@ -143,7 +144,7 @@ const projects: Project[] = [
     color: '236, 72, 153', x: 42, y: 70,
   },
   {
-    id: 'songsorter', name: 'Song Sorter', tagline: 'Pairwise library ranker',
+    id: 'songsorter', kind: 'satellite', name: 'Song Sorter', tagline: 'Pairwise library ranker',
     description: 'Ranks a Spotify library by making you pick between two songs, over and over, until fuzzy taste comes out as an ordered list. React and Zustand over the Spotify Web API.',
     badge: 'web app', status: 'STANDBY', pulseRate: 6,
     tech: ['TypeScript', 'React', 'Zustand', 'Radix UI', 'Tailwind'],
@@ -151,14 +152,14 @@ const projects: Project[] = [
     color: '16, 185, 129', x: 10, y: 44,
   },
   {
-    id: 'momentplayer', name: 'Moment Player', tagline: 'Podcast AI companion',
+    id: 'momentplayer', kind: 'satellite', name: 'Moment Player', tagline: 'Podcast AI companion',
     description: 'Podcast player for iOS. Pause on a line you did not follow, ask about it, get an answer with the transcript as context, then keep going. SwiftUI on the front, a Python transcript and LLM service behind it.',
     badge: 'ios', status: 'STANDBY', pulseRate: 5, wip: true,
     tech: ['Swift', 'SwiftUI', 'Python', 'FastAPI', 'LLM'],
     color: '99, 102, 241', x: 74, y: 64,
   },
   {
-    id: 'alldifferent', name: 'All Look Different', tagline: 'Face-quiz game',
+    id: 'alldifferent', kind: 'satellite', name: 'All Look Different', tagline: 'Face-quiz game',
     description: 'Guess the nationality from the face. You will be worse at this than you expect. Retro arcade styling, a global leaderboard, Cloudflare Workers behind it.',
     badge: 'game', status: 'ONLINE', pulseRate: 4,
     tech: ['JavaScript', 'HTML/CSS', 'Cloudflare Workers'],
@@ -167,21 +168,21 @@ const projects: Project[] = [
   },
 
   {
-    id: 'vibe', name: 'Vibe Framework', tagline: 'In-app agent, live reload',
+    id: 'vibe', kind: 'satellite', name: 'Vibe Framework', tagline: 'In-app agent, live reload',
     description: 'Astro template with a chat panel on every page, wired to a Claude Code session on the host machine. Ask it to change something and Vite refreshes the page while you watch. Works from my phone over Tailscale, which is either very good or very bad.',
     badge: 'tooling', status: 'DEPLOYING', pulseRate: 2.5, wip: true,
     tech: ['Astro', 'TypeScript', 'Bun', 'Claude Code', 'SSE'],
     color: '192, 132, 252', x: 64, y: 8,
   },
   {
-    id: 'polymarket', name: 'Polymarket Bot', tagline: 'Behavioral edge research',
+    id: 'polymarket', kind: 'satellite', name: 'Polymarket Bot', tagline: 'Behavioral edge research',
     description: 'Backtest and paper-trade harness for behavioral biases on prediction markets. Public read-only data, no wallet, no real money. Most of the hypotheses died in the gauntlet; the mid-range underdog one survived replication.',
     badge: 'research', status: 'STANDBY', pulseRate: 6,
     tech: ['Python', 'pandas', 'Polymarket API'],
     color: '20, 184, 166', x: 90, y: 68,
   },
   {
-    id: 'calsync', name: 'Cal Sync', tagline: 'Apple Note ↔ Calendar',
+    id: 'calsync', kind: 'satellite', name: 'Cal Sync', tagline: 'Apple Note ↔ Calendar',
     description: 'Plans get written in a shared Apple Note, not a calendar app. This syncs that note to a Google Calendar both ways, and identifies the calendar by a marker instead of its name so renaming it does not quietly break the sync.',
     badge: 'automation', status: 'ONLINE', pulseRate: 5,
     tech: ['Python', 'Google Calendar API', 'AppleScript', 'launchd'],
@@ -300,6 +301,11 @@ const edgeMidpoints = edges.map(edge => {
     <span class="dashboard-tp-rate" id="dashboard-tp-rate"></span>
   </div>
 
+  <div class="network-key" aria-label="Node types">
+    <span><i class="key-project"></i>PROJECTS <b>{projects.filter(p => !p.kind).length}</b></span>
+    <span><i class="key-satellite"></i>SMALL BUILDS <b>{projects.filter(p => p.kind === 'satellite').length}</b></span>
+  </div>
+
   <!-- Resource HUD -->
   <div class="resource-hud" id="resource-hud">
     <div class="hud-row">
@@ -372,11 +378,21 @@ const edgeMidpoints = edges.map(edge => {
   <!-- Project nodes -->
   {projects.map((p, i) => (
     <div
-      class={`dashboard-node${showcaseIds.has(p.id) ? ' has-showcase' : ''}${p.hero ? ` hero-${p.hero}` : ''}`}
+      class={`dashboard-node${p.kind === 'satellite' ? ' satellite-node' : ''}${showcaseIds.has(p.id) ? ' has-showcase' : ''}${p.hero ? ` hero-${p.hero}` : ''}`}
       style={`left: ${p.x}%; top: ${p.y}%; --node-color: ${p.color}; --node-delay: ${i * 80}ms; --pulse-rate: ${p.pulseRate}s;`}
       data-project={p.id}
+      data-node-type={p.kind || 'project'}
+      tabindex="0"
+      role="button"
+      aria-label={`${p.name}: ${p.tagline}. ${p.status}`}
+      aria-expanded="false"
       data-edges={JSON.stringify(nodeEdgeMap[p.id])}
     >
+      {p.kind === 'satellite' && (
+        <span class="satellite-marker" aria-hidden="true">
+          <span class="node-status-dot" data-status={p.status}></span>
+        </span>
+      )}
       <span class={`node-status-label ${p.status.toLowerCase()}`}>{p.status}</span>
       <div class="node-compact">
         <div class="node-top-row">
@@ -585,11 +601,13 @@ const edgeMidpoints = edges.map(edge => {
       node.style.setProperty('--clamp-x', `${dx}px`);
       node.style.setProperty('--clamp-y', `${dy}px`);
       node.classList.add('expanded');
+      node.setAttribute('aria-expanded', 'true');
       dashboard.classList.add('has-expanded');
     }
 
     function collapseNode(node: HTMLElement) {
       node.classList.remove('expanded');
+      node.setAttribute('aria-expanded', 'false');
       node.style.setProperty('--clamp-x', '0px');
       node.style.setProperty('--clamp-y', '0px');
       dashboard.classList.remove('has-expanded');
@@ -668,6 +686,22 @@ const edgeMidpoints = edges.map(edge => {
       });
     });
 
+    // Keyboard access follows the same expansion path as a pointer click.
+    nodes.forEach(node => {
+      node.addEventListener('keydown', (event) => {
+        if (event.target === node && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          node.click();
+        }
+      });
+      node.addEventListener('focus', () => {
+        if (!expandedNode && !focusedProjectId) highlightNode(node);
+      });
+      node.addEventListener('blur', () => {
+        if (!expandedNode && !focusedProjectId) clearHighlights();
+      });
+    });
+
     // ── Click: three-state progression ──
     // State 1 (compact) → click → State 2 (expanded inline)
     // State 2 (expanded) → click → State 3 (focus overlay with full showcase)
@@ -686,7 +720,11 @@ const edgeMidpoints = edges.map(edge => {
           if (hasShowcase) {
             openFocus(projectId);
           }
-          // If no showcase, clicking again does nothing (stay in state 2)
+          else {
+            collapseNode(node);
+            expandedNode = null;
+            clearHighlights();
+          }
           return;
         }
 
@@ -1638,6 +1676,24 @@ const edgeMidpoints = edges.map(edge => {
     letter-spacing: 0.08em;
   }
 
+  .network-key {
+    position: absolute;
+    bottom: 1rem;
+    left: 2rem;
+    z-index: 5;
+    display: flex;
+    gap: 1.4rem;
+    font: 0.55rem var(--font-mono);
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    pointer-events: none;
+  }
+
+  .network-key > span { display: flex; align-items: center; gap: 0.5rem; }
+  .network-key b { font-weight: 400; color: var(--text-faint); }
+  .network-key i { width: 11px; height: 8px; border: 1px solid var(--text-faint); border-radius: 2px; }
+  .network-key .key-satellite { width: 6px; height: 6px; border-radius: 0; transform: rotate(45deg); }
+
   /* ── SVG edges ── */
   .dashboard-svg {
     position: absolute;
@@ -1749,7 +1805,7 @@ const edgeMidpoints = edges.map(edge => {
     to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
 
-  .dashboard-node:hover:not(.dimmed) {
+  .dashboard-node:not(.satellite-node):hover:not(.dimmed):not(.expanded) {
     border-color: rgba(var(--node-color), 0.4);
     transform: translate(-50%, -50%) scale(1.03);
     box-shadow:
@@ -1949,6 +2005,97 @@ const edgeMidpoints = edges.map(edge => {
     display: block;
   }
   .node-link:hover { opacity: 0.8; }
+
+  /* Small builds are points on the network, with a label rather than a card.
+     The marker sits at the same center as its connections. On selection they
+     unfold into the existing detail card, including the viewport clamp. */
+  .satellite-marker { display: none; }
+
+  .satellite-node:not(.expanded) {
+    width: 148px;
+    height: 56px;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-radius: 6px;
+  }
+
+  .satellite-node:not(.expanded) .satellite-marker {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    border: 1px solid rgba(var(--node-color), 0.55);
+    background: var(--dash-node-bg);
+    transform: translate(-50%, -50%) rotate(45deg);
+    box-shadow: 0 0 16px rgba(var(--node-color), 0.12);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .satellite-marker .node-status-dot {
+    width: 4px;
+    height: 4px;
+    transform: rotate(-45deg);
+  }
+
+  .satellite-node:not(.expanded) .node-compact {
+    position: absolute;
+    top: calc(50% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+    padding: 0;
+    gap: 4px;
+  }
+
+  .satellite-node:not(.expanded) .node-top-row > .node-status-dot,
+  .satellite-node:not(.expanded) .node-status-label,
+  .satellite-node:not(.expanded) .node-detail { display: none; }
+
+  .satellite-node:not(.expanded) .node-name {
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: var(--dash-node-bg);
+  }
+
+  .satellite-node:not(.expanded) .node-tagline {
+    font-size: 0.55rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    padding: 2px 5px;
+    background: var(--dash-node-bg);
+    max-width: 190px;
+  }
+
+  .satellite-node:not(.expanded):is(:hover, :focus-visible) {
+    border-color: transparent;
+    box-shadow: none;
+    transform: translate(-50%, -50%);
+  }
+
+  .satellite-node:not(.expanded):is(:hover, :focus-visible) .satellite-marker {
+    border-color: rgb(var(--node-color));
+    box-shadow: 0 0 0 5px rgba(var(--node-color), 0.08), 0 0 24px rgba(var(--node-color), 0.2);
+  }
+
+  .satellite-node:not(.expanded):is(:hover, :focus-visible) .node-tagline { opacity: 1; }
+
+  .dashboard-node:focus-visible {
+    outline: 2px solid rgba(var(--node-color), 0.8);
+    outline-offset: 5px;
+    z-index: 9;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dashboard-node, .satellite-marker { animation: none; transition: none; }
+  }
 
   /* ── Explore hint (visible on expanded showcase nodes) ── */
   .node-explore-hint {
