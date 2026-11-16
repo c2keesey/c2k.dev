@@ -40,7 +40,12 @@ const quotes = [
 ---
 
 <div class="rotating-quote" id="rotating-quote">
-  <div class="quote-text" id="quote-text">// {quotes[0].text}</div>
+  <div class="quote-text">
+    <span id="quote-text">// {quotes[0].text}</span>
+    {quotes.map(quote => (
+      <span class="quote-size" aria-hidden="true">// {quote.text}</span>
+    ))}
+  </div>
   <div class="quote-author" id="quote-author">// — {quotes[0].author}</div>
 </div>
 
@@ -141,22 +146,21 @@ const quotes = [
     font-size: 0.75rem;
     line-height: 1.6;
     color: var(--text-quaternary);
-    /* Fixed height to prevent layout shift when quotes rotate.
-       Sized for the longest quote (~3 lines on mobile, ~2 on desktop). */
-    height: 4.8em;
-    overflow: hidden;
+    /* Overlap invisible copies so the longest quote reserves its actual
+       wrapped height at every viewport width, without shifting on rotation. */
+    display: grid;
+    overflow-wrap: anywhere;
   }
 
-  @media (min-width: 768px) {
-    .quote-text {
-      height: 3.2em;
-    }
+  .quote-text > span {
+    grid-area: 1 / 1;
+    min-width: 0;
   }
 
-  @media (min-width: 1024px) {
-    .quote-text {
-      height: 2.4em;
-    }
+  .quote-size {
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
   }
 
   .quote-author {
