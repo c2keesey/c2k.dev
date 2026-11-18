@@ -159,11 +159,11 @@ const projects: Project[] = [
     color: '99, 102, 241', x: 74, y: 64,
   },
   {
-    id: 'alldifferent', kind: 'satellite', name: 'All Look Different', tagline: 'Face-quiz game',
-    description: 'Guess the nationality from the face. You will be worse at this than you expect. Retro arcade styling, a global leaderboard, Cloudflare Workers behind it.',
+    id: 'alldifferent', kind: 'satellite', name: 'All Look Different', tagline: 'Border-desk face quiz',
+    description: 'Eighteen real British, German and French faces at a border desk, and you stamp the passport you think each one holds. Freely licensed portraits from Wikidata and Wikimedia Commons, a global roster on Cloudflare Workers, and a European answer to alllooksame.com.',
     badge: 'game', status: 'ONLINE', pulseRate: 4,
-    tech: ['JavaScript', 'HTML/CSS', 'Cloudflare Workers'],
-    link: 'https://github.com/c2keesey/All-look-different', linkText: 'github/all-look-different',
+    tech: ['JavaScript', 'Wikidata', 'Wikimedia Commons', 'Cloudflare Workers'],
+    link: 'https://alllookdifferent.c2k.page', linkText: 'alllookdifferent.c2k.page',
     color: '245, 158, 11', x: 66, y: 42,
   },
 
@@ -276,7 +276,7 @@ edges.forEach((edge, i) => {
 });
 
 // Projects with full interactive showcases (state 3 available)
-const showcaseIds = new Set(['maia', 'c2k', 'dotfiles', 'statusline', 'spotify', 'flux', 'corne', 'lightning']);
+const showcaseIds = new Set(['maia', 'c2k', 'dotfiles', 'statusline', 'spotify', 'flux', 'corne', 'lightning', 'alldifferent']);
 
 // Compute edge midpoints for labels (as percentages)
 const edgeMidpoints = edges.map(edge => {
@@ -507,6 +507,7 @@ const edgeMidpoints = edges.map(edge => {
       flux: '.showcases-source .fg-showcase',
       corne: '.showcases-source .crn-showcase',
       lightning: '.showcases-source .lc-showcase',
+      alldifferent: '.showcases-source .ald-showcase',
     };
 
     let expandedNode: HTMLElement | null = null;
