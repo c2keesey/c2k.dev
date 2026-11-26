@@ -13,7 +13,7 @@ Use "brah", "howzit", "da kine", "no worry", "shoots" naturally but don't overdo
 
 ## Design Direction
 
-> **Rebuild in progress (shadcn/Tailwind v4/React islands).** The design system — tokens, components, patterns, migration rules — is in `docs/design-system.md` and rendered at `/design-system`. New pages use `src/layouts/AppLayout.astro` and live under `/next` until Chris approves the swap.
+**Read `docs/design-direction.md` first.** It is Chris's own record of inspiration and ideas, and it outranks the design system. Only Chris adds to it: record his words verbatim and dated, never add your own ideas there.
 
 ### Concept
 "System monitor for my life" — c2k.page is the public observability layer for a developer's digital life. Projects, tools, workflow, all surfaced like a well-designed dashboard.
@@ -39,7 +39,7 @@ Use "brah", "howzit", "da kine", "no worry", "shoots" naturally but don't overdo
 - Purple as primary, orange as warm complement
 
 ### Typography
-- Instrument Sans (prose/display) + JetBrains Mono (all chrome). Full system: `docs/design-system.md`, live at `/design-system`.
+- TBD
 
 ### Identity
 - "c2k" text mark, no logo for now
@@ -91,7 +91,6 @@ a control room.
 
 ### NOT this (dashboard-specific)
 - Movie sci-fi HUDs with no real data behind them
-- Gratuitous particle effects or canvas noise
 - Neon/cyberpunk overkill — glow should be subtle, not blinding
 - Static layouts pretending to be dashboards
 
