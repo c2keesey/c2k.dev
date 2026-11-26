@@ -20,6 +20,11 @@ Status: open idea. Not yet decided how or whether it shapes the rebuild.
 
 Removed the principle "no gratuitous particle effects or canvas noise". The background effects (canvas mesh, starfield, cursor trail) are wanted, not noise.
 
+### Circuit-board feel (2026-11-26)
+> "i do kinda like the circuit board feel tho. maybe log that for later for some other thing"
+
+About the shadcn rebuild's projects map: orthogonal traces, parallel lanes, glowing packets flowing along routes. Status: saved for later, for some other thing. Not tied to this page.
+
 ---
 
 ## Earlier direction (from previous work, carried over from CLAUDE.md)
