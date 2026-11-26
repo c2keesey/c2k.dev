@@ -2,16 +2,17 @@
 
 The live version is at **`/design-system`** (`bun run dev`, then open the route). This file is the written contract. When the two disagree, the code in `src/styles/app.css` and `src/components/system/` wins; fix whichever is wrong.
 
-Named for the neighbourhood the site is built in, at the hour the sky over the Pacific turns violet and the last orange sits on the water. The concept is unchanged from `CLAUDE.md`: **a system monitor for my life**. Every element reports something real.
+Named for the neighbourhood the site is built in, at the hour the sky over the Pacific turns violet and the last orange sits on the water. The concept is unchanged from `CLAUDE.md`: **a system monitor for my life**. And it is **primarily an art project**. Chris's own direction lives in `docs/design-direction.md`. That doc outranks this one, so when the two disagree, this doc changes.
 
 ---
 
 ## 1. Principles
 
-These four decide arguments. Anything this doc doesn't cover goes back to them.
+These five decide arguments. Anything this doc doesn't cover goes back to them.
 
-1. **Real, not decorative.** Every dot, line and number reflects actual state. If nothing real sits behind an element, don't draw it. Missing data reads `--` and never a plausible fake.
-2. **Data resolves; it does not slide.** Show change by decoding text into place, not with fades or slide-ups. Each view gets one orchestrated decode on load. After that, motion only answers what the visitor does.
+0. **It's an art project first.** Background effects such as canvas meshes, starfields, particles and cursor trails are wanted. They are part of the piece, not noise to cut. Keep them subtle enough that the content stays readable, and honour reduced motion.
+1. **Real data, never fake data.** Every reading, status, count and relationship reflects actual state. Missing data reads `--` and never a plausible fake. This governs *data*. It does not forbid art: a background effect is fine, as long as it doesn't pretend to be a reading.
+2. **Data resolves; it does not slide.** Show change by decoding text into place, not with fades or slide-ups. Each view gets one orchestrated decode on load. After that, data motion only answers what the visitor does. Ambient background art may keep moving.
 3. **The sunset means change.** The purple → orange gradient is reserved for things in transition: glyphs mid-decode, live route pulses, and the `c2k` mark. Resolved content is solid colour. Don't use the gradient as a background wash, and don't paint gradient headlines.
 4. **Chrome is quiet, content is loud.** Labels, counters and status lines are small lowercase mono at the edge of perception. Names and writing are proportional and full contrast. Uppercase is allowed only for machine states and route names.
 
@@ -185,7 +186,7 @@ Overlays (tooltip, hover card, dialog, sheet) use `bg-popover` with a strong hai
 **Project network** (for the projects worker)
 
 - Full bleed: `<AppLayout title="Projects" bleed>`.
-- The map surface is `bg-dot-grid` plus a `bg-vignette` overlay.
+- The map surface is `bg-dot-grid`, then the living background (`MeshField` in `src/components/network/MeshField.tsx`: a noise-breathing triangle mesh, a twinkling parallax starfield and a cursor heat trail), then a `bg-vignette` overlay.
 - Nodes are `NodeCard`, or your own built on the same parts: `StatusDot`, `ROUTES`, `.panel`, `chrome`.
 - Routes are orthogonal SVG paths with rounded corners. Use `stroke={ROUTES[r].stroke}`, dashed, with `animate-flow` or `animate-flow-slow` depending on connection type.
 - Hovering a node brightens connected routes from 0.3 to 0.7 opacity and dims the rest to 0.1, over 150ms.
