@@ -188,6 +188,12 @@ export default function ProjectNetwork() {
     setHovered(null);
   }, []);
 
+  // /projects#maia (linked from the home page's line map) opens that node
+  React.useEffect(() => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (id && PROJECT_BY_ID[id]) select(id);
+  }, [select]);
+
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;

@@ -1,9 +1,34 @@
 ---
-// Placeholder — a page worker replaces this. See docs/design-system.md.
+/**
+ * Home. One loud thing (the name, decoding at display size); everything under it is
+ * plain sentences whose numbers are live readings, then the network as transit lines.
+ * No boxes: nothing here is an instrument except the push log, and that's a list.
+ */
 import AppLayout from '@/layouts/AppLayout.astro';
 import Decode from '@/components/system/Decode.astro';
+import HomeLive from '@/components/home/HomeLive';
+import QuoteLine from '@/components/home/QuoteLine';
+import OceanWindow from '@/components/home/OceanWindow';
+import { QUOTES } from '@/data/quotes';
+
+// same quote for everyone on a given day
+const day = Math.floor(Date.now() / 86_400_000);
+const quoteIndex = day % QUOTES.length;
 ---
-<AppLayout title="">
-  <Decode as="h1" text="home" class="font-display text-5xl" />
-  <p class="mt-4 max-w-prose text-muted-foreground">Not ported yet. The legacy page is still live; the design system is at <a class="text-primary underline-offset-4 hover:underline" href="/design-system">/design-system</a>.</p>
+
+<AppLayout description="Christopher Keesey: CTO at MAIA Analytics, building in the Outer Sunset. Everything I make, live.">
+  <OceanWindow client:only="react" />
+  <Decode
+    as="h1"
+    text="Christopher Carson Keesey"
+    delay={120}
+    duration={1100}
+    class="mb-12 block max-w-[12ch] font-display text-[clamp(3.25rem,10.5vw,8.5rem)] leading-[0.92] tracking-[-0.035em] text-foreground lg:mb-16"
+  />
+
+  <HomeLive client:load />
+
+  <section aria-label="A quote" class="mt-24 border-t border-border pt-10 lg:mt-32">
+    <QuoteLine client:visible initial={quoteIndex} />
+  </section>
 </AppLayout>

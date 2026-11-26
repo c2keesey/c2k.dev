@@ -22,6 +22,13 @@ export default function MobileNetwork() {
     if (id) setLastId(id);
   };
 
+  // /projects#maia (linked from the home page's line map) opens that project
+  React.useEffect(() => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (id && PROJECT_BY_ID[id]) open(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="px-4 pt-6 pb-10">
       <header className="mb-6 flex flex-col gap-1.5">
