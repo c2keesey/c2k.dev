@@ -19,6 +19,11 @@ function getIndexHtml(): string {
 export const onRequest = defineMiddleware(async (context, next) => {
   // Serve index.html for panel routes — client JS handles panel switching
   if (panelRoutes.has(context.url.pathname)) {
+    // In dev there is no fresh dist/ build: render the live index instead of a stale file.
+    if (import.meta.env.DEV) {
+      const live = await fetch(new URL('/', context.url));
+      return new Response(await live.text(), { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
     return new Response(getIndexHtml(), {
       status: 200,
       headers: {

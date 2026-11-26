@@ -1,0 +1,359 @@
+/*
+ * c2k.page design system — "Outer Sunset" tokens
+ * Read docs/design-system.md before changing anything here.
+ *
+ * This stylesheet is loaded ONLY by src/layouts/AppLayout.astro (the new shell).
+ * The legacy single-page site (src/pages/index.astro) still uses global.css, so
+ * nothing here can regress it while pages are being ported.
+ */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource-variable/instrument-sans/wdth.css";
+@import "@fontsource-variable/jetbrains-mono";
+
+/* Dark ("dusk") is the default. data-theme="warm" on <html> is golden hour. */
+@custom-variant dark (&:not(:where([data-theme="warm"], [data-theme="warm"] *)));
+@custom-variant warm (&:where([data-theme="warm"], [data-theme="warm"] *));
+@custom-variant reduced-motion (@media (prefers-reduced-motion: reduce));
+
+/* ───────────────────────────── 1. Raw tokens ───────────────────────────── */
+:root {
+  color-scheme: dark;
+
+  /* Dusk: the Outer Sunset after the sun is gone — violet-black sky, fog, sodium lamps */
+  --background: oklch(0.145 0.014 292);     /* night   #0d0b13-ish */
+  --foreground: oklch(0.94 0.012 75);       /* fog-lit warm white */
+  --surface: oklch(0.175 0.016 292);        /* raised panel */
+  --surface-2: oklch(0.205 0.018 292);      /* raised twice: popovers, hover */
+  --card: oklch(0.175 0.016 292 / 0.72);    /* frosted panel (sits on the dot grid) */
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.2 0.018 292);
+  --popover-foreground: var(--foreground);
+
+  --primary: oklch(0.7 0.19 300);           /* violet — the sky above the sunset */
+  --primary-foreground: oklch(0.16 0.02 292);
+  --ember: oklch(0.76 0.165 55);            /* orange — the last of the sun */
+  --ember-foreground: oklch(0.18 0.03 50);
+  --dusk-pink: oklch(0.7 0.21 345);         /* only ever as the gradient midpoint */
+
+  --secondary: oklch(0.235 0.02 292);
+  --secondary-foreground: var(--foreground);
+  --muted: oklch(0.22 0.016 292);
+  --muted-foreground: oklch(0.74 0.02 285); /* body-secondary: 8.6:1 on night */
+  --faint-foreground: oklch(0.6 0.02 285);  /* chrome labels: 5.0:1 on night — floor for text */
+  --accent: oklch(0.24 0.022 292);
+  --accent-foreground: var(--foreground);
+  --destructive: oklch(0.66 0.2 25);
+
+  --border: oklch(1 0 0 / 0.08);
+  --border-strong: oklch(1 0 0 / 0.14);
+  --input: oklch(1 0 0 / 0.12);
+  --ring: oklch(0.7 0.19 300 / 0.6);
+  --highlight: oklch(1 0 0 / 0.04);         /* inner top-edge highlight on panels */
+  --grid-dot: oklch(1 0 0 / 0.035);
+
+  /* Status — semantic, never decorative. See docs/design-system.md §Status */
+  --status-online: oklch(0.79 0.17 152);
+  --status-deploying: oklch(0.83 0.15 85);
+  --status-standby: oklch(0.7 0.045 250);
+  --status-advisory: oklch(0.7 0.19 38);
+  --status-offline: oklch(0.6 0.012 285);
+
+  /* Metro routes on the project network */
+  --route-core: oklch(0.7 0.19 300);        /* CORE STACK   purple */
+  --route-hardware: oklch(0.76 0.165 55);   /* HARDWARE     orange */
+  --route-software: oklch(0.77 0.15 160);   /* SOFTWARE     green  */
+  --route-claude: oklch(0.67 0.2 28);       /* CLAUDE TOOLS red    */
+  --route-config: oklch(0.68 0.15 268);     /* CONFIG       violet-blue */
+  --route-automation: oklch(0.77 0.12 195); /* AUTOMATION   teal   */
+
+  /* The sunset. Reserved for change-in-progress: decoding glyphs, live edges, the mark. */
+  --sunset: linear-gradient(90deg, var(--primary), var(--dusk-pink), var(--ember));
+  --sunset-diag: linear-gradient(135deg, var(--primary), var(--dusk-pink), var(--ember));
+
+  --vignette: radial-gradient(ellipse at 50% 45%, transparent 40%, oklch(0.1 0.01 292 / 0.55) 100%);
+}
+
+[data-theme="warm"] {
+  color-scheme: light;
+
+  /* Golden hour: same street, two hours earlier */
+  --background: oklch(0.975 0.008 75);
+  --foreground: oklch(0.24 0.02 50);
+  --surface: oklch(0.955 0.011 72);
+  --surface-2: oklch(0.93 0.014 70);
+  --card: oklch(0.985 0.006 75 / 0.8);
+  --popover: oklch(0.99 0.005 75);
+
+  --primary: oklch(0.52 0.22 300);
+  --primary-foreground: oklch(0.985 0.005 75);
+  --ember: oklch(0.56 0.18 45);
+  --ember-foreground: oklch(0.985 0.005 75);
+  --dusk-pink: oklch(0.56 0.22 345);
+
+  --secondary: oklch(0.93 0.014 70);
+  --muted: oklch(0.94 0.012 72);
+  --muted-foreground: oklch(0.45 0.02 50);
+  --faint-foreground: oklch(0.51 0.02 50);
+  --accent: oklch(0.93 0.016 70);
+  --destructive: oklch(0.55 0.21 27);
+
+  --border: oklch(0.3 0.03 50 / 0.12);
+  --border-strong: oklch(0.3 0.03 50 / 0.2);
+  --input: oklch(0.3 0.03 50 / 0.18);
+  --ring: oklch(0.52 0.22 300 / 0.5);
+  --highlight: oklch(1 0 0 / 0.6);
+  --grid-dot: oklch(0.3 0.03 50 / 0.06);
+
+  --status-online: oklch(0.5 0.14 152);
+  --status-deploying: oklch(0.52 0.12 70);
+  --status-standby: oklch(0.5 0.05 250);
+  --status-advisory: oklch(0.53 0.19 35);
+  --status-offline: oklch(0.5 0.012 50);
+
+  --route-core: oklch(0.52 0.22 300);
+  --route-hardware: oklch(0.56 0.18 45);
+  --route-software: oklch(0.55 0.14 160);
+  --route-claude: oklch(0.55 0.21 27);
+  --route-config: oklch(0.5 0.17 268);
+  --route-automation: oklch(0.56 0.11 200);
+
+  --vignette: radial-gradient(ellipse at 50% 45%, transparent 45%, oklch(0.85 0.03 70 / 0.35) 100%);
+}
+
+/* ─────────────────────── 2. Tailwind theme bindings ─────────────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-ember: var(--ember);
+  --color-ember-foreground: var(--ember-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-faint-foreground: var(--faint-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-highlight: var(--highlight);
+
+  --color-status-online: var(--status-online);
+  --color-status-deploying: var(--status-deploying);
+  --color-status-standby: var(--status-standby);
+  --color-status-advisory: var(--status-advisory);
+  --color-status-offline: var(--status-offline);
+
+  --color-route-core: var(--route-core);
+  --color-route-hardware: var(--route-hardware);
+  --color-route-software: var(--route-software);
+  --color-route-claude: var(--route-claude);
+  --color-route-config: var(--route-config);
+  --color-route-automation: var(--route-automation);
+}
+
+@theme {
+  /* Type: one proportional family with a width axis + one mono for chrome */
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", monospace;
+
+  /* Classical scale (Bringhurst): 11 12 14 16 18 21 24 30 36 48 60 72 */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.375rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.7rem;
+  --text-xl: 1.3125rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.9rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.2rem;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1.05;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1;
+  --text-7xl: 4.5rem;
+  --text-7xl--line-height: 0.95;
+
+  /* Radius encodes hierarchy: chips < controls < panels < overlays */
+  --radius-xs: 3px;   /* kbd, tags, tiny chips */
+  --radius-sm: 5px;   /* buttons, inputs, badges */
+  --radius-md: 8px;   /* panels, node cards */
+  --radius-lg: 12px;  /* expanded nodes, dialogs, sheets */
+  --radius-xl: 16px;
+
+  /* Motion */
+  --ease-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --default-transition-duration: 200ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-pulse-active: status-pulse 2s var(--ease-out) infinite;
+  --animate-pulse-periodic: status-pulse 5s var(--ease-out) infinite;
+  --animate-pulse-dormant: status-pulse 8s var(--ease-out) infinite;
+  --animate-flow: route-flow 1.2s linear infinite;
+  --animate-flow-slow: route-flow 3s linear infinite;
+  --animate-caret: caret-blink 1.1s steps(1) infinite;
+
+  @keyframes status-pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 55%, transparent); }
+    60%, 100% { box-shadow: 0 0 0 6px color-mix(in oklch, currentColor 0%, transparent); }
+  }
+  @keyframes route-flow {
+    to { stroke-dashoffset: -16; }
+  }
+  @keyframes caret-blink {
+    0%, 50% { opacity: 1; }
+    50.01%, 100% { opacity: 0; }
+  }
+}
+
+/* ───────────────────────────── 3. Base layer ───────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    min-height: 100dvh;
+  }
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ───────────────────────────── 4. Utilities ────────────────────────────── */
+
+/* Sunset text: for the c2k mark and for glyphs mid-decode. Not for headlines. */
+@utility text-sunset {
+  background: var(--sunset);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Chrome: the instrument's own labels — mono, small, lowercase, quiet */
+@utility chrome {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: var(--text-2xs--line-height);
+  letter-spacing: 0.02em;
+  color: var(--faint-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Readout numbers: tabular, slashed zero */
+@utility tabular {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* Frosted instrument panel */
+@utility panel {
+  position: relative;
+  background:
+    linear-gradient(135deg, var(--highlight), transparent 40%),
+    var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 0 var(--highlight);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* The map surface: dot grid + vignette */
+@utility bg-dot-grid {
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+@utility bg-vignette {
+  background-image: var(--vignette);
+}
+
+/* Display type: Instrument Sans, slightly condensed, tight */
+@utility font-display {
+  font-family: var(--font-sans);
+  font-stretch: 88%;
+  font-weight: 620;
+  letter-spacing: -0.025em;
+}
+
+/* ──────────── 5. Legacy bridge: old var names → new tokens ────────────
+ * Lets un-ported legacy .astro components (DesktopDashboard, showcases…) render
+ * inside AppLayout while they are being migrated. Delete once nothing reads them.
+ */
+:root, [data-theme="warm"] {
+  --bg: var(--background);
+  --bg-surface: var(--surface);
+  --bg-hover: var(--surface-2);
+  --bg-glass: var(--card);
+  --bg-glass-heavy: var(--card);
+  --text: var(--foreground);
+  --text-muted: var(--muted-foreground);
+  --text-secondary: var(--foreground);
+  --text-tertiary: var(--muted-foreground);
+  --text-quaternary: var(--faint-foreground);
+  --text-faint: color-mix(in oklch, var(--foreground) 22%, transparent);
+  --text-ghost: color-mix(in oklch, var(--foreground) 12%, transparent);
+  --glass-border: color-mix(in oklch, var(--primary) 14%, transparent);
+  --glass-highlight: var(--highlight);
+  --purple: var(--primary);
+  --purple-bg: color-mix(in oklch, var(--primary) 15%, transparent);
+  --purple-bg-subtle: color-mix(in oklch, var(--primary) 6%, transparent);
+  --purple-glow: color-mix(in oklch, var(--primary) 30%, transparent);
+  --orange: var(--ember);
+  --green: var(--status-online);
+  --red: var(--destructive);
+  --gradient: var(--sunset-diag);
+  --gradient-text: var(--sunset);
+  --font-heading: var(--font-sans);
+}
+
+/* Decode engine glyph states (src/lib/scramble.ts) */
+.decode-glyph {
+  background: var(--sunset);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.decode-idle {
+  opacity: 0.18;
+}
+.text-sunset .decode-glyph,
+.text-sunset .decode-idle {
+  -webkit-text-fill-color: transparent;
+}

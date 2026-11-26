@@ -1,0 +1,55 @@
+---
+/**
+ * The new shell. Every ported page renders inside this.
+ * - loads src/styles/app.css (Tailwind + tokens); legacy global.css is NOT loaded
+ * - applies the saved theme before first paint
+ * - header (mark, sliding nav, theme) and the live system strip
+ */
+import '@/styles/app.css';
+import { SiteHeader } from '@/components/system/SiteHeader';
+import { SystemStrip } from '@/components/system/SystemStrip';
+import { BASE, THEME_STORAGE_KEY } from '@/lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** full-bleed pages (the project network) skip the centered container */
+  bleed?: boolean;
+  /** hide the bottom system strip (e.g. a page that already shows live system data) */
+  hideStrip?: boolean;
+}
+
+const { title, description = 'Christopher Keesey — the systems I build, live.', bleed = false, hideStrip = false } = Astro.props;
+const pageTitle = title ? `${title} · c2k` : 'c2k';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0d0b13" />
+    <title>{pageTitle}</title>
+    <script is:inline define:vars={{ key: THEME_STORAGE_KEY }}>
+      if (localStorage.getItem(key) === 'warm') document.documentElement.dataset.theme = 'warm';
+    </script>
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-sm focus:bg-popover focus:px-3 focus:py-2 focus:text-sm">Skip to content</a>
+    <SiteHeader client:load pathname={Astro.url.pathname} homeHref={`${BASE}/`} />
+    <main id="main" class:list={['flex-1', !bleed && 'mx-auto w-full max-w-screen-xl px-4 py-10 sm:px-6 lg:py-16']}>
+      <slot />
+    </main>
+    {!hideStrip && (
+      <footer class="border-t border-border">
+        <div class="mx-auto flex h-9 max-w-screen-2xl items-center px-4 sm:px-6">
+          <SystemStrip client:idle />
+        </div>
+      </footer>
+    )}
+  </body>
+</html>

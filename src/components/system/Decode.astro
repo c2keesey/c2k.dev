@@ -1,0 +1,41 @@
+---
+/**
+ * Decode text with zero React. For static copy in .astro pages (headlines, bios).
+ * <Decode text="Christopher Keesey" as="h1" class="font-display text-6xl" delay={150} />
+ * Screen readers read the real text; the animation is aria-hidden.
+ */
+import { idleText } from '@/lib/scramble';
+interface Props {
+  text: string;
+  as?: string;
+  class?: string;
+  delay?: number;
+  duration?: number;
+}
+const { text, as: Tag = 'span', class: className, delay = 0, duration = 900 } = Astro.props;
+---
+<Tag class:list={['decode', className]} data-decode={text} data-decode-delay={delay} data-decode-duration={duration}>
+  <span class="sr-only">{text}</span><span aria-hidden="true" data-decode-target>{idleText(text)}</span>
+</Tag>
+
+<script>
+  import { decode } from '@/lib/scramble';
+  function init() {
+    const els = document.querySelectorAll<HTMLElement>('[data-decode]:not([data-decode-ready])');
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        const el = e.target as HTMLElement;
+        io.unobserve(el);
+        const target = el.querySelector<HTMLElement>('[data-decode-target]');
+        if (target) decode(target, el.dataset.decode ?? '', {
+          delay: Number(el.dataset.decodeDelay ?? 0),
+          duration: Number(el.dataset.decodeDuration ?? 900),
+        });
+      }
+    });
+    els.forEach((el) => { el.setAttribute('data-decode-ready', ''); io.observe(el); });
+  }
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>
