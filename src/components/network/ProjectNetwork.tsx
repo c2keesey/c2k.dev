@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { prefersReducedMotion } from '@/lib/scramble';
 import { NetworkOptimizer } from '@/game/optimizer';
 import { EDGES, EDGES_BY_NODE, PROJECTS, PROJECT_BY_ID, ROUTE_ORDER, neighbours, type Project } from '@/data/projects';
+import { MeshField } from './MeshField';
 import { ProjectFacts, useNetworkLive, useShowcaseMount, type NetworkLive } from './shared';
 
 /* ───────────── geometry ───────────── */
@@ -232,6 +233,7 @@ export default function ProjectNetwork() {
         if (e.target === e.currentTarget) e.preventDefault();
       }}
     >
+      <MeshField target={mapRef} />
       <div className="pointer-events-none absolute inset-0 bg-vignette" aria-hidden />
 
       {size && (
