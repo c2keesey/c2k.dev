@@ -91,7 +91,6 @@ a control room.
 
 ### NOT this (dashboard-specific)
 - Movie sci-fi HUDs with no real data behind them
-- Gratuitous particle effects or canvas noise
 - Neon/cyberpunk overkill — glow should be subtle, not blinding
 - Static layouts pretending to be dashboards
 

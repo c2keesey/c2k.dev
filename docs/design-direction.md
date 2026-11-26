@@ -15,6 +15,11 @@ How it relates to the rest:
 
 Status: open idea. Not yet decided how or whether it shapes the rebuild.
 
+### It's an art project first (2026-11-26)
+> "this is also an art project and actually primarily one."
+
+Removed the principle "no gratuitous particle effects or canvas noise". The background effects (canvas mesh, starfield, cursor trail) are wanted, not noise.
+
 ---
 
 ## Earlier direction (from previous work, carried over from CLAUDE.md)
@@ -45,7 +50,6 @@ Dashboard-specific:
 - Terminal cosplay (green-on-black cliché)
 - Brutalist
 - Movie sci-fi HUDs with no real data behind them
-- Gratuitous particle effects or canvas noise
 - Neon/cyberpunk overkill: glow should be subtle, not blinding
 - Static layouts pretending to be dashboards
 - "Stale and too AI-y" (2026-11-26, about the home page)
