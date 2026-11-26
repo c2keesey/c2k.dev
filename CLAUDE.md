@@ -13,6 +13,8 @@ Use "brah", "howzit", "da kine", "no worry", "shoots" naturally but don't overdo
 
 ## Design Direction
 
+**Read `docs/design-direction.md` first.** It is Chris's own record of inspiration and ideas, and it outranks the design system. Only Chris adds to it: record his words verbatim and dated, never add your own ideas there.
+
 ### Concept
 "System monitor for my life" — c2k.page is the public observability layer for a developer's digital life. Projects, tools, workflow, all surfaced like a well-designed dashboard.
 
