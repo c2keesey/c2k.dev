@@ -1,34 +1,76 @@
 ---
 /**
- * Home. One loud thing (the name, decoding at display size); everything under it is
- * plain sentences whose numbers are live readings, then the network as transit lines.
- * No boxes: nothing here is an instrument except the push log, and that's a list.
+ * Home: the legacy home (name, bio, links, rotating quote, currently building,
+ * systems, MAIA) brought onto the new foundation, over the view west from Ocean Beach.
+ * Every push from the last day is a swell on that water, landing 24h after it was made.
  */
 import AppLayout from '@/layouts/AppLayout.astro';
 import Decode from '@/components/system/Decode.astro';
-import HomeLive from '@/components/home/HomeLive';
-import QuoteLine from '@/components/home/QuoteLine';
 import OceanWindow from '@/components/home/OceanWindow';
-import { QUOTES } from '@/data/quotes';
+import RotatingQuote from '@/components/home/RotatingQuote';
+import HomeBoard from '@/components/home/HomeBoard';
 
-// same quote for everyone on a given day
-const day = Math.floor(Date.now() / 86_400_000);
-const quoteIndex = day % QUOTES.length;
+const LINKS = [
+  { label: 'github', href: 'https://github.com/c2keesey' },
+  { label: 'x', href: 'https://x.com/c2keesey' },
+  { label: 'linkedin', href: 'https://linkedin.com/in/c2keesey' },
+];
 ---
 
-<AppLayout description="Christopher Keesey: CTO at MAIA Analytics, building in the Outer Sunset. Everything I make, live.">
-  <OceanWindow client:only="react" />
-  <Decode
-    as="h1"
-    text="Christopher Carson Keesey"
-    delay={120}
-    duration={1100}
-    class="mb-12 block max-w-[12ch] font-display text-[clamp(3.25rem,10.5vw,8.5rem)] leading-[0.92] tracking-[-0.035em] text-foreground lg:mb-16"
-  />
+<AppLayout description="Christopher Keesey: CTO and context engineer at MAIA Analytics, Outer Sunset, SF.">
+  <OceanWindow client:only="react" swells />
 
-  <HomeLive client:load />
+  <div class="mx-auto max-w-5xl">
+    <section class="pt-2 pb-10 lg:pt-8 lg:pb-14">
+      <Decode
+        as="h1"
+        text="CHRISTOPHER KEESEY"
+        delay={0}
+        class="text-sunset mb-3 inline-block font-sans text-[clamp(1.25rem,4vw,1.75rem)] font-semibold tracking-[0.03em] whitespace-nowrap"
+      />
+      <p class="font-mono text-sm text-muted-foreground">
+        <Decode text="CTO, context engineer " delay={150} />
+        <a href="https://maia-analytics.com" target="_blank" rel="noopener" class="text-primary hover:opacity-75">
+          <Decode text="@maia_analytics" delay={150} />
+        </a>
+      </p>
+      <Decode as="p" text="Outer Sunset, SF · Ridiculous output · Living in agreement with nature" delay={250} class="mt-1 block font-mono text-xs text-faint-foreground" />
+      <ul class="mt-2 flex gap-3 font-mono text-xs">
+        {LINKS.map((l) => (
+          <li>
+            <a href={l.href} target="_blank" rel="noopener me" class="text-faint-foreground hover:text-primary">
+              <Decode text={l.label} delay={350} />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-5">
+        <RotatingQuote client:load />
+      </div>
+    </section>
 
-  <section aria-label="A quote" class="mt-24 border-t border-border pt-10 lg:mt-32">
-    <QuoteLine client:visible initial={quoteIndex} />
-  </section>
+    <HomeBoard client:load />
+  </div>
 </AppLayout>
+
+<style is:global>
+  /* MAIA's own cyan, kept as the showcase's brand colour */
+  .maia {
+    --maia: oklch(0.78 0.12 210);
+    border-color: color-mix(in oklch, var(--maia) 24%, transparent);
+    background:
+      linear-gradient(160deg, color-mix(in oklch, var(--maia) 9%, transparent), transparent 55%),
+      color-mix(in oklch, var(--card) 88%, transparent);
+  }
+  [data-theme='warm'] .maia { --maia: oklch(0.52 0.1 215); }
+  [data-theme='warm'] .maia-logo { filter: brightness(0.2); }
+  .maia .maia-chip { background: color-mix(in oklch, var(--maia) 16%, transparent); color: var(--maia); }
+  .maia-map {
+    border-color: color-mix(in oklch, var(--maia) 16%, transparent);
+    background: color-mix(in oklch, var(--background) 70%, transparent);
+  }
+  .maia-query { color: var(--maia); border-color: color-mix(in oklch, var(--maia) 14%, transparent); }
+  .maia-caret { background: var(--maia); animation: maia-blink 1s steps(2) infinite; }
+  .maia-link { color: var(--maia); }
+  @keyframes maia-blink { 50% { opacity: 0; } }
+</style>

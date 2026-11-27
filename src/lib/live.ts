@@ -18,6 +18,15 @@ export interface ActivityRepo {
   description: string | null;
   lastCommit: string | null;
   pushedAt: string;
+  /** set by the server; private repos' names stay off public pages */
+  private?: boolean;
+}
+
+export interface ActivityPush {
+  repo: string;
+  /** ISO time of the push */
+  at: string;
+  private: boolean;
 }
 
 export interface Activity {
@@ -25,6 +34,8 @@ export interface Activity {
   totalPushes: number;
   /** pushes per day, [6 days ago … today] */
   pushesByDay: number[];
+  /** every push in the 7-day window, newest first */
+  pushes?: ActivityPush[];
 }
 
 /** Map the server's overall color to the site's status vocabulary. */

@@ -8,7 +8,6 @@ export const BASE = '/next';
 export const NAV = [
   { href: `${BASE}/`, label: 'home', match: (p: string) => p === `${BASE}` || p === `${BASE}/` },
   { href: `${BASE}/projects`, label: 'projects', match: (p: string) => p.startsWith(`${BASE}/projects`) },
-  { href: `${BASE}/about`, label: 'about', match: (p: string) => p.startsWith(`${BASE}/about`) },
 ] as const;
 
 export const THEME_STORAGE_KEY = 'c2k-theme'; // shared with the legacy ThemeToggle

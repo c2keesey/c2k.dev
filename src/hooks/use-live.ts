@@ -11,6 +11,7 @@ export function useLive<T>(url: string, intervalMs = 30_000) {
   const [failed, setFailed] = React.useState(false);
 
   React.useEffect(() => {
+    if (!url) return; // pass '' to switch polling off
     let alive = true;
     const pull = async () => {
       try {

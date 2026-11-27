@@ -105,12 +105,24 @@ export async function GET() {
         description: repoData?.description ?? '',
         lastCommit: hideCommit ? '' : lastCommit,
         pushedAt: r.pushedAt,
+        private: isPrivate,
       };
     }));
 
-    return json({ repos, totalPushes, pushesByDay });
+    // Every push in the window, newest first, for the home page's swells.
+    // Private repos are marked so the page can leave their names off.
+    const privateRepos = new Set(repos.filter((r) => r.private).map((r) => r.name));
+    const pushes = events
+      .filter((e) => e.type === 'PushEvent' && new Date(e.created_at).getTime() >= cutoff)
+      .slice(0, 300)
+      .map((e) => {
+        const name = e.repo.name.includes('/') ? e.repo.name.split('/').pop()! : e.repo.name;
+        return { repo: name, at: e.created_at, private: privateRepos.has(name) || !seen.has(name) };
+      });
+
+    return json({ repos, totalPushes, pushesByDay, pushes });
   } catch {
-    return json({ repos: [], totalPushes: 0, pushesByDay: [0,0,0,0,0,0,0] });
+    return json({ repos: [], totalPushes: 0, pushesByDay: [0,0,0,0,0,0,0], pushes: [] });
   }
 }
 

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useLive } from '@/hooks/use-live';
+import type { Activity, ActivityPush } from '@/lib/live';
+import { PROJECTS } from '@/data/projects';
 import { sunPosition, tideAt, tideLevel, type TideData } from '@/lib/ocean';
 
 /**
@@ -12,11 +14,14 @@ import { sunPosition, tideAt, tideLevel, type TideData } from '@/lib/ocean';
  * be fetched, the shore sits at mid-tide and stops moving with it. The swell itself is
  * periodic, waves inside sets inside tides. Your cursor leaves ripples on the water.
  */
-export default function OceanWindow({ quiet = false }: { quiet?: boolean }) {
+export default function OceanWindow({ swells = false }: { swells?: boolean }) {
   const ref = React.useRef<HTMLCanvasElement>(null);
   const { data: tide } = useLive<TideData>('/api/tide', 30 * 60_000);
   const tideRef = React.useRef<TideData | null>(null);
   tideRef.current = tide && 'extremes' in tide ? tide : null;
+  const { data: activity } = useLive<Activity>(swells ? '/api/activity' : '', 5 * 60_000);
+  const pushRef = React.useRef<ActivityPush[]>([]);
+  pushRef.current = swells ? activity?.pushes ?? [] : [];
 
   React.useEffect(() => {
     const canvas = ref.current;
@@ -81,7 +86,7 @@ export default function OceanWindow({ quiet = false }: { quiet?: boolean }) {
       const inView = sx > -W * 0.3 && sx < W * 1.3;
       const glow = inView ? Math.exp(-((alt + 1.5) ** 2) / (2 * 6 ** 2)) : 0; // strongest just after sunset
       const dark = clamp((-alt - 4) / 10, 0, 1);
-      const amp = quiet ? 0.7 : 1;
+      const amp = 1;
 
       if (glow > 0.01) {
         ctx!.save();
@@ -172,8 +177,62 @@ export default function OceanWindow({ quiet = false }: { quiet?: boolean }) {
         ctx!.stroke();
       }
 
+      // ── swells: every push from the last day, travelling in ──
+      // A push starts as a swell at the horizon and reaches the shore 24h later,
+      // then breaks. Private repos ride in unnamed and uncoloured.
+      const DAY = 86_400_000;
+      const FOAM = 30 * 60_000;
+      let lastLabelY = -99;
+      ctx!.font = '11px "JetBrains Mono Variable", ui-monospace, monospace';
+      ctx!.textAlign = 'right';
+      const seenRepo = new Set<string>();
+      for (const p of pushRef.current) {
+        const age = wall - Date.parse(p.at);
+        if (age < 0 || age > DAY + FOAM) continue;
+        const col = p.private ? light.fg : routeRgb(light, p.repo);
+        if (age > DAY) {
+          // broken: foam along the shore, fading over half an hour
+          const f = 1 - (age - DAY) / FOAM;
+          ctx!.fillStyle = rgba(col, 0.35 * f * amp);
+          for (let x = (Date.parse(p.at) / 7919) % 23; x < W; x += 23) {
+            const fy = shoreY + swash0(t) - 4 - 6 * Math.abs(Math.sin(x * 0.07 + age / 4e5));
+            ctx!.fillRect(x, fy, 2 + 4 * Math.abs(Math.sin(x * 0.31)), 1);
+          }
+          continue;
+        }
+        const prog = age / DAY;
+        const y0 = hy + (shoreY - hy) * prog ** 1.6;
+        const d = (y0 - hy) / (H - hy);
+        const a = (0.5 + 7 * d ** 1.6) * 1.5;
+        const scale = 0.12 + d;
+        const k = d * N;
+        const curl = prog > 0.94 ? (prog - 0.94) / 0.06 : 0; // steepening before it breaks
+        ctx!.strokeStyle = rgba(col, (0.2 + 0.35 * prog) * amp);
+        ctx!.lineWidth = 1.2 + 1.3 * prog;
+        ctx!.beginPath();
+        let labelY = y0;
+        for (let x = -step; x <= W + step; x += step) {
+          const y =
+            y0 - curl * 4 +
+            a * (0.6 * Math.sin((x * 0.011) / scale + t * 0.55 + k * 0.7) + 0.4 * Math.sin((x * 0.023) / scale - t * 0.32 + k * 1.9));
+          if (x <= W - 20) labelY = y;
+          x === -step ? ctx!.moveTo(x, y) : ctx!.lineTo(x, y);
+        }
+        ctx!.stroke();
+        ctx!.lineWidth = 1;
+        // the newest swell from each repo carries a label
+        const key = p.private ? `private:${p.repo}` : p.repo;
+        if (!seenRepo.has(key) && Math.abs(labelY - lastLabelY) > 14) {
+          seenRepo.add(key);
+          lastLabelY = labelY;
+          const hrs = Math.floor(age / 3_600_000);
+          ctx!.fillStyle = rgba(col, 0.75 * amp);
+          ctx!.fillText(`${p.private ? 'private' : p.repo} ${hrs}h`, W - 20, labelY - 7);
+        }
+      }
+
       // shoreline: the swash runs up and back on a ~11s set, riding the tide
-      const swash = reduced ? 0 : Math.sin(t * ((2 * Math.PI) / 11)) * 8 + Math.sin(t * 0.9) * 2;
+      const swash = reduced ? 0 : swash0(t);
       ctx!.strokeStyle = rgba(light.fg, 0.22 * amp);
       ctx!.beginPath();
       for (let x = -step; x <= W + step; x += step) {
@@ -208,7 +267,7 @@ export default function OceanWindow({ quiet = false }: { quiet?: boolean }) {
       window.removeEventListener('pointermove', onPointer);
       document.removeEventListener('visibilitychange', onVis);
     };
-  }, [quiet]);
+  }, []);
 
   return <canvas ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10" />;
 }
@@ -218,6 +277,17 @@ export default function OceanWindow({ quiet = false }: { quiet?: boolean }) {
 interface Star { x: number; y: number; r: number; a: number; speed: number; phase: number }
 interface Ripple { x: number; y: number; t0: number }
 type RGB = [number, number, number];
+
+function swash0(t: number) {
+  return Math.sin(t * ((2 * Math.PI) / 11)) * 8 + Math.sin(t * 0.9) * 2;
+}
+
+const ROUTE_OF_REPO: Record<string, string> = Object.fromEntries(PROJECTS.filter((p) => p.repo).map((p) => [p.repo!, p.route]));
+
+function routeRgb(light: ReturnType<typeof readColors>, repo: string): RGB {
+  const r = ROUTE_OF_REPO[repo];
+  return (r && light.routes[r]) || light.ember;
+}
 
 function horizonFrac(w: number) {
   return w < 700 ? 0.66 : 0.62;
@@ -253,6 +323,7 @@ function readColors() {
     pink: rgb('--dusk-pink'),
     ember: rgb('--ember'),
     warm: document.documentElement.dataset.theme === 'warm',
+    routes: Object.fromEntries(['core', 'hardware', 'software', 'claude', 'config', 'automation'].map((r) => [r, rgb(`--route-${r}`)])) as Record<string, RGB>,
   };
 }
 
