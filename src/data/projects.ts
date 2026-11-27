@@ -2,8 +2,13 @@
  * The project network: one source of truth for the desktop map and the mobile line view.
  *
  * Every node rides exactly one route (its colour), and every edge is a real relationship
- * between two projects. x/y are percentages of the map; they keep the legacy layout's
- * zones (platform top, automation middle, hardware bottom).
+ * between two projects. x/y are percentages of the map's frame (see
+ * components/network/layout.ts). Projects sit on a staggered lattice: rows at y 0, 50 and
+ * 100, four columns (0, 33.3, 66.7, 100) on the outer rows and three (16.7, 50, 83.3) in
+ * the middle. Small builds sit on the gutter rows between them (y 25 and 75, x in
+ * sevenths). Platform and Claude tools ride the top, hardware the bottom. The slots were
+ * chosen to keep every route clear of the cards and crossings low; keep new stations on
+ * the lattice.
  *
  * This is the ONLY place project copy lives (name, tagline, description, tech, links).
  * Components read it; nothing copies it. The daily c2k-project-sync bot (dotfiles/bin)
@@ -60,7 +65,7 @@ export const PROJECTS: Project[] = [
     role: 'startup', status: 'online', activity: 'active', route: 'core', kind: 'project',
     tech: ['TypeScript', 'Python', 'FastAPI', 'Postgres', 'GCP'],
     link: 'https://maia-analytics.com', linkText: 'maia-analytics.com', repo: 'maia-analytics',
-    showcase: 'maia', x: 14, y: 16,
+    showcase: 'maia', x: 0, y: 0,
   },
   {
     id: 'c2k', name: 'c2k.page', tagline: 'This website',
@@ -68,35 +73,35 @@ export const PROJECTS: Project[] = [
     role: 'web', status: 'online', activity: 'active', route: 'core', kind: 'project',
     tech: ['Astro', 'TypeScript', 'React', 'Tailwind', 'Cloudflare'],
     link: 'https://c2k.page', linkText: 'c2k.page', repo: 'c2k.dev',
-    showcase: 'c2k', x: 36, y: 42,
+    showcase: 'c2k', x: 33.3, y: 0,
   },
   {
     id: 'flux', name: 'Flux Gauntlet', tagline: 'LED wearable',
     description: '300 LEDs in 16 rings, addressed as a 3D cylinder so effects travel around the arm instead of along a strip. Seven of them: blast, lightning, fire, firework, casimir, twinkle, pew.',
     role: 'hardware', status: 'standby', activity: 'none', route: 'hardware', kind: 'project',
     tech: ['C++', 'FastLED', 'ESP32'],
-    showcase: 'flux', x: 28, y: 82,
+    showcase: 'flux', x: 100, y: 100,
   },
   {
     id: 'corne', name: 'Corne', tagline: '42-key split keyboard',
     description: '42 keys and 7 layers, running ZMK. Combos, home row mods, vim-style arrows. No number row, which sounds worse than it is.',
     role: 'daily driver', status: 'online', activity: 'periodic', route: 'hardware', kind: 'project',
     tech: ['ZMK', 'C', 'KiCad'],
-    showcase: 'corne', x: 56, y: 56,
+    showcase: 'corne', x: 33.3, y: 100,
   },
   {
     id: 'spotify', name: 'Spotify Macro', tagline: 'Library auto-sorter',
     description: 'Keeps my Spotify library sorted without me. The whole library is cached locally so classification runs offline; track metadata plus a 30-second audio embedding decide which folder a new song belongs in. Adding the audio head moved folder accuracy from .800 to .878.',
     role: 'automation', status: 'online', activity: 'periodic', route: 'automation', kind: 'project',
     tech: ['Python', 'Spotify API', 'EfficientNet', 'scikit-learn', 'launchd'],
-    showcase: 'spotify', x: 10, y: 70,
+    showcase: 'spotify', x: 0, y: 100,
   },
   {
     id: 'dashboard', name: 'OptiPlex Dashboard', tagline: 'Server monitoring PWA',
     description: 'Mobile-first dashboard for the OptiPlex. CPU, memory, disk, network sparklines, cron status and running Claude sessions, all polled live. Installable PWA, reachable over Tailscale. The readouts in the corner of this map come from it.',
     role: 'infra', status: 'online', activity: 'active', route: 'core', kind: 'project',
     tech: ['Next.js', 'TypeScript', 'shadcn/ui', 'SQLite', 'systeminformation'],
-    x: 58, y: 32,
+    x: 83.3, y: 50,
   },
   {
     id: 'dotfiles', name: 'Dotfiles', tagline: 'Dev environment system',
@@ -104,7 +109,7 @@ export const PROJECTS: Project[] = [
     role: 'tooling', status: 'online', activity: 'periodic', route: 'config', kind: 'project',
     tech: ['Bash', 'Zsh', 'Claude Code', 'Tmux', 'Ghostty'],
     link: 'https://github.com/c2keesey/dotfiles', linkText: 'github/dotfiles', repo: 'dotfiles',
-    showcase: 'dotfiles', x: 46, y: 14,
+    showcase: 'dotfiles', x: 50, y: 50,
   },
   {
     id: 'statusline', name: 'Codex Statusline', tagline: 'Native footer + tmux telemetry',
@@ -112,7 +117,7 @@ export const PROJECTS: Project[] = [
     role: 'open source', status: 'online', activity: 'periodic', route: 'claude', kind: 'project',
     tech: ['Go', 'Codex', 'tmux', 'Agent Deck'],
     link: 'https://github.com/c2keesey/codex-statusline', linkText: 'github/codex-statusline', repo: 'codex-statusline',
-    showcase: 'statusline', x: 88, y: 22,
+    showcase: 'statusline', x: 100, y: 0,
   },
   {
     id: 'secretgate', name: 'Secret Gate', tagline: 'Human-in-the-loop gate',
@@ -120,7 +125,7 @@ export const PROJECTS: Project[] = [
     role: 'security', status: 'deploying', activity: 'active', route: 'claude', kind: 'satellite', wip: true,
     tech: ['Python', '1Password CLI', 'Telegram', 'Claude Code'],
     link: 'https://github.com/c2keesey/secret-gate', linkText: 'github/secret-gate', repo: 'secret-gate',
-    x: 74, y: 12,
+    x: 100, y: 25,
   },
   {
     id: 'techdigest', name: 'Tech Digest', tagline: 'Daily release digest',
@@ -128,14 +133,14 @@ export const PROJECTS: Project[] = [
     role: 'daily driver', status: 'online', activity: 'periodic', route: 'automation', kind: 'satellite',
     tech: ['Python', 'Claude CLI', 'Telegram', 'GitHub API', 'cron'],
     link: 'https://github.com/c2keesey/tech-digest', linkText: 'github/tech-digest', repo: 'tech-digest',
-    x: 88, y: 40,
+    x: 100, y: 75,
   },
   {
     id: 'lightning', name: 'Lightning Cloud', tagline: 'Procedural lightning',
     description: 'A cloud lamp that makes its own lightning. Bolts are generated at runtime with branching forks, then flashed and faded. No animation files, just an ESP32 doing math.',
     role: 'hardware', status: 'standby', activity: 'none', route: 'hardware', kind: 'project',
     tech: ['C++', 'FastLED', 'ESP32'],
-    showcase: 'lightning', x: 70, y: 80,
+    showcase: 'lightning', x: 66.7, y: 100,
   },
   {
     id: 'propeller', name: 'Propeller Scrape', tagline: 'Concert ticket monitor',
@@ -143,7 +148,7 @@ export const PROJECTS: Project[] = [
     role: 'utility', status: 'online', activity: 'periodic', route: 'automation', kind: 'satellite',
     tech: ['Python', 'BeautifulSoup', 'Telegram', 'cron'],
     link: 'https://github.com/c2keesey/propeller-scrape', linkText: 'github/propeller-scrape', repo: 'propeller-scrape',
-    x: 88, y: 56,
+    x: 57.1, y: 75,
   },
   {
     id: 'panecmd', name: 'Pane Skill', tagline: 'Claude tmux side pane',
@@ -151,7 +156,7 @@ export const PROJECTS: Project[] = [
     role: 'claude tools', status: 'online', activity: 'periodic', route: 'claude', kind: 'satellite',
     tech: ['Bash', 'tmux', 'Claude Code', 'Helix'],
     link: 'https://github.com/c2keesey/claude-pane-skill', linkText: 'github/claude-pane-skill', repo: 'claude-pane-skill',
-    x: 30, y: 26,
+    x: 71.4, y: 25,
   },
   {
     id: 'playlistai', name: 'Playlist AI', tagline: 'ML playlist sorter',
@@ -159,14 +164,14 @@ export const PROJECTS: Project[] = [
     role: 'ml', status: 'standby', activity: 'none', route: 'software', kind: 'satellite',
     tech: ['Python', 'scikit-learn', 'Jupyter', 'Spotify API'],
     link: 'https://github.com/c2keesey/spotify-playlist-ai', linkText: 'github/spotify-playlist-ai', repo: 'spotify-playlist-ai',
-    x: 22, y: 56,
+    x: 28.6, y: 75,
   },
   {
     id: 'djtrainer', name: 'DJ Trainer', tagline: 'Learn the DDJ-FLX4',
     description: 'Click any knob, fader or pad on a Pioneer DDJ-FLX4 and it tells you what that one does. The hotspots come from an on-device SAM and CoreML pipeline that finds the controls in a photo, because placing them all by hand was not happening.',
     role: 'learning', status: 'online', activity: 'periodic', route: 'software', kind: 'project',
     tech: ['JavaScript', 'Vite', 'Python', 'CoreML', 'SAM'],
-    x: 42, y: 70,
+    x: 16.7, y: 50,
   },
   {
     id: 'songsorter', name: 'Song Sorter', tagline: 'Pairwise library ranker',
@@ -174,14 +179,14 @@ export const PROJECTS: Project[] = [
     role: 'web app', status: 'standby', activity: 'none', route: 'software', kind: 'satellite',
     tech: ['TypeScript', 'React', 'Zustand', 'Radix UI', 'Tailwind'],
     link: 'https://github.com/c2keesey/spotify-song-sorter', linkText: 'github/song-sorter', repo: 'spotify-song-sorter',
-    x: 10, y: 44,
+    x: 14.3, y: 75,
   },
   {
     id: 'momentplayer', name: 'Moment Player', tagline: 'Podcast AI companion',
     description: 'Podcast player for iOS. Pause on a line you did not follow, ask about it, get an answer with the transcript as context, then keep going. SwiftUI on the front, a Python transcript and LLM service behind it.',
     role: 'ios', status: 'standby', activity: 'none', route: 'software', kind: 'satellite', wip: true,
     tech: ['Swift', 'SwiftUI', 'Python', 'FastAPI', 'LLM'],
-    x: 74, y: 66,
+    x: 14.3, y: 25,
   },
   {
     id: 'alldifferent', name: 'All Look Different', tagline: 'Border-desk face quiz',
@@ -189,28 +194,28 @@ export const PROJECTS: Project[] = [
     role: 'game', status: 'online', activity: 'periodic', route: 'software', kind: 'satellite',
     tech: ['JavaScript', 'Wikidata', 'Wikimedia Commons', 'Cloudflare Workers'],
     link: 'https://alllookdifferent.c2k.page', linkText: 'alllookdifferent.c2k.page',
-    showcase: 'alldifferent', x: 72, y: 44,
+    showcase: 'alldifferent', x: 0, y: 75,
   },
   {
     id: 'vibe', name: 'Vibe Framework', tagline: 'In-app agent, live reload',
     description: 'Astro template with a chat panel on every page, wired to a Claude Code session on the host machine. Ask it to change something and Vite refreshes the page while you watch. Works from my phone over Tailscale, which is either very good or very bad.',
     role: 'tooling', status: 'deploying', activity: 'active', route: 'claude', kind: 'satellite', wip: true,
     tech: ['Astro', 'TypeScript', 'Bun', 'Claude Code', 'SSE'],
-    x: 62, y: 8,
+    x: 42.9, y: 25,
   },
   {
     id: 'polymarket', name: 'Polymarket Bot', tagline: 'Behavioral edge research',
     description: 'Backtest and paper-trade harness for behavioral biases on prediction markets. Public read-only data, no wallet, no real money. Most of the hypotheses died in the gauntlet; the mid-range underdog one survived replication.',
     role: 'research', status: 'standby', activity: 'none', route: 'automation', kind: 'satellite',
     tech: ['Python', 'pandas', 'Polymarket API'],
-    x: 90, y: 72,
+    x: 85.7, y: 75,
   },
   {
     id: 'calsync', name: 'Cal Sync', tagline: 'Apple Note ↔ Calendar',
     description: 'Plans get written in a shared Apple Note, not a calendar app. This syncs that note to a Google Calendar both ways, and identifies the calendar by a marker instead of its name so renaming it does not quietly break the sync.',
     role: 'automation', status: 'online', activity: 'periodic', route: 'automation', kind: 'satellite',
     tech: ['Python', 'Google Calendar API', 'AppleScript', 'launchd'],
-    x: 8, y: 88,
+    x: 42.9, y: 75,
   },
   {
     id: 'parley', name: 'Parley', tagline: 'Two-way voice for coding agents',
@@ -218,7 +223,7 @@ export const PROJECTS: Project[] = [
     role: 'open source', status: 'online', activity: 'active', route: 'claude', kind: 'project',
     tech: ['Python', 'Claude Code', 'Codex', 'OpenAI', 'whisper.cpp', 'tmux'],
     link: 'https://github.com/c2keesey/parley', linkText: 'github/parley', repo: 'parley',
-    x: 50, y: 88,
+    x: 66.7, y: 0,
   },
 ];
 

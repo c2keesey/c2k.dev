@@ -19,127 +19,7 @@ import { NetworkOptimizer } from '@/game/optimizer';
 import { EDGES, EDGES_BY_NODE, PROJECTS, PROJECT_BY_ID, ROUTE_ORDER, neighbours, type Project } from '@/data/projects';
 import { MeshField } from './MeshField';
 import { ProjectFacts, useNetworkLive, useShowcaseMount, type NetworkLive } from './shared';
-
-/* ───────────── geometry ───────────── */
-
-/** the map's drawable area inside the surface: room for the header and legend */
-const INSET = { top: 84, right: 120, bottom: 72, left: 96 };
-const CARD_W = 256;
-const CARD_H = 60;
-const EXPANDED_W = 340;
-const LANE = 5;
-const CORNER = 18;
-
-type Pt = { x: number; y: number };
-type Size = { w: number; h: number };
-
-function place(p: Project, size: Size): Pt {
-  const w = size.w - INSET.left - INSET.right;
-  const h = size.h - INSET.top - INSET.bottom;
-  return { x: INSET.left + (p.x / 100) * w, y: INSET.top + (p.y / 100) * h };
-}
-
-interface RoutedEdge {
-  d: string;
-  length: number;
-  /** label spots: on the leg leaving `from`, and on the leg arriving at `to` */
-  nearFrom: Pt;
-  nearTo: Pt;
-  a: Pt;
-  b: Pt;
-}
-
-/**
- * Metro routing: every edge is one horizontal and one vertical run joined by a rounded
- * corner. Lines leaving a station on the same side get parallel lanes, so a hub like
- * dotfiles reads as a bundle of tracks instead of one smeared line.
- */
-function routeEdges(size: Size): RoutedEdge[] {
-  const pos = Object.fromEntries(PROJECTS.map((p) => [p.id, place(p, size)]));
-  type Leg = { edge: number; node: string; key: string; sortBy: number };
-  const legs: Leg[] = [];
-  const horizFirst = EDGES.map((e) => {
-    const a = pos[e.from];
-    const b = pos[e.to];
-    return Math.abs(b.x - a.x) >= Math.abs(b.y - a.y);
-  });
-
-  EDGES.forEach((e, i) => {
-    const a = pos[e.from];
-    const b = pos[e.to];
-    if (horizFirst[i]) {
-      // leaves A horizontally toward B; arrives at B vertically from A's side
-      legs.push({ edge: i, node: e.from, key: `${e.from}:h:${Math.sign(b.x - a.x)}`, sortBy: b.y });
-      legs.push({ edge: i, node: e.to, key: `${e.to}:v:${Math.sign(a.y - b.y)}`, sortBy: a.x });
-    } else {
-      legs.push({ edge: i, node: e.from, key: `${e.from}:v:${Math.sign(b.y - a.y)}`, sortBy: b.x });
-      legs.push({ edge: i, node: e.to, key: `${e.to}:h:${Math.sign(a.x - b.x)}`, sortBy: a.y });
-    }
-  });
-
-  const buckets = new Map<string, Leg[]>();
-  for (const l of legs) buckets.set(l.key, [...(buckets.get(l.key) ?? []), l]);
-  const offset = new Map<string, number>(); // `${edge}:${node}` → px
-  for (const group of buckets.values()) {
-    group.sort((p, q) => p.sortBy - q.sortBy);
-    group.forEach((l, i) => offset.set(`${l.edge}:${l.node}`, (i - (group.length - 1) / 2) * LANE));
-  }
-
-  return EDGES.map((e, i) => {
-    const a = pos[e.from];
-    const b = pos[e.to];
-    const oa = offset.get(`${i}:${e.from}`) ?? 0;
-    const ob = offset.get(`${i}:${e.to}`) ?? 0;
-    if (horizFirst[i]) {
-      const y1 = a.y + oa;
-      const x2 = b.x + ob;
-      const sx = Math.sign(x2 - a.x) || 1;
-      const sy = Math.sign(b.y - y1) || 1;
-      const r = Math.min(CORNER, Math.abs(x2 - a.x) / 2, Math.abs(b.y - y1) / 2);
-      const d = `M${a.x},${y1} H${x2 - sx * r} Q${x2},${y1} ${x2},${y1 + sy * r} V${b.y}`;
-      const h = Math.abs(x2 - a.x);
-      const v = Math.abs(b.y - y1);
-      const legH = { x: (a.x + x2) / 2, y: y1 };
-      const legV = { x: x2, y: (y1 + b.y) / 2 };
-      return { d, length: h + v, nearFrom: h > 70 ? legH : legV, nearTo: v > 40 ? legV : legH, a, b };
-    }
-    const x1 = a.x + oa;
-    const y2 = b.y + ob;
-    const sx = Math.sign(b.x - x1) || 1;
-    const sy = Math.sign(y2 - a.y) || 1;
-    const r = Math.min(CORNER, Math.abs(b.x - x1) / 2, Math.abs(y2 - a.y) / 2);
-    const d = `M${x1},${a.y} V${y2 - sy * r} Q${x1},${y2} ${x1 + sx * r},${y2} H${b.x}`;
-    const v = Math.abs(y2 - a.y);
-    const h = Math.abs(b.x - x1);
-    const legV = { x: x1, y: (a.y + y2) / 2 };
-    const legH = { x: (x1 + b.x) / 2, y: y2 };
-    return { d, length: h + v, nearFrom: v > 40 ? legV : legH, nearTo: h > 70 ? legH : legV, a, b };
-  });
-}
-
-/**
- * Put each lit connection's label out near the *other* station so a hub's labels fan
- * out, then nudge any that would overlap an earlier one. Mono 11px ≈ 6.7px per glyph.
- */
-function placeLabels(routed: RoutedEdge[], lit: Set<number>, active: string | null) {
-  const placed: { i: number; x: number; y: number; w: number }[] = [];
-  const H = 17;
-  for (const i of lit) {
-    const r = routed[i];
-    if (!r) continue;
-    const e = EDGES[i];
-    const spot = active === e.from ? r.nearTo : active === e.to ? r.nearFrom : r.nearTo;
-    const w = e.label.length * 6.7 + 10;
-    let y = spot.y;
-    for (let k = 1; k < 12; k++) {
-      const hit = placed.some((p) => Math.abs(p.x - spot.x) < (p.w + w) / 2 && Math.abs(p.y - y) < H);
-      if (!hit) break;
-      y = spot.y + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * H;
-    }
-    placed.push({ i, x: spot.x, y, w });
-  }
-  return placed;
-}
+import { CARD_H, EXPANDED_W, cardWidth, place, placeLabels, routeEdges, type Size } from './layout';
 
 /* ───────────── the island ───────────── */
 
@@ -165,7 +45,7 @@ export default function ProjectNetwork() {
     return () => ro.disconnect();
   }, []);
 
-  const routed = React.useMemo(() => (size ? routeEdges(size) : []), [size]);
+  const routed = React.useMemo(() => (size ? routeEdges(PROJECTS, EDGES, size) : []), [size]);
 
   /* hidden idle game: right-click a node or a connection label */
   const game = useOptimizer();
@@ -307,7 +187,7 @@ export default function ProjectNetwork() {
       {/* connection labels: only for lit routes, so the map stays quiet */}
       {size &&
         litEdges &&
-        placeLabels(routed, litEdges, active).map(({ i, x, y }) => (
+        placeLabels(PROJECTS, EDGES, routed, litEdges, active, size).map(({ i, x, y }) => (
           <span
             key={i}
             className="chrome absolute z-[25] -translate-x-1/2 -translate-y-1/2 rounded-xs bg-background/85 px-1 whitespace-nowrap text-muted-foreground"
@@ -391,8 +271,9 @@ function Station({ project: p, index, size, live, expanded, selected, lit, level
   // Expanded cards stay inside the map: clamp horizontally, and grow upward from the
   // lower half so a node near the bottom edge opens toward the middle.
   const growUp = c.y > size.h * 0.55;
-  const width = expanded ? EXPANDED_W : CARD_W;
-  const left = expanded ? Math.min(Math.max(c.x - width / 2, 16), size.w - width - 16) : c.x - CARD_W / 2;
+  const cardW = cardWidth(size.w);
+  const width = expanded ? EXPANDED_W : cardW;
+  const left = expanded ? Math.min(Math.max(c.x - width / 2, 16), size.w - width - 16) : c.x - cardW / 2;
   const top = expanded && growUp ? c.y + CARD_H / 2 : c.y - CARD_H / 2;
 
   const dim = lit === false;
