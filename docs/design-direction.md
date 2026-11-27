@@ -28,6 +28,9 @@ Status: idea, proposed for the home page's ocean background.
 ### Home page feedback on the rebuild (2026-11-26)
 > "i liked the old home page better. but i like the wave sunset background. ... i liked old scramble, name, i want maia showcase (can embellish more though) and quote at top"
 
+### About page (2026-11-26)
+> "remove about page completely"
+
 ### Circuit-board feel (2026-11-26)
 > "i do kinda like the circuit board feel tho. maybe log that for later for some other thing"
 
