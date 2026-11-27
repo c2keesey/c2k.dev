@@ -188,6 +188,7 @@ Overlays (tooltip, hover card, dialog, sheet) use `bg-popover` with a strong hai
 - Full bleed: `<AppLayout title="Projects" bleed>`.
 - The map surface is `bg-dot-grid`, then the living background (`MeshField` in `src/components/network/MeshField.tsx`: a noise-breathing triangle mesh, a twinkling parallax starfield and a cursor heat trail), then a `bg-vignette` overlay.
 - Nodes are `NodeCard`, or your own built on the same parts: `StatusDot`, `ROUTES`, `.panel`, `chrome`.
+- Layout: projects on a staggered lattice, small builds on the gutter rows between (see the note on `x`/`y` in `src/data/projects.ts`). `src/components/network/layout.ts` maps it into a frame clear of the header, telemetry and legend, routes each line through the gutters rather than under a card, and sets each lit label where it covers no station.
 - Routes are orthogonal SVG paths with rounded corners. Use `stroke={ROUTES[r].stroke}`, dashed, with `animate-flow` or `animate-flow-slow` depending on connection type.
 - Hovering a node brightens connected routes from 0.3 to 0.7 opacity and dims the rest to 0.1, over 150ms.
 - Glow uses SVG `feGaussianBlur`, never `box-shadow`.
