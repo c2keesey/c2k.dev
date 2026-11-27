@@ -20,6 +20,14 @@ Status: open idea. Not yet decided how or whether it shapes the rebuild.
 
 Removed the principle "no gratuitous particle effects or canvas noise". The background effects (canvas mesh, starfield, cursor trail) are wanted, not noise.
 
+### Swell lines from work (2026-11-26)
+> "maybe can make each currently working project a wave or something that is moving in to crash on the shore after it has been 24 hrs. swell lines im making by working and they crash 24 hrs later."
+
+Status: idea, proposed for the home page's ocean background.
+
+### Home page feedback on the rebuild (2026-11-26)
+> "i liked the old home page better. but i like the wave sunset background. ... i liked old scramble, name, i want maia showcase (can embellish more though) and quote at top"
+
 ### Circuit-board feel (2026-11-26)
 > "i do kinda like the circuit board feel tho. maybe log that for later for some other thing"
 
